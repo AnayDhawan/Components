@@ -34,5 +34,5 @@ Do not disclose publicly until the entry has been fixed or removed.
 
 ## Non-vulnerabilities
 
-Dead links and outdated commands are **bugs, not vulnerabilities** — open a
+Dead links and outdated commands are **bugs, not vulnerabilities** - open a
 normal issue or PR for those.

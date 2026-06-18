@@ -1,6 +1,6 @@
 # components
 
-> **Showpiece UI for AI coding agents.** Describe a *wow* effect — a laptop opening on scroll, a 3D tilt card, animated beams, a spinning globe — and your agent fetches the **real component live** from the best React + Tailwind libraries (Aceternity, Magic UI, Cult UI, ReactBits, 21st.dev) and adapts it to your brand tokens. 1 skill · 18 showpiece effects · 12 plain fallbacks · 5 source libraries.
+> **Showpiece UI for AI coding agents.** Describe a *wow* effect - a laptop opening on scroll, a 3D tilt card, animated beams, a spinning globe - and your agent fetches the **real component live** from the best React + Tailwind libraries (Aceternity, Magic UI, Cult UI, ReactBits, 21st.dev) and adapts it to your brand tokens. 1 skill · 18 showpiece effects · 12 plain fallbacks · 5 source libraries.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 ![Stack](https://img.shields.io/badge/stack-React%20%2B%20Tailwind-38bdf8)
@@ -21,9 +21,9 @@ Then just ask your agent: *"add a macbook-scroll hero"* or *"put an interactive 
 
 ## Why components
 
-Anthropic's `frontend-design` skill makes an agent design *well*. It does **not** hand you a scroll-driven 3D MacBook or a WebGL globe — that motion is slow and bug-prone to hand-write, and copy-pasting from a docs site goes stale and skips attribution.
+Anthropic's `frontend-design` skill makes an agent design *well*. It does **not** hand you a scroll-driven 3D MacBook or a WebGL globe - that motion is slow and bug-prone to hand-write, and copy-pasting from a docs site goes stale and skips attribution.
 
-`components` is a **sourcing** skill. It answers one question — *"which proven showpiece fits, and how do I make it on-brand?"* — by pulling the real, maintained component **live at build time**, then handing final polish to a quality skill (`impeccable` / `frontend-design`). It curates *pointers*, not stale copies, so the code is always current and the upstream license travels with it.
+`components` is a **sourcing** skill. It answers one question - *"which proven showpiece fits, and how do I make it on-brand?"* - by pulling the real, maintained component **live at build time**, then handing final polish to a quality skill (`impeccable` / `frontend-design`). It curates *pointers*, not stale copies, so the code is always current and the upstream license travels with it.
 
 ## What's included
 
@@ -53,10 +53,10 @@ Anthropic's `frontend-design` skill makes an agent design *well*. It does **not*
 | Shiny sweeping text | magicui | `npx shadcn@latest add @magicui/animated-shiny-text` | MIT |
 | Interactive particle field | magicui | `npx shadcn@latest add @magicui/particles` | MIT |
 
-¹ Aceternity is free for personal **and** commercial use — see [Sources & licenses](#sources--licenses). Cult UI / ReactBits / 21st.dev are wired as sources and curated on demand (see the [issues](https://github.com/AnayDhawan/components/issues)).
+¹ Aceternity is free for personal **and** commercial use - see [Sources & licenses](#sources--licenses). Cult UI / ReactBits / 21st.dev are wired as sources and curated on demand (see the [issues](https://github.com/AnayDhawan/components/issues)).
 
 ### Plain fallbacks (when no *wow* is needed)
-`button · navbar · hero · pricing-table · feature-grid · form · modal · tabs · data-table · dashboard-stat-cards · toast · empty-state` — standard shadcn/ui, Tremor for data.
+`button · navbar · hero · pricing-table · feature-grid · form · modal · tabs · data-table · dashboard-stat-cards · toast · empty-state` - standard shadcn/ui, Tremor for data.
 
 ### Anti-patterns (the skill enforces these)
 - **Never raw-paste.** Always adapt colors to brand tokens, wrap motion in `prefers-reduced-motion`, check mobile.
@@ -65,7 +65,7 @@ Anthropic's `frontend-design` skill makes an agent design *well*. It does **not*
 
 ## Installation
 
-`components` is a [Claude Code](https://docs.claude.com/en/docs/claude-code) skill (markdown + a JSON registry — no executable code of its own). Copy the payload into a skills directory:
+`components` is a [Claude Code](https://docs.claude.com/en/docs/claude-code) skill (markdown + a JSON registry - no executable code of its own). Copy the payload into a skills directory:
 
 ```bash
 # project-scoped
@@ -82,7 +82,7 @@ The agent auto-discovers it from the `description` in `SKILL.md`. It needs **net
 ## Usage
 
 ```
-"make the hero pop — laptop opening as you scroll"   → @aceternity/macbook-scroll
+"make the hero pop - laptop opening as you scroll"   → @aceternity/macbook-scroll
 "animated beams behind the features section"         → @aceternity/background-beams
 "interactive globe near the contact form"            → @magicui/globe
 "marquee of customer logos"                          → @magicui/marquee
@@ -97,7 +97,7 @@ The agent auto-discovers it from the `description` in `SKILL.md`. It needs **net
 | [Magic UI](https://magicui.design) | MIT | |
 | [Cult UI](https://www.cult-ui.com) | MIT | |
 | [ReactBits](https://www.reactbits.dev) | MIT | jsrepo / copy (no shadcn registry) |
-| [21st.dev](https://21st.dev) | Per-component — **verify each** | Community registry; check each component's licence before shipping |
+| [21st.dev](https://21st.dev) | Per-component - **verify each** | Community registry; check each component's licence before shipping |
 | [shadcn/ui](https://ui.shadcn.com) | MIT | Plain fallbacks |
 | [Tremor](https://tremor.so) | Apache-2.0 | Dashboards / charts |
 
@@ -105,7 +105,7 @@ Full attribution: [ATTRIBUTION.md](./ATTRIBUTION.md). Each `components.json` ent
 
 ## Supported tools
 
-- **Claude Code** (native — the skill auto-loads from `.claude/skills/`).
+- **Claude Code** (native - the skill auto-loads from `.claude/skills/`).
 - Any agent that can read a `SKILL.md` + run `npx` + WebFetch can use the same `components.json` registry.
 
 ## Community & contributing
@@ -114,4 +114,4 @@ PRs are almost always a new/updated entry in `components.json`. See [CONTRIBUTIN
 
 ## License
 
-[MIT](./LICENSE) © Anay Dhawan — use it freely, keep the copyright notice. Components fetched via the skill carry their own upstream licenses (recorded per entry in `components.json`).
+[MIT](./LICENSE) © Anay Dhawan - use it freely, keep the copyright notice. Components fetched via the skill carry their own upstream licenses (recorded per entry in `components.json`).

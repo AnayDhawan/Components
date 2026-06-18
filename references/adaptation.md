@@ -37,17 +37,17 @@ Source libraries ship neutral defaults (shadcn = zinc/neutral, Tremor = its own 
 - Forms: `react-hook-form`, `zod`, `@hookform/resolvers`.
 - data-table: `@tanstack/react-table`.
 - Tremor: `@tremor/react` + Tailwind preset/content paths.
-- Aceternity: `framer-motion` (heavy) — only when motion is justified.
+- Aceternity: `framer-motion` (heavy) - only when motion is justified.
 
 ## 5b. Motion (showpiece components)
 
 Live-fetched showpiece components ship heavy animation. Adapt it:
 
-- **Always honor `prefers-reduced-motion`** — gate or disable scroll/loop/parallax motion for users who opt out. Wrap with a `useReducedMotion()` check (framer-motion) or a `motion-reduce:` Tailwind variant.
-- **Tune to brand, don't ship the demo** — demo timings/colors/copy are placeholders. Re-time to feel calm, recolor to tokens.
-- **One showpiece per view** — don't stack laptop-scroll + beams + globe + meteors on one screen; it reads as noise and tanks performance.
+- **Always honor `prefers-reduced-motion`** - gate or disable scroll/loop/parallax motion for users who opt out. Wrap with a `useReducedMotion()` check (framer-motion) or a `motion-reduce:` Tailwind variant.
+- **Tune to brand, don't ship the demo** - demo timings/colors/copy are placeholders. Re-time to feel calm, recolor to tokens.
+- **One showpiece per view** - don't stack laptop-scroll + beams + globe + meteors on one screen; it reads as noise and tanks performance.
 - **Imports:** match what the fetched code uses (`framer-motion` vs `motion/react`). Install the exact dep.
-- **Perf:** WebGL (globe), canvas particles, and heavy parallax are expensive — lazy-load / only mount when in view; check mobile FPS.
+- **Perf:** WebGL (globe), canvas particles, and heavy parallax are expensive - lazy-load / only mount when in view; check mobile FPS.
 
 ## 6. Handoff
 

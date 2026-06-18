@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for improving **components**. The skill stores *pointers* to live-fetchable components — contributions are almost always *new or updated entries in `components.json`*.
+Thanks for improving **components**. The skill stores *pointers* to live-fetchable components - contributions are almost always *new or updated entries in `components.json`*.
 
 By participating you agree to the [Code of Conduct](./CODE_OF_CONDUCT.md).
 
@@ -12,22 +12,22 @@ By participating you agree to the [Code of Conduct](./CODE_OF_CONDUCT.md).
 ```jsonc
 {
   "name": "kebab-case-name",          // unique
-  "aliases": ["laptop opening", "..."], // how a user might DESCRIBE the effect — drives matching
+  "aliases": ["laptop opening", "..."], // how a user might DESCRIBE the effect - drives matching
   "effect": "one-line description of what it does",
   "library": "aceternity",            // must exist in code_libraries[]
-  "ref": "npx shadcn@latest add @aceternity/<name>",  // the live-fetch command — REQUIRED
-  "license": "MIT",                   // upstream license — REQUIRED
+  "ref": "npx shadcn@latest add @aceternity/<name>",  // the live-fetch command - REQUIRED
+  "license": "MIT",                   // upstream license - REQUIRED
   "deps": ["motion"]                  // peer deps to install (framer-motion, cobe, ...)
 }
 ```
 
 ### Rules
 
-- **`ref` must fetch live** — a registry command (preferred) or a resolvable component-page URL. No pasted code in this repo.
-- **`aliases` are the match surface** — list how users phrase the effect, not just the canonical name.
+- **`ref` must fetch live** - a registry command (preferred) or a resolvable component-page URL. No pasted code in this repo.
+- **`aliases` are the match surface** - list how users phrase the effect, not just the canonical name.
 - **`library` must be listed in `code_libraries[]`** (add it there if new, with registry pattern + license).
 - **`license` is required.** Verify it (Aceternity = free/verify, 21st.dev = per-component).
-- **Galleries are not sources.** Dribbble / godly.website / Awwwards go in `galleries_visual_ref_only[]` — visual reference only, never `ref`.
+- **Galleries are not sources.** Dribbble / godly.website / Awwwards go in `galleries_visual_ref_only[]` - visual reference only, never `ref`.
 - **Adaptation is mandatory** at use time (brand tokens + `prefers-reduced-motion`); see `references/adaptation.md`.
 - Keep scope React + Tailwind. Other stacks need a separate discussion (open an issue).
 
@@ -35,7 +35,7 @@ Plain (non-flashy) components go in `fallback_basic.components[]` with just `nam
 
 ## Before you open a PR
 
-- `components.json` is valid JSON (CI checks this — see `.github/workflows/validate.yml`).
+- `components.json` is valid JSON (CI checks this - see `.github/workflows/validate.yml`).
 - Every `source.ref` link/command resolves and works on a fresh project.
 - New component genuinely lacks a good existing entry (no duplicates by alias).
 - Fill out the PR template.
