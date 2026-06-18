@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security / unsafe source report
+    url: https://github.com/AnayDhawan/components/security/advisories/new
+    about: Report typosquatted packages, hijacked domains, or malicious sources privately. See SECURITY.md.
+  - name: Question / discussion
+    url: https://github.com/AnayDhawan/components/discussions
+    about: Ask a question or propose a broader change before opening an issue.

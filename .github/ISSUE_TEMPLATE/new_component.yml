@@ -1,0 +1,56 @@
+name: New component request
+description: Propose a new React + Tailwind component entry for the curated map.
+title: "[component]: "
+labels: ["enhancement", "new-entry"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Propose a component to add to `components.json`. It must have a proven,
+        maintained, clearly-licensed React + Tailwind source. See CONTRIBUTING.md.
+  - type: input
+    id: name
+    attributes:
+      label: Component name
+      placeholder: accordion
+    validations:
+      required: true
+  - type: input
+    id: aliases
+    attributes:
+      label: Aliases
+      description: Comma-separated synonyms the agent might use.
+      placeholder: collapsible, disclosure, expander
+  - type: dropdown
+    id: library
+    attributes:
+      label: Proposed source library
+      options:
+        - shadcn
+        - tremor
+        - aceternity
+        - other (explain below)
+    validations:
+      required: true
+  - type: input
+    id: ref
+    attributes:
+      label: source.ref
+      description: The install command or copy URL.
+      placeholder: npx shadcn@latest add accordion
+    validations:
+      required: true
+  - type: input
+    id: license
+    attributes:
+      label: Upstream license
+      placeholder: MIT
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why add it?
+      description: Common use case, and confirm no existing entry covers it.
+    validations:
+      required: true

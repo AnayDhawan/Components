@@ -1,0 +1,58 @@
+name: validate
+
+on:
+  push:
+    paths:
+      - "components.json"
+      - ".github/workflows/validate.yml"
+  pull_request:
+    paths:
+      - "components.json"
+  workflow_dispatch:
+  schedule:
+    # Quarterly sanity check (1st of Jan/Apr/Jul/Oct, 06:00 UTC).
+    - cron: "0 6 1 1,4,7,10 *"
+
+jobs:
+  json:
+    name: validate components.json
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate JSON + required fields
+        run: |
+          python3 - <<'PY'
+          import json, sys
+          with open("components.json") as f:
+              data = json.load(f)  # raises on invalid JSON
+          errors = []
+          names = set()
+
+          showpiece = data.get("showpiece", [])
+          assert showpiece, "no showpiece entries found"
+          for c in showpiece:
+              n = c.get("name")
+              if not n:
+                  errors.append("showpiece entry missing 'name'"); continue
+              if n in names:
+                  errors.append(f"duplicate showpiece name: {n}")
+              names.add(n)
+              for key in ("library", "ref", "license"):
+                  if not c.get(key):
+                      errors.append(f"{n}: {key} missing")
+              if not c.get("aliases"):
+                  errors.append(f"{n}: aliases empty (needed for matching)")
+
+          fb = data.get("fallback_basic", {}).get("components", [])
+          assert fb, "no fallback_basic components found"
+          for c in fb:
+              if not c.get("name") or not c.get("ref"):
+                  errors.append(f"fallback entry missing name/ref: {c.get('name')}")
+
+          libs = data.get("code_libraries", [])
+          assert libs, "no code_libraries found"
+
+          if errors:
+              print("\n".join(errors)); sys.exit(1)
+          print(f"OK: {len(showpiece)} showpiece + {len(fb)} fallback + {len(libs)} libraries")
+          PY

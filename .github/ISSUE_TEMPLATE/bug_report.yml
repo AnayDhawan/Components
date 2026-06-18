@@ -1,0 +1,44 @@
+name: Bug report
+description: A dead link, wrong command, broken adaptation, or incorrect license in an entry.
+title: "[bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Dead links and outdated commands are bugs (not security issues).
+        For a security-relevant problem (typosquat, hijacked domain, malicious source), see SECURITY.md instead.
+  - type: input
+    id: component
+    attributes:
+      label: Which component entry?
+      description: The `name` in components.json (e.g. `data-table`).
+      placeholder: data-table
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What's wrong?
+      options:
+        - Dead / moved source.ref link
+        - Command no longer works
+        - adapt_rules produce a broken result
+        - Wrong or missing license
+        - Wrong gotchas / missing peer dep
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: What did you run/expect/get? Include the failing command or link.
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: Environment
+      description: React / Tailwind / shadcn / Tremor versions if relevant.
+      placeholder: "Next 15, Tailwind 3.4, shadcn latest"

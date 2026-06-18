@@ -1,0 +1,86 @@
+{
+  "meta": {
+    "version": "0.4.0",
+    "stack": "react+tailwind",
+    "updated": "2026-06-18",
+    "purpose": "PRIMARY: fetch flashy showpiece animated components LIVE from code libraries at build time, based on the user's prompt. FALLBACK: a curated map of plain components. Inspiration galleries are VISUAL REFERENCE ONLY (no code).",
+    "rules": [
+      "Match the user's described effect to a showpiece entry OR search the code_libraries live.",
+      "Fetch live via the entry's registry command (preferred) or WebFetch/Playwright the component page (fallback).",
+      "NEVER paste raw: adapt colors to brand tokens, respect prefers-reduced-motion, install the right deps. See references/adaptation.md + references/live-fetch.md.",
+      "galleries[] have NO code. Use only for visual direction. Never try to fetch components from them.",
+      "After placing, hand off final polish to the impeccable / frontend-design skills."
+    ]
+  },
+
+  "fetch_methods": {
+    "registry_cli": {
+      "how": "Run the shadcn registry command, e.g. `npx shadcn@latest add @magicui/marquee`. Most reliable; resolves deps + files automatically.",
+      "when": "Library exposes a shadcn registry namespace (magicui, aceternity, cult-ui, etc.).",
+      "safety": "Registry commands pull code into the project. Show the user the command before running. Prefer pinned/official namespaces; do not run arbitrary unknown-registry URLs without review."
+    },
+    "webfetch": {
+      "how": "WebFetch the component's docs page, extract the code block, then write it into the project + install listed deps.",
+      "when": "No registry command available, or you only need to read the code.",
+      "limit": "Galleries + JS-heavy pages may not expose code cleanly to WebFetch."
+    },
+    "playwright": {
+      "how": "Use the playwright skill to open the page and read the rendered code panel / copy button content.",
+      "when": "WebFetch misses code behind tabs/JS. Heavier; use only when needed."
+    }
+  },
+
+  "code_libraries": [
+    { "name": "magicui",    "registry": "npx shadcn@latest add @magicui/<name>",    "site": "https://magicui.design/docs/components", "license": "MIT", "deps": ["motion (framer-motion)"], "best_for": "marquee, animated-beam, bento, globe, meteors, dock, shimmer/animated text + buttons" },
+    { "name": "aceternity", "registry": "npx shadcn@latest add @aceternity/<name>", "site": "https://ui.aceternity.com/components", "license": "free for personal + commercial (verify ui.aceternity.com/licence)", "deps": ["motion (framer-motion)", "sometimes @tabler/icons-react", "three/cobe for 3D"], "best_for": "macbook-scroll, 3d-card, spotlight, beams, lamp, wavy bg, infinite cards, text reveal", "note": "append -demo to a name for the full example, e.g. @aceternity/macbook-scroll-demo" },
+    { "name": "cult-ui",    "registry": "npx shadcn@latest add @cult-ui/<name>",    "site": "https://www.cult-ui.com/docs/components", "license": "MIT", "deps": ["motion (framer-motion)"], "best_for": "polished animated cards, text, shaders, dynamic islands" },
+    { "name": "reactbits",  "registry": "npx jsrepo add <name>  (or copy from site)", "site": "https://www.reactbits.dev", "license": "MIT", "deps": ["motion (framer-motion)", "gsap for some"], "best_for": "animated text + backgrounds (no shadcn registry; uses jsrepo or copy)" },
+    { "name": "21st.dev",   "registry": "npx shadcn@latest add \"https://21st.dev/r/<author>/<name>\"", "site": "https://21st.dev", "license": "per-component (verify each)", "deps": ["varies"], "best_for": "huge community registry; search by effect. Verify license + code per component before shipping." }
+  ],
+
+  "galleries_visual_ref_only": [
+    { "name": "godly",    "url": "https://www.godly.website", "note": "IMAGES/VIDEO ONLY. Design direction, no code." },
+    { "name": "dribbble", "url": "https://dribbble.com",      "note": "IMAGES ONLY. Mood/visual ref, no code." },
+    { "name": "awwwards", "url": "https://www.awwwards.com",  "note": "Showcase sites. Visual ref only, no extractable component code." },
+    { "name": "landbook", "url": "https://land-book.com",     "note": "Landing-page gallery. Visual ref only." }
+  ],
+
+  "showpiece": [
+    { "name": "macbook-scroll",        "aliases": ["laptop opening", "macbook open on scroll", "laptop screen lift", "device scroll reveal"], "effect": "MacBook lid opens + screen content scales as you scroll", "library": "aceternity", "ref": "npx shadcn@latest add @aceternity/macbook-scroll", "license": "free (verify)", "deps": ["motion"] },
+    { "name": "3d-card",               "aliases": ["3d tilt card", "card perspective hover", "tilt on hover"], "effect": "card tilts in 3D toward cursor with layered depth", "library": "aceternity", "ref": "npx shadcn@latest add @aceternity/3d-card", "license": "free (verify)", "deps": ["motion"] },
+    { "name": "spotlight",             "aliases": ["cursor spotlight", "hero spotlight", "radial light follow"], "effect": "radial spotlight glow on hero / following cursor", "library": "aceternity", "ref": "npx shadcn@latest add @aceternity/spotlight", "license": "free (verify)", "deps": ["motion"] },
+    { "name": "background-beams",      "aliases": ["animated beams background", "svg beams", "collision beams"], "effect": "animated SVG light beams as section background", "library": "aceternity", "ref": "npx shadcn@latest add @aceternity/background-beams", "license": "free (verify)", "deps": ["motion"] },
+    { "name": "lamp",                  "aliases": ["lamp glow heading", "spotlight heading reveal"], "effect": "conic lamp glow that reveals a heading", "library": "aceternity", "ref": "npx shadcn@latest add @aceternity/lamp", "license": "free (verify)", "deps": ["motion"] },
+    { "name": "wavy-background",       "aliases": ["animated waves", "fluid wave background"], "effect": "animated flowing wave background", "library": "aceternity", "ref": "npx shadcn@latest add @aceternity/wavy-background", "license": "free (verify)", "deps": ["motion", "simplex-noise"] },
+    { "name": "infinite-moving-cards", "aliases": ["marquee testimonials", "looping card row", "auto-scroll cards"], "effect": "infinite horizontal looping cards (testimonials/logos)", "library": "aceternity", "ref": "npx shadcn@latest add @aceternity/infinite-moving-cards", "license": "free (verify)", "deps": ["motion"] },
+    { "name": "text-generate-effect",  "aliases": ["text reveal", "staggered word fade-in", "ai typing text"], "effect": "words fade/blur in sequentially", "library": "aceternity", "ref": "npx shadcn@latest add @aceternity/text-generate-effect", "license": "free (verify)", "deps": ["motion"] },
+    { "name": "card-hover-effect",     "aliases": ["grid hover glow", "feature card hover spotlight"], "effect": "grid cards with moving hover highlight", "library": "aceternity", "ref": "npx shadcn@latest add @aceternity/card-hover-effect", "license": "free (verify)", "deps": ["motion"] },
+    { "name": "animated-beam",         "aliases": ["beam between nodes", "connection beam", "integration diagram beam"], "effect": "animated beam connecting two nodes (integration diagrams)", "library": "magicui", "ref": "npx shadcn@latest add @magicui/animated-beam", "license": "MIT", "deps": ["motion"] },
+    { "name": "marquee",               "aliases": ["logo marquee", "infinite scroll strip", "ticker"], "effect": "infinite scrolling row of logos/cards", "library": "magicui", "ref": "npx shadcn@latest add @magicui/marquee", "license": "MIT", "deps": ["motion"] },
+    { "name": "bento-grid",            "aliases": ["bento", "feature bento", "asymmetric grid"], "effect": "animated asymmetric bento feature grid", "library": "magicui", "ref": "npx shadcn@latest add @magicui/bento-grid", "license": "MIT", "deps": ["motion"] },
+    { "name": "globe",                 "aliases": ["interactive globe", "3d earth", "spinning globe"], "effect": "interactive WebGL globe", "library": "magicui", "ref": "npx shadcn@latest add @magicui/globe", "license": "MIT", "deps": ["cobe", "motion"] },
+    { "name": "meteors",               "aliases": ["meteor shower", "shooting stars bg"], "effect": "meteor-shower background effect", "library": "magicui", "ref": "npx shadcn@latest add @magicui/meteors", "license": "MIT", "deps": ["motion"] },
+    { "name": "shimmer-button",        "aliases": ["shiny button", "shimmer cta", "animated gradient button"], "effect": "button with traveling shimmer/border light", "library": "magicui", "ref": "npx shadcn@latest add @magicui/shimmer-button", "license": "MIT", "deps": [] },
+    { "name": "dock",                  "aliases": ["macos dock", "magnify dock", "icon dock"], "effect": "macOS-style magnifying icon dock", "library": "magicui", "ref": "npx shadcn@latest add @magicui/dock", "license": "MIT", "deps": ["motion"] },
+    { "name": "animated-shiny-text",   "aliases": ["shiny text", "shimmer text", "announcement pill text"], "effect": "subtle shine sweeping across text", "library": "magicui", "ref": "npx shadcn@latest add @magicui/animated-shiny-text", "license": "MIT", "deps": [] },
+    { "name": "particles",             "aliases": ["particle background", "interactive dots bg", "sparkles"], "effect": "interactive particle field background", "library": "magicui", "ref": "npx shadcn@latest add @magicui/particles", "license": "MIT", "deps": [] }
+  ],
+
+  "fallback_basic": {
+    "note": "Plain, non-flashy components. Use ONLY when the user wants a standard element (not a showpiece effect). shadcn primary, Tremor for data. Adapt to brand tokens (references/adaptation.md).",
+    "components": [
+      { "name": "button",               "aliases": ["btn", "cta button"],                 "ref": "npx shadcn@latest add button",            "library": "shadcn", "license": "MIT" },
+      { "name": "navbar",                "aliases": ["nav", "header menu"],                 "ref": "npx shadcn@latest add navigation-menu sheet", "library": "shadcn", "license": "MIT", "gotchas": "compose into header; sheet for mobile" },
+      { "name": "hero",                  "aliases": ["hero section", "above the fold"],     "ref": "compose: heading + supporting copy + button (or use a showpiece bg)", "library": "shadcn", "license": "MIT" },
+      { "name": "pricing-table",         "aliases": ["pricing", "plans", "tiers"],          "ref": "compose: card + badge + button", "library": "shadcn", "license": "MIT", "gotchas": "equal-height feature lists via grid" },
+      { "name": "feature-grid",          "aliases": ["features", "feature cards"],          "ref": "npx shadcn@latest add card",  "library": "shadcn", "license": "MIT" },
+      { "name": "form",                  "aliases": ["contact form", "auth", "login"],      "ref": "npx shadcn@latest add form input label", "library": "shadcn", "license": "MIT", "gotchas": "react-hook-form + zod" },
+      { "name": "modal",                 "aliases": ["dialog", "popup"],                    "ref": "npx shadcn@latest add dialog", "library": "shadcn", "license": "MIT", "gotchas": "alert-dialog for destructive confirms" },
+      { "name": "tabs",                  "aliases": ["tab group", "segmented"],             "ref": "npx shadcn@latest add tabs",  "library": "shadcn", "license": "MIT" },
+      { "name": "data-table",            "aliases": ["table", "datagrid"],                  "ref": "npx shadcn@latest add table  (+ @tanstack/react-table)", "library": "shadcn", "license": "MIT", "gotchas": "sorting/filtering = TanStack" },
+      { "name": "dashboard-stat-cards",  "aliases": ["kpi cards", "metrics", "charts"],     "ref": "npm i @tremor/react  (Card + Metric + charts)", "library": "tremor", "license": "Apache-2.0", "gotchas": "needs Tremor tailwind preset/content paths" },
+      { "name": "toast",                 "aliases": ["notification", "snackbar", "sonner"], "ref": "npx shadcn@latest add sonner", "library": "shadcn", "license": "MIT", "gotchas": "single <Toaster/> at root" },
+      { "name": "empty-state",           "aliases": ["empty", "zero state", "no data"],     "ref": "compose: icon + heading + guidance + one primary action", "library": "shadcn", "license": "MIT" }
+    ]
+  }
+}
