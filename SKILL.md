@@ -61,7 +61,7 @@ Registries change. Recover in this order - never leave the user stuck:
 3. **Code is behind JS/tabs** → use the `playwright` skill to read the rendered code panel.
 4. **Network/registry down** → fall back to the closest `fallback_basic` entry or a hand-composed version, and tell the user the showpiece source is unreachable. Do not block the build on a dead registry.
 
-> **Snapshot note:** until a vendored-snapshot fallback ships (see repo issues), a dead upstream means the showpiece is temporarily unavailable - degrade gracefully per step 4 rather than erroring out.
+> **No vendoring, by design:** `components` ships pointers only and never bundles upstream code, so when an upstream is unreachable the showpiece is temporarily unavailable. Degrade gracefully per step 4 (closest `fallback_basic`, or hand-compose) rather than erroring out. Staying pointer-only keeps the skill permanently clear of any redistribution licensing.
 
 ## Maintenance
 
