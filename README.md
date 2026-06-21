@@ -2,10 +2,12 @@
 
 > **Showpiece UI for AI coding agents.** Describe a *wow* effect - a laptop opening on scroll, a 3D tilt card, animated beams, a spinning globe - and your agent fetches the **real component live** from the best React + Tailwind libraries (Aceternity, Magic UI, Cult UI, ReactBits, 21st.dev) and adapts it to your brand tokens. 1 skill · 18 showpiece effects · 12 plain fallbacks · 5 source libraries.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
 ![Stack](https://img.shields.io/badge/stack-React%20%2B%20Tailwind-38bdf8)
 ![Status](https://img.shields.io/badge/status-v0.4.0-brightgreen)
 ![Skill](https://img.shields.io/badge/Claude%20Code-skill-8a5cf6)
+
+![A macbook-scroll showpiece, fetched live and adapted to brand tokens](docs/media/demo.gif)
 
 ## Quick start
 
@@ -114,4 +116,4 @@ PRs are almost always a new/updated entry in `components.json`. See [CONTRIBUTIN
 
 ## License
 
-[MIT](./LICENSE) © Anay Dhawan - use it freely, keep the copyright notice. Components fetched via the skill carry their own upstream licenses (recorded per entry in `components.json`).
+[Apache-2.0](./LICENSE) © Anay Dhawan. Components fetched via the skill carry their own upstream licenses (recorded per entry in `components.json`).
