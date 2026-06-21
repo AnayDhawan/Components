@@ -9,6 +9,8 @@
 
 ![A macbook-scroll showpiece, fetched live and adapted to brand tokens](docs/media/demo.gif)
 
+*A stylized motion-graphics demo of the workflow, not an actual recorded run. A real captured session will replace it in a later release.*
+
 ## Quick start
 
 ```bash
