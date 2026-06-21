@@ -2,7 +2,7 @@
 
 `components` is a **sourcing skill**. It ships *pointers* (registry commands), not component code.
 When you use it, the real component is fetched live from the library below and is governed by **that
-library's license**, not this repo's MIT license. This file credits every upstream source.
+library's license**, not this repo's Apache-2.0 license. This file credits every upstream source.
 
 | Library | Author / Project | License | License link |
 |---------|------------------|---------|--------------|
@@ -19,6 +19,6 @@ Every entry in `components.json` carries a `license` field. The `aceternity` ent
 `free (verify)` as a reminder to re-check the licence page before a public relaunch. The `21st.dev`
 source has **no blanket license** - each component must be verified individually before shipping.
 
-## What this repo's MIT license covers
-Only the curation itself: `SKILL.md`, `components.json`, `references/`, and the docs. Copyright (c)
-2026 Anay Dhawan. Keep the notice; otherwise use it freely.
+## What this repo's Apache-2.0 license covers
+Only the curation itself: `SKILL.md`, `components.json`, `references/`, and the docs. Copyright 2026
+Anay Dhawan. Keep the notice; otherwise use it freely.
