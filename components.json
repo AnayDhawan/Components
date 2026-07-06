@@ -1,8 +1,8 @@
 {
   "meta": {
-    "version": "0.4.0",
+    "version": "0.4.1",
     "stack": "react+tailwind",
-    "updated": "2026-06-18",
+    "updated": "2026-07-06",
     "purpose": "PRIMARY: fetch flashy showpiece animated components LIVE from code libraries at build time, based on the user's prompt. FALLBACK: a curated map of plain components. Inspiration galleries are VISUAL REFERENCE ONLY (no code).",
     "rules": [
       "Match the user's described effect to a showpiece entry OR search the code_libraries live.",
@@ -15,7 +15,7 @@
 
   "fetch_methods": {
     "registry_cli": {
-      "how": "Run the shadcn registry command, e.g. `npx shadcn@latest add @magicui/marquee`. Most reliable; resolves deps + files automatically.",
+      "how": "Run the shadcn registry command, e.g. `npx shadcn@latest add \"https://magicui.design/r/marquee.json\"`. Most reliable; resolves deps + files automatically.",
       "when": "Library exposes a shadcn registry namespace (magicui, aceternity, cult-ui, etc.).",
       "safety": "Registry commands pull code into the project. Show the user the command before running. Prefer pinned/official namespaces; do not run arbitrary unknown-registry URLs without review."
     },
@@ -31,9 +31,9 @@
   },
 
   "code_libraries": [
-    { "name": "magicui",    "registry": "npx shadcn@latest add @magicui/<name>",    "site": "https://magicui.design/docs/components", "license": "MIT", "deps": ["motion (framer-motion)"], "best_for": "marquee, animated-beam, bento, globe, meteors, dock, shimmer/animated text + buttons" },
-    { "name": "aceternity", "registry": "npx shadcn@latest add @aceternity/<name>", "site": "https://ui.aceternity.com/components", "license": "free for personal + commercial (verify ui.aceternity.com/licence)", "deps": ["motion (framer-motion)", "sometimes @tabler/icons-react", "three/cobe for 3D"], "best_for": "macbook-scroll, 3d-card, spotlight, beams, lamp, wavy bg, infinite cards, text reveal", "note": "append -demo to a name for the full example, e.g. @aceternity/macbook-scroll-demo" },
-    { "name": "cult-ui",    "registry": "npx shadcn@latest add @cult-ui/<name>",    "site": "https://www.cult-ui.com/docs/components", "license": "MIT", "deps": ["motion (framer-motion)"], "best_for": "polished animated cards, text, shaders, dynamic islands" },
+    { "name": "magicui",    "registry": "npx shadcn@latest add \"https://magicui.design/r/<name>.json\"",    "site": "https://magicui.design/docs/components", "license": "MIT", "deps": ["motion (framer-motion)"], "best_for": "marquee, animated-beam, bento, globe, meteors, dock, shimmer/animated text + buttons" },
+    { "name": "aceternity", "registry": "npx shadcn@latest add \"https://ui.aceternity.com/registry/<name>.json\"", "site": "https://ui.aceternity.com/components", "license": "free for personal + commercial (verify ui.aceternity.com/licence)", "deps": ["motion (framer-motion)", "sometimes @tabler/icons-react", "three/cobe for 3D"], "best_for": "macbook-scroll, 3d-card, spotlight, beams, lamp, wavy bg, infinite cards, text reveal", "note": "append -demo to a name for the full example, e.g. https://ui.aceternity.com/registry/macbook-scroll-demo.json" },
+    { "name": "cult-ui",    "registry": "npx shadcn@latest add \"https://www.cult-ui.com/r/<name>.json\"",    "site": "https://www.cult-ui.com/docs/components", "license": "MIT", "deps": ["motion (framer-motion)"], "best_for": "polished animated cards, text, shaders, dynamic islands" },
     { "name": "reactbits",  "registry": "npx jsrepo add <name>  (or copy from site)", "site": "https://www.reactbits.dev", "license": "MIT", "deps": ["motion (framer-motion)", "gsap for some"], "best_for": "animated text + backgrounds (no shadcn registry; uses jsrepo or copy)" },
     { "name": "21st.dev",   "registry": "npx shadcn@latest add \"https://21st.dev/r/<author>/<name>\"", "site": "https://21st.dev", "license": "per-component (verify each)", "deps": ["varies"], "best_for": "huge community registry; search by effect. Verify license + code per component before shipping." }
   ],
@@ -46,24 +46,24 @@
   ],
 
   "showpiece": [
-    { "name": "macbook-scroll",        "aliases": ["laptop opening", "macbook open on scroll", "laptop screen lift", "device scroll reveal"], "effect": "MacBook lid opens + screen content scales as you scroll", "library": "aceternity", "ref": "npx shadcn@latest add @aceternity/macbook-scroll", "license": "free (verify)", "deps": ["motion"] },
-    { "name": "3d-card",               "aliases": ["3d tilt card", "card perspective hover", "tilt on hover"], "effect": "card tilts in 3D toward cursor with layered depth", "library": "aceternity", "ref": "npx shadcn@latest add @aceternity/3d-card", "license": "free (verify)", "deps": ["motion"] },
-    { "name": "spotlight",             "aliases": ["cursor spotlight", "hero spotlight", "radial light follow"], "effect": "radial spotlight glow on hero / following cursor", "library": "aceternity", "ref": "npx shadcn@latest add @aceternity/spotlight", "license": "free (verify)", "deps": ["motion"] },
-    { "name": "background-beams",      "aliases": ["animated beams background", "svg beams", "collision beams"], "effect": "animated SVG light beams as section background", "library": "aceternity", "ref": "npx shadcn@latest add @aceternity/background-beams", "license": "free (verify)", "deps": ["motion"] },
-    { "name": "lamp",                  "aliases": ["lamp glow heading", "spotlight heading reveal"], "effect": "conic lamp glow that reveals a heading", "library": "aceternity", "ref": "npx shadcn@latest add @aceternity/lamp", "license": "free (verify)", "deps": ["motion"] },
-    { "name": "wavy-background",       "aliases": ["animated waves", "fluid wave background"], "effect": "animated flowing wave background", "library": "aceternity", "ref": "npx shadcn@latest add @aceternity/wavy-background", "license": "free (verify)", "deps": ["motion", "simplex-noise"] },
-    { "name": "infinite-moving-cards", "aliases": ["marquee testimonials", "looping card row", "auto-scroll cards"], "effect": "infinite horizontal looping cards (testimonials/logos)", "library": "aceternity", "ref": "npx shadcn@latest add @aceternity/infinite-moving-cards", "license": "free (verify)", "deps": ["motion"] },
-    { "name": "text-generate-effect",  "aliases": ["text reveal", "staggered word fade-in", "ai typing text"], "effect": "words fade/blur in sequentially", "library": "aceternity", "ref": "npx shadcn@latest add @aceternity/text-generate-effect", "license": "free (verify)", "deps": ["motion"] },
-    { "name": "card-hover-effect",     "aliases": ["grid hover glow", "feature card hover spotlight"], "effect": "grid cards with moving hover highlight", "library": "aceternity", "ref": "npx shadcn@latest add @aceternity/card-hover-effect", "license": "free (verify)", "deps": ["motion"] },
-    { "name": "animated-beam",         "aliases": ["beam between nodes", "connection beam", "integration diagram beam"], "effect": "animated beam connecting two nodes (integration diagrams)", "library": "magicui", "ref": "npx shadcn@latest add @magicui/animated-beam", "license": "MIT", "deps": ["motion"] },
-    { "name": "marquee",               "aliases": ["logo marquee", "infinite scroll strip", "ticker"], "effect": "infinite scrolling row of logos/cards", "library": "magicui", "ref": "npx shadcn@latest add @magicui/marquee", "license": "MIT", "deps": ["motion"] },
-    { "name": "bento-grid",            "aliases": ["bento", "feature bento", "asymmetric grid"], "effect": "animated asymmetric bento feature grid", "library": "magicui", "ref": "npx shadcn@latest add @magicui/bento-grid", "license": "MIT", "deps": ["motion"] },
-    { "name": "globe",                 "aliases": ["interactive globe", "3d earth", "spinning globe"], "effect": "interactive WebGL globe", "library": "magicui", "ref": "npx shadcn@latest add @magicui/globe", "license": "MIT", "deps": ["cobe", "motion"] },
-    { "name": "meteors",               "aliases": ["meteor shower", "shooting stars bg"], "effect": "meteor-shower background effect", "library": "magicui", "ref": "npx shadcn@latest add @magicui/meteors", "license": "MIT", "deps": ["motion"] },
-    { "name": "shimmer-button",        "aliases": ["shiny button", "shimmer cta", "animated gradient button"], "effect": "button with traveling shimmer/border light", "library": "magicui", "ref": "npx shadcn@latest add @magicui/shimmer-button", "license": "MIT", "deps": [] },
-    { "name": "dock",                  "aliases": ["macos dock", "magnify dock", "icon dock"], "effect": "macOS-style magnifying icon dock", "library": "magicui", "ref": "npx shadcn@latest add @magicui/dock", "license": "MIT", "deps": ["motion"] },
-    { "name": "animated-shiny-text",   "aliases": ["shiny text", "shimmer text", "announcement pill text"], "effect": "subtle shine sweeping across text", "library": "magicui", "ref": "npx shadcn@latest add @magicui/animated-shiny-text", "license": "MIT", "deps": [] },
-    { "name": "particles",             "aliases": ["particle background", "interactive dots bg", "sparkles"], "effect": "interactive particle field background", "library": "magicui", "ref": "npx shadcn@latest add @magicui/particles", "license": "MIT", "deps": [] }
+    { "name": "macbook-scroll",        "aliases": ["laptop opening", "macbook open on scroll", "laptop screen lift", "device scroll reveal"], "effect": "MacBook lid opens + screen content scales as you scroll", "library": "aceternity", "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/macbook-scroll.json\"", "license": "free (verify)", "deps": ["motion"] },
+    { "name": "3d-card",               "aliases": ["3d tilt card", "card perspective hover", "tilt on hover"], "effect": "card tilts in 3D toward cursor with layered depth", "library": "aceternity", "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/3d-card.json\"", "license": "free (verify)", "deps": ["motion"] },
+    { "name": "spotlight",             "aliases": ["cursor spotlight", "hero spotlight", "radial light follow"], "effect": "radial spotlight glow on hero / following cursor", "library": "aceternity", "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/spotlight.json\"", "license": "free (verify)", "deps": ["motion"] },
+    { "name": "background-beams",      "aliases": ["animated beams background", "svg beams", "collision beams"], "effect": "animated SVG light beams as section background", "library": "aceternity", "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/background-beams.json\"", "license": "free (verify)", "deps": ["motion"] },
+    { "name": "lamp",                  "aliases": ["lamp glow heading", "spotlight heading reveal"], "effect": "conic lamp glow that reveals a heading", "library": "aceternity", "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/lamp.json\"", "license": "free (verify)", "deps": ["motion"] },
+    { "name": "wavy-background",       "aliases": ["animated waves", "fluid wave background"], "effect": "animated flowing wave background", "library": "aceternity", "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/wavy-background.json\"", "license": "free (verify)", "deps": ["motion", "simplex-noise"] },
+    { "name": "infinite-moving-cards", "aliases": ["marquee testimonials", "looping card row", "auto-scroll cards"], "effect": "infinite horizontal looping cards (testimonials/logos)", "library": "aceternity", "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/infinite-moving-cards.json\"", "license": "free (verify)", "deps": ["motion"] },
+    { "name": "text-generate-effect",  "aliases": ["text reveal", "staggered word fade-in", "ai typing text"], "effect": "words fade/blur in sequentially", "library": "aceternity", "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/text-generate-effect.json\"", "license": "free (verify)", "deps": ["motion"] },
+    { "name": "card-hover-effect",     "aliases": ["grid hover glow", "feature card hover spotlight"], "effect": "grid cards with moving hover highlight", "library": "aceternity", "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/card-hover-effect.json\"", "license": "free (verify)", "deps": ["motion"] },
+    { "name": "animated-beam",         "aliases": ["beam between nodes", "connection beam", "integration diagram beam"], "effect": "animated beam connecting two nodes (integration diagrams)", "library": "magicui", "ref": "npx shadcn@latest add \"https://magicui.design/r/animated-beam.json\"", "license": "MIT", "deps": ["motion"] },
+    { "name": "marquee",               "aliases": ["logo marquee", "infinite scroll strip", "ticker"], "effect": "infinite scrolling row of logos/cards", "library": "magicui", "ref": "npx shadcn@latest add \"https://magicui.design/r/marquee.json\"", "license": "MIT", "deps": ["motion"] },
+    { "name": "bento-grid",            "aliases": ["bento", "feature bento", "asymmetric grid"], "effect": "animated asymmetric bento feature grid", "library": "magicui", "ref": "npx shadcn@latest add \"https://magicui.design/r/bento-grid.json\"", "license": "MIT", "deps": ["motion"] },
+    { "name": "globe",                 "aliases": ["interactive globe", "3d earth", "spinning globe"], "effect": "interactive WebGL globe", "library": "magicui", "ref": "npx shadcn@latest add \"https://magicui.design/r/globe.json\"", "license": "MIT", "deps": ["cobe", "motion"] },
+    { "name": "meteors",               "aliases": ["meteor shower", "shooting stars bg"], "effect": "meteor-shower background effect", "library": "magicui", "ref": "npx shadcn@latest add \"https://magicui.design/r/meteors.json\"", "license": "MIT", "deps": ["motion"] },
+    { "name": "shimmer-button",        "aliases": ["shiny button", "shimmer cta", "animated gradient button"], "effect": "button with traveling shimmer/border light", "library": "magicui", "ref": "npx shadcn@latest add \"https://magicui.design/r/shimmer-button.json\"", "license": "MIT", "deps": [] },
+    { "name": "dock",                  "aliases": ["macos dock", "magnify dock", "icon dock"], "effect": "macOS-style magnifying icon dock", "library": "magicui", "ref": "npx shadcn@latest add \"https://magicui.design/r/dock.json\"", "license": "MIT", "deps": ["motion"] },
+    { "name": "animated-shiny-text",   "aliases": ["shiny text", "shimmer text", "announcement pill text"], "effect": "subtle shine sweeping across text", "library": "magicui", "ref": "npx shadcn@latest add \"https://magicui.design/r/animated-shiny-text.json\"", "license": "MIT", "deps": [] },
+    { "name": "particles",             "aliases": ["particle background", "interactive dots bg", "sparkles"], "effect": "interactive particle field background", "library": "magicui", "ref": "npx shadcn@latest add \"https://magicui.design/r/particles.json\"", "license": "MIT", "deps": [] }
   ],
 
   "fallback_basic": {

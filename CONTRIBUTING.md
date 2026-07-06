@@ -15,7 +15,7 @@ By participating you agree to the [Code of Conduct](./CODE_OF_CONDUCT.md).
   "aliases": ["laptop opening", "..."], // how a user might DESCRIBE the effect - drives matching
   "effect": "one-line description of what it does",
   "library": "aceternity",            // must exist in code_libraries[]
-  "ref": "npx shadcn@latest add @aceternity/<name>",  // the live-fetch command - REQUIRED
+  "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/<name>.json\"",  // the live-fetch command - REQUIRED, full registry URL (not namespaced shorthand, see #14)
   "license": "MIT",                   // upstream license - REQUIRED
   "deps": ["motion"]                  // peer deps to install (framer-motion, cobe, ...)
 }
@@ -24,6 +24,7 @@ By participating you agree to the [Code of Conduct](./CODE_OF_CONDUCT.md).
 ### Rules
 
 - **`ref` must fetch live** - a registry command (preferred) or a resolvable component-page URL. No pasted code in this repo.
+- **`ref` must use the full registry URL form**, not a namespaced shorthand (`@aceternity/<name>` etc.) - shorthand requires the namespace pre-registered in the user's project `components.json` and fails cold on a fresh project.
 - **`aliases` are the match surface** - list how users phrase the effect, not just the canonical name.
 - **`library` must be listed in `code_libraries[]`** (add it there if new, with registry pattern + license).
 - **`license` is required.** Verify it (Aceternity = free/verify, 21st.dev = per-component).

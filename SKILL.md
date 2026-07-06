@@ -25,7 +25,7 @@ user wants a UI component (React + Tailwind)?
 │   │      (WebFetch the library's components page, find the closest)
 │   │   3. FETCH LIVE (see references/live-fetch.md):
 │   │      - preferred: run the entry's `ref` registry command
-│   │        e.g. `npx shadcn@latest add @aceternity/macbook-scroll`
+│   │        e.g. `npx shadcn@latest add "https://ui.aceternity.com/registry/macbook-scroll.json"`
 │   │      - fallback: WebFetch / Playwright the page, extract the code
 │   │   4. install listed `deps` (usually `motion` = framer-motion)
 │   │   5. ADAPT: brand tokens + prefers-reduced-motion + responsive

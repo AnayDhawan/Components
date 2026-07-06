@@ -38,26 +38,26 @@ Anthropic's `frontend-design` skill makes an agent design *well*. It does **not*
 
 | Effect | Library | Command | License |
 |--------|---------|---------|---------|
-| MacBook lid opens on scroll | aceternity | `npx shadcn@latest add @aceternity/macbook-scroll` | free¹ |
-| 3D tilt card (cursor depth) | aceternity | `npx shadcn@latest add @aceternity/3d-card` | free¹ |
-| Cursor / hero spotlight glow | aceternity | `npx shadcn@latest add @aceternity/spotlight` | free¹ |
-| Animated SVG background beams | aceternity | `npx shadcn@latest add @aceternity/background-beams` | free¹ |
-| Conic lamp glow heading | aceternity | `npx shadcn@latest add @aceternity/lamp` | free¹ |
-| Flowing wavy background | aceternity | `npx shadcn@latest add @aceternity/wavy-background` | free¹ |
-| Infinite looping cards | aceternity | `npx shadcn@latest add @aceternity/infinite-moving-cards` | free¹ |
-| Staggered text reveal | aceternity | `npx shadcn@latest add @aceternity/text-generate-effect` | free¹ |
-| Grid hover spotlight | aceternity | `npx shadcn@latest add @aceternity/card-hover-effect` | free¹ |
-| Beam between nodes | magicui | `npx shadcn@latest add @magicui/animated-beam` | MIT |
-| Logo / ticker marquee | magicui | `npx shadcn@latest add @magicui/marquee` | MIT |
-| Asymmetric bento grid | magicui | `npx shadcn@latest add @magicui/bento-grid` | MIT |
-| Interactive WebGL globe | magicui | `npx shadcn@latest add @magicui/globe` | MIT |
-| Meteor-shower background | magicui | `npx shadcn@latest add @magicui/meteors` | MIT |
-| Shimmer CTA button | magicui | `npx shadcn@latest add @magicui/shimmer-button` | MIT |
-| macOS magnify dock | magicui | `npx shadcn@latest add @magicui/dock` | MIT |
-| Shiny sweeping text | magicui | `npx shadcn@latest add @magicui/animated-shiny-text` | MIT |
-| Interactive particle field | magicui | `npx shadcn@latest add @magicui/particles` | MIT |
+| MacBook lid opens on scroll | aceternity | `npx shadcn@latest add "https://ui.aceternity.com/registry/macbook-scroll.json"` | free¹ |
+| 3D tilt card (cursor depth) | aceternity | `npx shadcn@latest add "https://ui.aceternity.com/registry/3d-card.json"` | free¹ |
+| Cursor / hero spotlight glow | aceternity | `npx shadcn@latest add "https://ui.aceternity.com/registry/spotlight.json"` | free¹ |
+| Animated SVG background beams | aceternity | `npx shadcn@latest add "https://ui.aceternity.com/registry/background-beams.json"` | free¹ |
+| Conic lamp glow heading | aceternity | `npx shadcn@latest add "https://ui.aceternity.com/registry/lamp.json"` | free¹ |
+| Flowing wavy background | aceternity | `npx shadcn@latest add "https://ui.aceternity.com/registry/wavy-background.json"` | free¹ |
+| Infinite looping cards | aceternity | `npx shadcn@latest add "https://ui.aceternity.com/registry/infinite-moving-cards.json"` | free¹ |
+| Staggered text reveal | aceternity | `npx shadcn@latest add "https://ui.aceternity.com/registry/text-generate-effect.json"` | free¹ |
+| Grid hover spotlight | aceternity | `npx shadcn@latest add "https://ui.aceternity.com/registry/card-hover-effect.json"` | free¹ |
+| Beam between nodes | magicui | `npx shadcn@latest add "https://magicui.design/r/animated-beam.json"` | MIT |
+| Logo / ticker marquee | magicui | `npx shadcn@latest add "https://magicui.design/r/marquee.json"` | MIT |
+| Asymmetric bento grid | magicui | `npx shadcn@latest add "https://magicui.design/r/bento-grid.json"` | MIT |
+| Interactive WebGL globe | magicui | `npx shadcn@latest add "https://magicui.design/r/globe.json"` | MIT |
+| Meteor-shower background | magicui | `npx shadcn@latest add "https://magicui.design/r/meteors.json"` | MIT |
+| Shimmer CTA button | magicui | `npx shadcn@latest add "https://magicui.design/r/shimmer-button.json"` | MIT |
+| macOS magnify dock | magicui | `npx shadcn@latest add "https://magicui.design/r/dock.json"` | MIT |
+| Shiny sweeping text | magicui | `npx shadcn@latest add "https://magicui.design/r/animated-shiny-text.json"` | MIT |
+| Interactive particle field | magicui | `npx shadcn@latest add "https://magicui.design/r/particles.json"` | MIT |
 
-¹ Aceternity is free for personal **and** commercial use - see [Sources & licenses](#sources--licenses). Cult UI / ReactBits / 21st.dev are wired as sources and curated on demand (see the [issues](https://github.com/AnayDhawan/components/issues)).
+¹ Aceternity is free for personal **and** commercial use - see [Sources & licenses](#sources--licenses). Cult UI / ReactBits / 21st.dev are wired as sources and curated on demand (see the [issues](https://github.com/AnayDhawan/components/issues)). Full registry URLs are used (not the namespaced short form) so a fresh shadcn project can fetch a showpiece with no extra registry config - see [#14](https://github.com/AnayDhawan/Components/issues/14).
 
 ### Plain fallbacks (when no *wow* is needed)
 `button · navbar · hero · pricing-table · feature-grid · form · modal · tabs · data-table · dashboard-stat-cards · toast · empty-state` - standard shadcn/ui, Tremor for data.
@@ -86,10 +86,10 @@ The agent auto-discovers it from the `description` in `SKILL.md`. It needs **net
 ## Usage
 
 ```
-"make the hero pop - laptop opening as you scroll"   → @aceternity/macbook-scroll
-"animated beams behind the features section"         → @aceternity/background-beams
-"interactive globe near the contact form"            → @magicui/globe
-"marquee of customer logos"                          → @magicui/marquee
+"make the hero pop - laptop opening as you scroll"   → aceternity/macbook-scroll
+"animated beams behind the features section"         → aceternity/background-beams
+"interactive globe near the contact form"            → magicui/globe
+"marquee of customer logos"                          → magicui/marquee
 "just a normal contact form"                         → fallback: shadcn form
 ```
 

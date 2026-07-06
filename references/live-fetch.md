@@ -4,12 +4,12 @@ The skill stores *pointers*, not code. The real component is fetched when you bu
 
 ## 1. Registry CLI (preferred)
 
-Most code libraries publish a shadcn registry. Run the entry's `ref`:
+Most code libraries publish a shadcn registry. Run the entry's `ref` - always the full registry URL form, not the namespaced short form (`@aceternity/<name>` etc. requires the namespace to be pre-registered in the user's project `components.json`, which fails cold on a fresh project - see [#14](https://github.com/AnayDhawan/Components/issues/14)):
 
 ```bash
-npx shadcn@latest add @aceternity/macbook-scroll
-npx shadcn@latest add @magicui/marquee
-npx shadcn@latest add @cult-ui/<name>
+npx shadcn@latest add "https://ui.aceternity.com/registry/macbook-scroll.json"
+npx shadcn@latest add "https://magicui.design/r/marquee.json"
+npx shadcn@latest add "https://www.cult-ui.com/r/<name>.json"
 # community registry by full URL:
 npx shadcn@latest add "https://21st.dev/r/<author>/<name>"
 ```
@@ -17,7 +17,7 @@ npx shadcn@latest add "https://21st.dev/r/<author>/<name>"
 - Resolves files + registry deps automatically into the project's components dir.
 - **Show the user the command first** - it writes files and may install packages.
 - Requires the project to be shadcn-initialised (`components.json` at project root, `cn()` util). If not, run `npx shadcn@latest init` first.
-- If a shorthand 404s, the library may have renamed it - open the library `site`, copy the current command, retry.
+- If a URL 404s, the library may have renamed the slug - open the library `site`, copy the current command, retry.
 
 ## 2. WebFetch the component page (fallback)
 
@@ -43,6 +43,6 @@ Use the `playwright` skill to open the page, click the code tab / copy button, a
 
 ## Safety
 
-- Registry installs execute package installs and write code. Show the command, prefer official namespaces (`@magicui`, `@aceternity`, `@cult-ui`).
+- Registry installs execute package installs and write code. Show the command, prefer official registry URLs (`magicui.design`, `ui.aceternity.com`, `cult-ui.com`).
 - Treat arbitrary `https://<unknown>/r/...` registry URLs as untrusted - review the source before running.
 - Verify license for anything that will ship publicly (21st.dev is per-component).
