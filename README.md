@@ -57,7 +57,7 @@ Anthropic's `frontend-design` skill makes an agent design *well*. It does **not*
 | Shiny sweeping text | magicui | `npx shadcn@latest add "https://magicui.design/r/animated-shiny-text.json"` | MIT |
 | Interactive particle field | magicui | `npx shadcn@latest add "https://magicui.design/r/particles.json"` | MIT |
 
-¹ Aceternity is free for personal **and** commercial use - see [Sources & licenses](#sources--licenses). Cult UI / ReactBits / 21st.dev are wired as sources and curated on demand (see the [issues](https://github.com/AnayDhawan/components/issues)). Full registry URLs are used (not the namespaced short form) so a fresh shadcn project can fetch a showpiece with no extra registry config - see [#14](https://github.com/AnayDhawan/Components/issues/14).
+¹ Aceternity License: free to use in unlimited personal **and** commercial end products; the component/source itself may not be redistributed (no reselling, templating, or marketplace listing) - see [Sources & licenses](#sources--licenses). Cult UI / ReactBits / 21st.dev are wired as sources and curated on demand (see the [issues](https://github.com/AnayDhawan/components/issues)). Full registry URLs are used (not the namespaced short form) so a fresh shadcn project can fetch a showpiece with no extra registry config - see [#14](https://github.com/AnayDhawan/Components/issues/14).
 
 ### Plain fallbacks (when no *wow* is needed)
 `button · navbar · hero · pricing-table · feature-grid · form · modal · tabs · data-table · dashboard-stat-cards · toast · empty-state` - standard shadcn/ui, Tremor for data.
