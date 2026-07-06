@@ -32,7 +32,7 @@ Anthropic's `frontend-design` skill makes an agent design *well*. It does **not*
 ## What's included
 
 ### The skill
-`SKILL.md` (decision flow + rules) · `components.json` (the registry of pointers) · `references/live-fetch.md` (registry-CLI / WebFetch / Playwright methods) · `references/adaptation.md` (brand tokens, dark mode, responsive, `prefers-reduced-motion`) · `references/handoff.md` (optional `impeccable` / `frontend-design` polish handoff + graceful degradation when neither is installed).
+`SKILL.md` (decision flow + rules) · `components.json` (the registry of pointers) · `references/live-fetch.md` (registry-CLI / WebFetch / Playwright methods) · `references/adaptation.md` (brand tokens, dark mode, responsive, `prefers-reduced-motion`) · `references/handoff.md` (optional `impeccable` / `frontend-design` polish handoff + graceful degradation when neither is installed) · `references/dependencies.md` (React / Tailwind / shadcn CLI / peer-dep version matrix).
 
 ### Showpiece effects (live-fetched)
 

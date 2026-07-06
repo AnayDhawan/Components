@@ -20,5 +20,8 @@ All notable changes to this project are documented here. Format based on
 - `references/handoff.md` documenting the `impeccable`/`frontend-design` polish handoff as
   optional, with explicit graceful-degradation behavior when neither is installed
   ([#10](https://github.com/AnayDhawan/Components/issues/10)).
+- `references/dependencies.md`: React / Tailwind / shadcn CLI / `motion` / `cobe` /
+  `simplex-noise` version matrix, verified against npm's current published versions and each
+  package's peer-dependency declarations ([#9](https://github.com/AnayDhawan/Components/issues/9)).
 
 [0.4.2]: https://github.com/AnayDhawan/Components/releases/tag/v0.4.2

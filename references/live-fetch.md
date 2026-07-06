@@ -36,7 +36,7 @@ Use the `playwright` skill to open the page, click the code tab / copy button, a
 
 ## After fetching (always)
 
-- Install deps: most need `motion` (framer-motion). Note: many libs migrated import from `framer-motion` to `motion/react` - match what the fetched code imports.
+- Install deps: most need `motion` (framer-motion). Note: many libs migrated import from `framer-motion` to `motion/react` - match what the fetched code imports. See `references/dependencies.md` for the full React/Tailwind/shadcn CLI/peer-dep version matrix.
 - Tailwind: some components need custom keyframes/animation in `tailwind.config` - the registry adds these automatically; manual copy does not, so add them.
 - Adapt: brand tokens + `prefers-reduced-motion` + responsive (see `adaptation.md`).
 - Verify: component compiles and renders in the live app before handing off.
