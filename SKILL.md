@@ -11,7 +11,7 @@ description: Use when building a frontend and the user wants a distinctive / ani
 
 - **PRIMARY: showpiece live-fetch.** Distinctive/animated components (laptop scroll, 3D card, beams, globe, marquee...) fetched live from code libraries via registry CLI / WebFetch.
 - **FALLBACK: plain components.** Standard button/form/modal/table when no "wow" is asked.
-- **SOURCE layer only.** After placing the component, hand off final polish/distinctiveness to `impeccable` / `frontend-design`.
+- **SOURCE layer only.** After placing the component, hand off final polish/distinctiveness to `impeccable` / `frontend-design` **if installed** - both are optional sibling skills, not dependencies of this repo. See `references/handoff.md` for what to do when neither is available.
 - **Galleries ≠ code.** Dribbble, godly.website, Awwwards = visual reference ONLY. Never fetch components from them.
 
 ## Decision flow
@@ -30,7 +30,7 @@ user wants a UI component (React + Tailwind)?
 │   │   4. install listed `deps` (usually `motion` = framer-motion)
 │   │   5. ADAPT: brand tokens + prefers-reduced-motion + responsive
 │   │      (references/adaptation.md)
-│   │   6. hand off polish → impeccable / frontend-design
+│   │   6. hand off polish → impeccable / frontend-design (optional, if installed)
 │   └─ NO → fallback_basic[]: standard component, adapt to tokens.
 ```
 
@@ -41,7 +41,8 @@ user wants a UI component (React + Tailwind)?
 3. Run `ref`. If the registry shorthand fails (library changed it), open the `site` page, confirm the current command, retry. Last resort: WebFetch the page and write the code manually.
 4. Install `deps`. Most need `motion` (framer-motion). 3D globe needs `cobe`; wavy bg needs `simplex-noise`.
 5. Adapt (mandatory - never raw): map demo colors to brand tokens, wrap motion in `prefers-reduced-motion`, check mobile.
-6. Verify it compiles + renders, then hand off to a quality skill.
+6. Verify it compiles + renders, then hand off to a quality skill if one is installed
+   (`references/handoff.md`). Otherwise the adapted component is already the final output.
 
 ## Rules
 
