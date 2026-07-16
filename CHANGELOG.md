@@ -4,24 +4,32 @@ All notable changes to this project are documented here. Format based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); this project follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.4.2] - 2026-07-06
+## [1.0.0] - 2026-07-16
 
-### Fixed
-- All Magic UI, Aceternity, and Cult UI `ref` commands now use the full registry URL form
-  instead of the namespaced shorthand (`@aceternity/<name>`), which requires the namespace
-  to be pre-registered in the user's `components.json` and can fail to resolve on a fresh
-  shadcn project ([#14](https://github.com/AnayDhawan/Components/issues/14)).
-- Resolved the Aceternity license marker: replaced the `free (verify)` placeholder with the
-  confirmed Aceternity License terms (free to use in end products, no redistribution of the
-  component/source itself), verified against ui.aceternity.com/licence
-  ([#8](https://github.com/AnayDhawan/Components/issues/8)).
+All five wired source libraries are now curated - the v1.0.0 milestone. The registry grows
+from 18 to 38 showpiece entries, every one with a verified fetch path, license, and exact
+dependency list.
 
 ### Added
-- `references/handoff.md` documenting the `impeccable`/`frontend-design` polish handoff as
-  optional, with explicit graceful-degradation behavior when neither is installed
-  ([#10](https://github.com/AnayDhawan/Components/issues/10)).
-- `references/dependencies.md`: React / Tailwind / shadcn CLI / `motion` / `cobe` /
-  `simplex-noise` version matrix, verified against npm's current published versions and each
-  package's peer-dependency declarations ([#9](https://github.com/AnayDhawan/Components/issues/9)).
+- **ReactBits curation** (8 entries): split-text, blur-text, decrypted-text, count-up,
+  aurora, particles-webgl, hyperspeed, letter-glitch
+  ([#6](https://github.com/AnayDhawan/Components/issues/6)).
+- **Cult UI curation** (6 entries): dynamic-island, shader-lens-blur, canvas-fractal-grid,
+  texture-card, typewriter, animated-number
+  ([#5](https://github.com/AnayDhawan/Components/issues/5)).
+- **21st.dev curation + per-component license tracking** (6 entries): shape-landing-hero,
+  matrix-text, beams-background, background-paths, v0-ai-chat (KokonutUI), and
+  cobe-globe-interactive (shuding). 21st.dev has no blanket license, so each entry carries
+  its own license verified against the upstream source repo
+  ([#7](https://github.com/AnayDhawan/Components/issues/7)).
+- KokonutUI and cobe upstream attribution rows in `ATTRIBUTION.md`.
 
-[0.4.2]: https://github.com/AnayDhawan/Components/releases/tag/v0.4.2
+### Changed
+- ReactBits source row corrected: ReactBits now ships a shadcn registry
+  (`reactbits.dev/r/<Name>-TS-TW`), replacing the stale jsrepo-only note. Invalid names
+  return HTTP 200 HTML, so validation checks the response body, not the status code.
+- 21st.dev source row documents that the registry endpoint now requires an account/API key;
+  curated entries use the author's open registry mirror (kokonutui.com) or the public
+  component page via WebFetch/Playwright.
+
+[1.0.0]: https://github.com/AnayDhawan/Components/releases/tag/v1.0.0

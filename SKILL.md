@@ -50,7 +50,7 @@ user wants a UI component (React + Tailwind)?
 - **Galleries are visual-ref only** - no code lives there.
 - **Never paste raw.** Adapt tokens + motion + responsive every time.
 - **Respect motion accessibility.** Every animated component honors `prefers-reduced-motion`.
-- **Check license per source.** Magic UI / Cult UI / ReactBits = MIT. Aceternity = free personal+commercial (verify). 21st.dev = per-component, verify before shipping.
+- **Check license per source.** Magic UI / Cult UI / ReactBits = MIT. Aceternity = free personal+commercial (verify). 21st.dev = per-component, verify before shipping; its registry endpoint also needs a 21st.dev account/API key, so use each entry's open-mirror `ref` or the page-fetch path.
 - **Safety:** registry commands run code installs - show the command, prefer official namespaces, don't blindly run unknown-registry URLs.
 
 ## Troubleshooting (fetch failed?)

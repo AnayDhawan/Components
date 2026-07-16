@@ -1,10 +1,10 @@
 # components
 
-> **Showpiece UI for AI coding agents.** Describe a *wow* effect - a laptop opening on scroll, a 3D tilt card, animated beams, a spinning globe - and your agent fetches the **real component live** from the best React + Tailwind libraries (Aceternity, Magic UI, Cult UI, ReactBits, 21st.dev) and adapts it to your brand tokens. 1 skill · 18 showpiece effects · 12 plain fallbacks · 5 source libraries.
+> **Showpiece UI for AI coding agents.** Describe a *wow* effect - a laptop opening on scroll, a 3D tilt card, animated beams, a spinning globe - and your agent fetches the **real component live** from the best React + Tailwind libraries (Aceternity, Magic UI, Cult UI, ReactBits, 21st.dev) and adapts it to your brand tokens. 1 skill · 38 showpiece effects · 12 plain fallbacks · 5 source libraries.
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
 ![Stack](https://img.shields.io/badge/stack-React%20%2B%20Tailwind-38bdf8)
-![Status](https://img.shields.io/badge/status-v0.4.0-brightgreen)
+![Status](https://img.shields.io/badge/status-v1.0.0-brightgreen)
 ![Skill](https://img.shields.io/badge/Claude%20Code-skill-8a5cf6)
 
 ![A macbook-scroll showpiece, fetched live and adapted to brand tokens](docs/media/demo.gif)
@@ -56,8 +56,30 @@ Anthropic's `frontend-design` skill makes an agent design *well*. It does **not*
 | macOS magnify dock | magicui | `npx shadcn@latest add "https://magicui.design/r/dock.json"` | MIT |
 | Shiny sweeping text | magicui | `npx shadcn@latest add "https://magicui.design/r/animated-shiny-text.json"` | MIT |
 | Interactive particle field | magicui | `npx shadcn@latest add "https://magicui.design/r/particles.json"` | MIT |
+| Staggered split-text entrance | reactbits | `npx shadcn@latest add "https://reactbits.dev/r/SplitText-TS-TW"` | MIT |
+| Blur fade-in text | reactbits | `npx shadcn@latest add "https://reactbits.dev/r/BlurText-TS-TW"` | MIT |
+| Scramble/decode text | reactbits | `npx shadcn@latest add "https://reactbits.dev/r/DecryptedText-TS-TW"` | MIT |
+| Animated number count-up | reactbits | `npx shadcn@latest add "https://reactbits.dev/r/CountUp-TS-TW"` | MIT |
+| WebGL aurora background | reactbits | `npx shadcn@latest add "https://reactbits.dev/r/Aurora-TS-TW"` | MIT |
+| GPU particle field (WebGL) | reactbits | `npx shadcn@latest add "https://reactbits.dev/r/Particles-TS-TW"` | MIT |
+| Hyperspeed light tunnel | reactbits | `npx shadcn@latest add "https://reactbits.dev/r/Hyperspeed-TS-TW"` | MIT |
+| Glitching letter wall | reactbits | `npx shadcn@latest add "https://reactbits.dev/r/LetterGlitch-TS-TW"` | MIT |
+| iOS dynamic island | cult-ui | `npx shadcn@latest add "https://www.cult-ui.com/r/dynamic-island.json"` | MIT |
+| WebGL lens-blur shader | cult-ui | `npx shadcn@latest add "https://www.cult-ui.com/r/shader-lens-blur.json"` | MIT |
+| Fractal grid canvas bg | cult-ui | `npx shadcn@latest add "https://www.cult-ui.com/r/canvas-fractal-grid.json"` | MIT |
+| Tactile texture card | cult-ui | `npx shadcn@latest add "https://www.cult-ui.com/r/texture-card.json"` | MIT |
+| Typewriter text loop | cult-ui | `npx shadcn@latest add "https://www.cult-ui.com/r/typewriter.json"` | MIT |
+| Springy animated number | cult-ui | `npx shadcn@latest add "https://www.cult-ui.com/r/animated-number.json"` | MIT |
+| Floating-shapes hero | 21st.dev | page-fetch² (`@kokonutd/shape-landing-hero`) | MIT² |
+| Matrix text reveal | 21st.dev | `npx shadcn@latest add "https://kokonutui.com/r/matrix-text.json"` | MIT² |
+| Animated light beams bg | 21st.dev | `npx shadcn@latest add "https://kokonutui.com/r/beams-background.json"` | MIT² |
+| Flowing SVG paths hero bg | 21st.dev | `npx shadcn@latest add "https://kokonutui.com/r/background-paths.json"` | MIT² |
+| v0-style AI chat input | 21st.dev | page-fetch² (`@kokonutd/v0-ai-chat`) | MIT² |
+| Interactive cobe globe | 21st.dev | page-fetch² (`@shuding/cobe-globe-interactive`) | MIT² |
 
-¹ Aceternity License: free to use in unlimited personal **and** commercial end products; the component/source itself may not be redistributed (no reselling, templating, or marketplace listing) - see [Sources & licenses](#sources--licenses). Cult UI / ReactBits / 21st.dev are wired as sources and curated on demand (see the [issues](https://github.com/AnayDhawan/components/issues)). Full registry URLs are used (not the namespaced short form) so a fresh shadcn project can fetch a showpiece with no extra registry config - see [#14](https://github.com/AnayDhawan/Components/issues/14).
+¹ Aceternity License: free to use in unlimited personal **and** commercial end products; the component/source itself may not be redistributed (no reselling, templating, or marketplace listing) - see [Sources & licenses](#sources--licenses). Full registry URLs are used (not the namespaced short form) so a fresh shadcn project can fetch a showpiece with no extra registry config - see [#14](https://github.com/AnayDhawan/Components/issues/14).
+
+² 21st.dev's registry endpoint now requires an account/API key, so 21st.dev entries either use the author's own open registry mirror (kokonutui.com) or fall back to fetching the public component page (WebFetch/Playwright). 21st.dev has no blanket license; every curated entry's license is verified against the upstream source repo (KokonutUI and cobe are MIT).
 
 ### Plain fallbacks (when no *wow* is needed)
 `button · navbar · hero · pricing-table · feature-grid · form · modal · tabs · data-table · dashboard-stat-cards · toast · empty-state` - standard shadcn/ui, Tremor for data.
@@ -100,8 +122,8 @@ The agent auto-discovers it from the `description` in `SKILL.md`. It needs **net
 | [Aceternity UI](https://ui.aceternity.com) | Free for personal + commercial ([licence](https://ui.aceternity.com/licence)) | Attribution not required; verify the licence page before relaunch |
 | [Magic UI](https://magicui.design) | MIT | |
 | [Cult UI](https://www.cult-ui.com) | MIT | |
-| [ReactBits](https://www.reactbits.dev) | MIT | jsrepo / copy (no shadcn registry) |
-| [21st.dev](https://21st.dev) | Per-component - **verify each** | Community registry; check each component's licence before shipping |
+| [ReactBits](https://www.reactbits.dev) | MIT | shadcn registry: `reactbits.dev/r/<Name>-TS-TW` |
+| [21st.dev](https://21st.dev) | Per-component - **verify each** | Community registry; registry endpoint needs an account/API key - curated entries use open mirrors or page-fetch |
 | [shadcn/ui](https://ui.shadcn.com) | MIT | Plain fallbacks |
 | [Tremor](https://tremor.so) | Apache-2.0 | Dashboards / charts |
 
