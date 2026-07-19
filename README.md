@@ -1,6 +1,6 @@
 # components
 
-> **Showpiece UI for AI coding agents.** Describe a *wow* effect - a laptop opening on scroll, a 3D tilt card, animated beams, a spinning globe - and your agent fetches the **real component live** from the best React + Tailwind libraries (Aceternity, Magic UI, Cult UI, ReactBits, 21st.dev) and adapts it to your brand tokens. 1 skill · 38 showpiece effects · 12 plain fallbacks · 5 source libraries.
+> **Showpiece UI for AI coding agents.** Describe a *wow* effect - a laptop opening on scroll, a 3D tilt card, animated beams, a spinning globe - and your agent fetches the **real component live** from the best React + Tailwind libraries (Aceternity, Magic UI, Cult UI, ReactBits, 21st.dev) and adapts it to your brand tokens. 1 skill · 39 showpiece effects · 12 plain fallbacks · 5 source libraries.
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
 ![Stack](https://img.shields.io/badge/stack-React%20%2B%20Tailwind-38bdf8)
@@ -64,6 +64,7 @@ Anthropic's `frontend-design` skill makes an agent design *well*. It does **not*
 | GPU particle field (WebGL) | reactbits | `npx shadcn@latest add "https://reactbits.dev/r/Particles-TS-TW"` | MIT |
 | Hyperspeed light tunnel | reactbits | `npx shadcn@latest add "https://reactbits.dev/r/Hyperspeed-TS-TW"` | MIT |
 | Glitching letter wall | reactbits | `npx shadcn@latest add "https://reactbits.dev/r/LetterGlitch-TS-TW"` | MIT |
+| Fluid-simulation cursor (WebGL) | reactbits | `npx shadcn@latest add "https://reactbits.dev/r/SplashCursor-TS-TW"` | MIT |
 | iOS dynamic island | cult-ui | `npx shadcn@latest add "https://www.cult-ui.com/r/dynamic-island.json"` | MIT |
 | WebGL lens-blur shader | cult-ui | `npx shadcn@latest add "https://www.cult-ui.com/r/shader-lens-blur.json"` | MIT |
 | Fractal grid canvas bg | cult-ui | `npx shadcn@latest add "https://www.cult-ui.com/r/canvas-fractal-grid.json"` | MIT |
