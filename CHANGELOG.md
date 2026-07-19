@@ -4,6 +4,13 @@ All notable changes to this project are documented here. Format based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); this project follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **ReactBits `splash-cursor`** showpiece entry: interactive WebGL fluid-simulation that
+  splashes flowing color trails following the cursor. Self-contained WebGL2, zero npm deps,
+  MIT. Registry: `npx shadcn@latest add "https://reactbits.dev/r/SplashCursor-TS-TW"`.
+
 ## [1.0.0] - 2026-07-16
 
 All five wired source libraries are now curated - the v1.0.0 milestone. The registry grows
