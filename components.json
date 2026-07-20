@@ -1,8 +1,8 @@
 {
   "meta": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "stack": "react+tailwind",
-    "updated": "2026-07-16",
+    "updated": "2026-07-20",
     "purpose": "PRIMARY: fetch flashy showpiece animated components LIVE from code libraries at build time, based on the user's prompt. FALLBACK: a curated map of plain components. Inspiration galleries are VISUAL REFERENCE ONLY (no code).",
     "rules": [
       "Match the user's described effect to a showpiece entry OR search the code_libraries live.",
