@@ -4,7 +4,7 @@
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
 ![Stack](https://img.shields.io/badge/stack-React%20%2B%20Tailwind-38bdf8)
-![Status](https://img.shields.io/badge/status-v1.0.0-brightgreen)
+![Status](https://img.shields.io/badge/status-v1.1.0-brightgreen)
 ![Skill](https://img.shields.io/badge/Claude%20Code-skill-8a5cf6)
 
 ![A macbook-scroll showpiece, fetched live and adapted to brand tokens](docs/media/demo.gif)
