@@ -180,10 +180,3 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-
----
-
-Note: Components sourced via this skill (shadcn/ui, Tremor, Aceternity UI, etc.)
-are distributed under their own upstream licenses, recorded per entry in
-components.json. This Apache-2.0 license covers the skill (SKILL.md, components.json
-curation, references, docs) only.

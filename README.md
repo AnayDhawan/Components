@@ -6,6 +6,8 @@
 ![Stack](https://img.shields.io/badge/stack-React%20%2B%20Tailwind-38bdf8)
 ![Status](https://img.shields.io/badge/status-v1.1.0-brightgreen)
 ![Skill](https://img.shields.io/badge/Claude%20Code-skill-8a5cf6)
+[![GitHub stars](https://img.shields.io/github/stars/AnayDhawan/Components?style=social)](https://github.com/AnayDhawan/Components/stargazers)
+![Last commit](https://img.shields.io/github/last-commit/AnayDhawan/Components)
 
 ![A macbook-scroll showpiece, fetched live and adapted to brand tokens](docs/media/demo.gif)
 
@@ -137,7 +139,7 @@ Full attribution: [ATTRIBUTION.md](./ATTRIBUTION.md). Each `components.json` ent
 
 ## Community & contributing
 
-PRs are almost always a new/updated entry in `components.json`. See [CONTRIBUTING.md](./CONTRIBUTING.md), the [Code of Conduct](./CODE_OF_CONDUCT.md), and the [open issues](https://github.com/AnayDhawan/components/issues) for the roadmap.
+PRs are almost always a new/updated entry in `components.json`. See [CONTRIBUTING.md](./CONTRIBUTING.md), the [Code of Conduct](./CODE_OF_CONDUCT.md), [SECURITY.md](./SECURITY.md) for reporting vulnerabilities, and the [open issues](https://github.com/AnayDhawan/components/issues) for the roadmap.
 
 ## License
 

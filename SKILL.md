@@ -64,6 +64,21 @@ Registries change. Recover in this order - never leave the user stuck:
 
 > **No vendoring, by design:** `components` ships pointers only and never bundles upstream code, so when an upstream is unreachable the showpiece is temporarily unavailable. Degrade gracefully per step 4 (closest `fallback_basic`, or hand-compose) rather than erroring out. Staying pointer-only keeps the skill permanently clear of any redistribution licensing.
 
+## Limitations
+
+- **React + Tailwind only**, and the target project must already be `shadcn`-initialised
+  (has `components.json` + a registry-aware `npx shadcn` setup). No Vue/Svelte/plain-HTML support.
+- **No vendoring.** Showpieces are pointers fetched live; if an upstream registry endpoint
+  changes or goes down, that showpiece is temporarily unavailable (see Troubleshooting)
+  rather than silently served from a stale local copy.
+- **21st.dev** entries route around the official registry (which needs an account/API key)
+  via open mirrors or page-fetch - slightly more fragile than a direct `npx shadcn` call.
+- **License compliance is per-source, not blanket.** `components.json` records each entry's
+  license, but verifying it's still accurate before commercial redistribution is on the user
+  (see [Sources & licenses](README.md#sources--licenses) / `ATTRIBUTION.md`).
+- **Not a design-quality skill.** It sources and adapts a component; it doesn't judge whether
+  the result fits the page's visual system - that's `impeccable` / `frontend-design`'s job.
+
 ## Maintenance
 
 `showpiece`/`code_libraries` are pointers, so they rot slowly. Quarterly: confirm registry namespaces + library sites still resolve. Update `ref` patterns if a library changes its CLI. See `CONTRIBUTING.md`.
