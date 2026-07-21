@@ -6,6 +6,17 @@ All notable changes to this project are documented here. Format based on
 
 ## [Unreleased]
 
+### Fixed
+- LICENSE: stripped a stray trailing note that broke GitHub's license auto-detector
+  (was showing "Other" instead of Apache-2.0); the info already lives in
+  ATTRIBUTION.md/README.
+
+### Added
+- SKILL.md: explicit Limitations section (stack constraints, no vendoring, per-source
+  license verification, design-quality handoff).
+- README: link SECURITY.md from the contributing section, add stars/last-commit badges.
+- `.editorconfig` (flagged optional in OSS audits).
+
 ## [1.1.0] - 2026-07-20
 
 ### Added
