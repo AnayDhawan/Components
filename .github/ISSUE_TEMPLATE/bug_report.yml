@@ -21,9 +21,9 @@ body:
     attributes:
       label: What's wrong?
       options:
-        - Dead / moved source.ref link
+        - Dead / moved ref link
         - Command no longer works
-        - adapt_rules produce a broken result
+        - Adaptation guidance produces a broken result (references/adaptation.md)
         - Wrong or missing license
         - Wrong gotchas / missing peer dep
         - Other
