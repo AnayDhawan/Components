@@ -11,7 +11,7 @@
 
 ![A macbook-scroll showpiece, fetched live and adapted to brand tokens](docs/media/demo.gif)
 
-*A stylized motion-graphics demo of the workflow, not an actual recorded run. A real captured session will replace it in a later release.*
+*A stylized walkthrough of the workflow, not a screen recording ([higher-res clip](docs/media/demo.mp4)).*
 
 ## Quick start
 
@@ -21,6 +21,14 @@ git clone https://github.com/AnayDhawan/components
 mkdir -p <your-project>/.claude/skills/components
 cp -r components/SKILL.md components/components.json components/references \
       <your-project>/.claude/skills/components/
+```
+
+```powershell
+# PowerShell / Windows
+git clone https://github.com/AnayDhawan/components
+New-Item -ItemType Directory -Force <your-project>\.claude\skills\components
+Copy-Item -Recurse components\SKILL.md, components\components.json, components\references `
+          <your-project>\.claude\skills\components\
 ```
 
 Then just ask your agent: *"add a macbook-scroll hero"* or *"put an interactive globe in the contact section."* It matches the effect, runs the library's registry command live, installs the deps, and adapts the result to your tokens.
@@ -104,6 +112,16 @@ cp -r SKILL.md components.json references <your-project>/.claude/skills/componen
 # or global, for every project
 mkdir -p ~/.claude/skills/components
 cp -r SKILL.md components.json references ~/.claude/skills/components/
+```
+
+```powershell
+# PowerShell / Windows, project-scoped
+New-Item -ItemType Directory -Force <your-project>\.claude\skills\components
+Copy-Item -Recurse SKILL.md, components.json, references <your-project>\.claude\skills\components\
+
+# or global, for every project
+New-Item -ItemType Directory -Force $HOME\.claude\skills\components
+Copy-Item -Recurse SKILL.md, components.json, references $HOME\.claude\skills\components\
 ```
 
 The agent auto-discovers it from the `description` in `SKILL.md`. It needs **network access** at build time (to fetch live) and a **shadcn-initialised React + Tailwind** project to install into.
