@@ -26,31 +26,44 @@ jobs:
           with open("components.json") as f:
               data = json.load(f)  # raises on invalid JSON
           errors = []
-          names = set()
-
-          showpiece = data.get("showpiece", [])
-          assert showpiece, "no showpiece entries found"
-          for c in showpiece:
-              n = c.get("name")
-              if not n:
-                  errors.append("showpiece entry missing 'name'"); continue
-              if n in names:
-                  errors.append(f"duplicate showpiece name: {n}")
-              names.add(n)
-              for key in ("library", "ref", "license"):
-                  if not c.get(key):
-                      errors.append(f"{n}: {key} missing")
-              if not c.get("aliases"):
-                  errors.append(f"{n}: aliases empty (needed for matching)")
-
-          fb = data.get("fallback_basic", {}).get("components", [])
-          assert fb, "no fallback_basic components found"
-          for c in fb:
-              if not c.get("name") or not c.get("ref"):
-                  errors.append(f"fallback entry missing name/ref: {c.get('name')}")
 
           libs = data.get("code_libraries", [])
           assert libs, "no code_libraries found"
+          known_libs = {l.get("name") for l in libs}
+
+          # CONTRIBUTING.md requires the same fields of both arrays.
+          REQUIRED = ("aliases", "ref", "library", "license")
+
+          def check(entries, kind, names):
+              for c in entries:
+                  n = c.get("name")
+                  if not n:
+                      errors.append(f"{kind} entry missing 'name'"); continue
+                  if n in names:
+                      errors.append(f"duplicate {kind} name: {n}")
+                  names.add(n)
+                  for key in REQUIRED:
+                      if not c.get(key):
+                          errors.append(f"{n}: {key} missing")
+
+          showpiece = data.get("showpiece", [])
+          assert showpiece, "no showpiece entries found"
+          check(showpiece, "showpiece", set())
+
+          fb = data.get("fallback_basic", {}).get("components", [])
+          assert fb, "no fallback_basic components found"
+          check(fb, "fallback", set())
+
+          # Showpieces are live-fetched, so their library must be a real registry we
+          # document. Fallbacks intentionally point at shadcn/tremor, which are not
+          # code_libraries entries, so they are exempt from this check.
+          for c in showpiece:
+              lib = c.get("library")
+              if lib and lib not in known_libs:
+                  errors.append(
+                      f"{c.get('name')}: library '{lib}' is not in code_libraries[] "
+                      f"({', '.join(sorted(known_libs))})"
+                  )
 
           if errors:
               print("\n".join(errors)); sys.exit(1)
