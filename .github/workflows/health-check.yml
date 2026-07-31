@@ -1,0 +1,63 @@
+name: registry health
+
+# Deliberately NOT wired to push or pull_request. validate.yml is the only PR gate;
+# this job must never block a contributor because someone else's site is down.
+on:
+  schedule:
+    # Mondays 06:00 UTC.
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  health:
+    name: ping every registry ref
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Probe refs and library sites
+        id: probe
+        run: python3 scripts/health-check.py
+
+      - name: Open, update or close the health issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FAILURES: ${{ steps.probe.outputs.failures }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          gh label create registry-health \
+            --description "Automated registry rot reports" \
+            --color D93F0B 2>/dev/null || true
+
+          existing=$(gh issue list --label registry-health --state open \
+            --limit 1 --json number --jq '.[0].number // empty')
+
+          {
+            cat health-report.md
+            echo ""
+            echo "[Workflow run]($RUN_URL)"
+          } > body.md
+
+          if [ "${FAILURES:-0}" -gt 0 ]; then
+            if [ -n "$existing" ]; then
+              gh issue comment "$existing" --body-file body.md
+              echo "Updated existing issue #$existing"
+            else
+              gh issue create \
+                --title "Registry health: $FAILURES target(s) failing" \
+                --label registry-health \
+                --body-file body.md
+            fi
+          elif [ -n "$existing" ]; then
+            gh issue comment "$existing" \
+              --body "Every showpiece ref and library site resolved on the latest run. Closing. [Workflow run]($RUN_URL)"
+            gh issue close "$existing"
+            echo "Closed recovered issue #$existing"
+          else
+            echo "All green, nothing to report."
+          fi
