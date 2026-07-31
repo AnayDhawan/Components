@@ -9,8 +9,8 @@ therefore the integrity of the curated links and commands it recommends.
 
 ## Supported versions
 
-The latest released version (`v0.x`) is supported. Older versions are not
-patched.
+The latest released version (currently `v1.x`) is supported. Older versions are
+not patched.
 
 ## Reporting a vulnerability or unsafe recommendation
 
