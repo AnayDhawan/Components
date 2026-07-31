@@ -43,6 +43,6 @@ Use the `playwright` skill to open the page, click the code tab / copy button, a
 
 ## Safety
 
-- Registry installs execute package installs and write code. Show the command, prefer official registry URLs (`magicui.design`, `ui.aceternity.com`, `cult-ui.com`).
+- Registry installs execute package installs and write code. Show the command, prefer official registry URLs (`magicui.design`, `ui.aceternity.com`, `cult-ui.com`, `reactbits.dev`, `kokonutui.com`) - every first-party host in `components.json`'s `code_libraries[]`.
 - Treat arbitrary `https://<unknown>/r/...` registry URLs as untrusted - review the source before running.
 - Verify license for anything that will ship publicly (21st.dev is per-component).
