@@ -26,16 +26,20 @@ body:
     attributes:
       label: Proposed source library
       options:
-        - shadcn
-        - tremor
         - aceternity
+        - magicui
+        - cult-ui
+        - reactbits
+        - 21st.dev
+        - shadcn (plain fallback)
+        - tremor (plain fallback)
         - other (explain below)
     validations:
       required: true
   - type: input
     id: ref
     attributes:
-      label: source.ref
+      label: ref
       description: The install command or copy URL.
       placeholder: npx shadcn@latest add accordion
     validations:
