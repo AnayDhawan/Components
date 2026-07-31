@@ -6,16 +6,34 @@ All notable changes to this project are documented here. Format based on
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-07-31
+
 ### Fixed
 - LICENSE: stripped a stray trailing note that broke GitHub's license auto-detector
   (was showing "Other" instead of Apache-2.0); the info already lives in
   ATTRIBUTION.md/README.
+- `validate.yml` only checked `name` and `ref` on `fallback_basic` entries, so a
+  fallback could ship with no license and pass CI; both arrays now get the same
+  required-field check (#26).
+- `validate.yml` never checked an entry's `library` against `code_libraries[]`, so a
+  typo like `aceternety` passed silently. Showpieces are now checked; fallbacks stay
+  exempt, since `shadcn`/`tremor` are deliberately not `code_libraries` entries (#27).
+- `new_component.yml`'s library dropdown offered 4 options and was missing Magic UI,
+  Cult UI, ReactBits and 21st.dev, forcing the common case into "other" (#24).
+- `bug_report.yml` referenced `adapt_rules`, a field the flat schema no longer has (#25).
+- `SECURITY.md` still declared `v0.x` as the supported line (#22).
 
 ### Added
 - SKILL.md: explicit Limitations section (stack constraints, no vendoring, per-source
   license verification, design-quality handoff).
 - README: link SECURITY.md from the contributing section, add stars/last-commit badges.
 - `.editorconfig` (flagged optional in OSS audits).
+- README: PowerShell install commands alongside the bash ones (#28).
+- `references/live-fetch.md`: `reactbits.dev` and `kokonutui.com` added to the official
+  registry allowlist; both are first-party hosts in `code_libraries[]` (#29).
+
+### Changed
+- README demo refreshed to the current workflow clip, with the source mp4 alongside it.
 
 ## [1.1.0] - 2026-07-20
 
