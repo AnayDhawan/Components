@@ -19,9 +19,13 @@ COMPONENTS_JSON = os.path.join(ROOT, "components.json")
 # CONTRIBUTING.md requires the same fields of both arrays.
 REQUIRED = ("aliases", "ref", "library", "license")
 
+# A license field that is present but says nothing is worse than a missing one:
+# it passes the required-field check while still leaving the legal status unknown.
+LICENSE_PLACEHOLDERS = {"", "tbd", "todo", "verify", "unknown", "n/a", "none", "?"}
+
 
 def check_entries(entries, kind, errors):
-    """Required fields + duplicate names, for one array."""
+    """Required fields, duplicate names, and field shapes, for one array."""
     names = set()
     for c in entries:
         n = c.get("name")
@@ -34,6 +38,63 @@ def check_entries(entries, kind, errors):
         for key in REQUIRED:
             if not c.get(key):
                 errors.append(f"{n}: {key} missing")
+
+        # aliases are the match surface, so an empty or scalar one silently makes
+        # the entry unreachable by description.
+        aliases = c.get("aliases")
+        if aliases is not None:
+            if not isinstance(aliases, list):
+                errors.append(
+                    f"{n}: aliases must be a list, got {type(aliases).__name__}"
+                )
+            elif not aliases:
+                errors.append(f"{n}: aliases is empty")
+            elif not all(isinstance(a, str) and a.strip() for a in aliases):
+                errors.append(f"{n}: aliases must be non-empty strings")
+
+        # deps as a bare string is the easy mistake: "motion" iterates as
+        # characters, so anything consuming it installs garbage.
+        deps = c.get("deps")
+        if deps is not None and not isinstance(deps, list):
+            errors.append(
+                f"{n}: deps must be a list, got {type(deps).__name__} "
+                f"({deps!r} - wrap it in [])"
+            )
+
+        lic = c.get("license")
+        if isinstance(lic, str) and lic.strip().lower() in LICENSE_PLACEHOLDERS:
+            errors.append(f"{n}: license is a placeholder ({lic!r}), not a real license")
+        elif lic is not None and not isinstance(lic, str):
+            errors.append(f"{n}: license must be a string, got {type(lic).__name__}")
+
+
+def check_alias_collisions(showpiece, errors):
+    """No alias may point at two different showpieces.
+
+    Aliases drive matching, so a string claimed by two entries makes the match
+    ambiguous and whichever entry happens to be first silently wins.
+    """
+    owners = {}
+    for c in showpiece:
+        name = c.get("name")
+        aliases = c.get("aliases")
+        if not name or not isinstance(aliases, list):
+            continue
+        for alias in aliases:
+            if not isinstance(alias, str):
+                continue
+            key = alias.strip().lower()
+            if not key:
+                continue
+            owners.setdefault(key, []).append(name)
+
+    for alias, holders in sorted(owners.items()):
+        unique = sorted(set(holders))
+        if len(unique) > 1:
+            errors.append(
+                f"alias {alias!r} is claimed by {len(unique)} showpieces: "
+                f"{', '.join(unique)}"
+            )
 
 
 def validate(data):
@@ -55,6 +116,7 @@ def validate(data):
 
     check_entries(showpiece, "showpiece", errors)
     check_entries(fb, "fallback", errors)
+    check_alias_collisions(showpiece, errors)
 
     # Showpieces are live-fetched, so their library must be a real registry we
     # document. Fallbacks intentionally point at shadcn/tremor, which are not
