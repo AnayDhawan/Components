@@ -98,6 +98,12 @@ def main():
     for lib in data.get("code_libraries", []):
         if lib.get("site"):
             targets.append(("library site", lib["name"], lib["site"]))
+        # A mirror is the host that curated entries actually resolve through when
+        # the library's own registry is gated (21st.dev -> kokonutui.com). Probing
+        # only the gated site would report the library healthy while the host doing
+        # the real work is down, so mirrors get their own target.
+        if lib.get("mirror_site"):
+            targets.append(("library mirror", f"{lib['name']} mirror", lib["mirror_site"]))
 
     results = []
     for kind, name, url in targets:

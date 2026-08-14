@@ -19,6 +19,61 @@ npx shadcn@latest add "https://21st.dev/r/<author>/<name>"
 - Requires the project to be shadcn-initialised (`components.json` at project root, `cn()` util). If not, run `npx shadcn@latest init` first.
 - If a URL 404s, the library may have renamed the slug - open the library `site`, copy the current command, retry.
 
+### 1b. 21st.dev: the API-key path (opt-in)
+
+21st.dev's registry is auth-gated. Unauthenticated requests return **HTTP 403**:
+
+```json
+{"error":"Authentication required","reason":"authentication_required",
+ "component":{"name":"matrix-text","author":"kokonutd",
+              "url":"/@kokonutd/components/matrix-text"}}
+```
+
+Useful detail: the error body still names the component and its **public page path**,
+which is exactly what the WebFetch/Playwright fallback needs. A 403 here is not a
+dead ref.
+
+**How auth actually works.** 21st.dev issues API keys at
+[21st.dev/settings/api-keys](https://21st.dev/settings/api-keys) (keys from the old
+Magic console were reset and no longer work). The key is sent as an **`x-api-key`
+header**. Two documented consumers:
+
+- **Their MCP server** — `https://21st.dev/api/mcp` with `{"x-api-key": "<key>"}`,
+  set up via `npx @21st-dev/cli@latest install <client> --api-key <key>`, or the
+  `API_KEY_21ST` env var. This is a component *search/generation* surface for
+  agents, not a plain file fetch.
+- **shadcn CLI 3.0+ namespaced registries** — the only way to `add` from 21st.dev
+  directly. It needs the namespace declared in the *user's project*
+  `components.json`, with the key read from the environment, never hardcoded:
+
+  ```jsonc
+  {
+    "registries": {
+      "@21st": {
+        "url": "https://21st.dev/r/{name}",
+        "headers": { "x-api-key": "${API_KEY_21ST}" }
+      }
+    }
+  }
+  ```
+  ```bash
+  npx shadcn@latest add @21st/kokonutd/matrix-text
+  ```
+
+**When to prefer it, and when not to.** Default to the fallbacks. The API-key path
+requires the user to hold an account, export a secret, and pre-register a namespace
+in their project, which breaks the cold-start property every other entry in this
+repo has: a fresh shadcn project can fetch any of them with one command and no
+config (the reason [#14](https://github.com/AnayDhawan/Components/issues/14) forced
+full registry URLs over namespaced shorthand). So:
+
+| Situation | Use |
+|---|---|
+| Curated entry with a `registry_alt` mirror (kokonutui.com) | The mirror. Open, no auth, no config. It is what the entry's `ref` already points at. |
+| Curated entry with no mirror | Method 2/3 on the public page URL in the entry's `ref`. |
+| User wants something from the wider 21st.dev catalogue, and already has a key | The `@21st` namespace above. Confirm they have a key before suggesting it. |
+| User has no 21st.dev account | Do not send them to sign up. Match the effect to another library instead. |
+
 ## 2. WebFetch the component page (fallback)
 
 When there's no registry, or you only need to read code:
