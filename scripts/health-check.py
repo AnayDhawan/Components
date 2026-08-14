@@ -17,6 +17,7 @@ import re
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from collections import Counter
 
@@ -24,6 +25,37 @@ TIMEOUT = 25
 DELAY = 0.4  # be a polite guest on other people's registries
 UA = "components-skill-health-check/1.0 (+https://github.com/AnayDhawan/Components)"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Upstream breakage that is already diagnosed and written up in
+# references/live-fetch.md § Known registry issues. These still get probed and
+# still appear in the report, but they do NOT count toward the failure total,
+# because the failure total is what opens and re-opens the weekly tracking issue.
+# Without this, a permanent upstream condition re-files an issue every Monday
+# forever and the signal stops meaning anything.
+#
+# Keyed by hostname -> (status we expect to see, why, tracking issue).
+# A host only gets excused for the exact status documented; anything else about
+# it is still a real, countable failure.
+KNOWN_ISSUES = {
+    "www.cult-ui.com": (
+        "rate-limited",
+        "Vercel Attack Challenge Mode returns HTTP 429 to every non-browser "
+        "client. The registry is healthy; a real browser fetches valid JSON. "
+        "Use the Playwright method. See references/live-fetch.md.",
+        31,
+    ),
+}
+
+
+def known_issue(url, status):
+    """Return the KNOWN_ISSUES record if this exact failure is already documented."""
+    if not url:
+        return None
+    host = urllib.parse.urlparse(url).hostname
+    record = KNOWN_ISSUES.get(host)
+    if record and record[0] == status:
+        return record
+    return None
 
 # `npx shadcn@latest add "<url>"` and `fetch page <url> via webfetch/playwright`
 URL_RE = re.compile(r'https?://[^\s"\'<>)]+')
@@ -74,11 +106,14 @@ def main():
             continue
         status, detail = probe(url)
         results.append((kind, name, url, status, detail))
-        print(f"{status:<13} {name:<40} {detail}", flush=True)
+        flag = " (known issue)" if known_issue(url, status) else ""
+        print(f"{status:<13} {name:<40} {detail}{flag}", flush=True)
         time.sleep(DELAY)
 
     counts = Counter(r[3] for r in results)
-    bad = [r for r in results if r[3] != "ok"]
+    failing = [r for r in results if r[3] != "ok"]
+    known = [r for r in failing if known_issue(r[2], r[3])]
+    bad = [r for r in failing if not known_issue(r[2], r[3])]
 
     lines = [
         "# Registry health check",
@@ -87,18 +122,43 @@ def main():
         f"{counts.get('ok', 0)} ok, {counts.get('rate-limited', 0)} rate-limited, "
         f"{counts.get('dead', 0)} dead, {counts.get('error', 0)} error.",
         "",
+        f"**{len(bad)}** need attention. "
+        f"{len(known)} are already-documented upstream issues and are not counted.",
+        "",
     ]
     if bad:
-        lines += ["| Kind | Entry | Status | Detail | URL |", "|---|---|---|---|---|"]
+        lines += [
+            "## Needs attention",
+            "",
+            "| Kind | Entry | Status | Detail | URL |",
+            "|---|---|---|---|---|",
+        ]
         for kind, name, url, status, detail in bad:
             lines.append(f"| {kind} | `{name}` | **{status}** | {detail} | {url} |")
         lines += [
             "",
             "`rate-limited` may be transient; `dead` means the ref no longer resolves "
             "and any user asking for that showpiece gets a failure.",
+            "",
         ]
     else:
-        lines.append("Every showpiece ref and library site resolved.")
+        lines += ["Every showpiece ref and library site resolved, or is a known issue.", ""]
+
+    if known:
+        lines += [
+            "## Known upstream issues (expected, not counted)",
+            "",
+            "Documented in `references/live-fetch.md` § Known registry issues.",
+            "",
+            "| Entry | Status | Tracking | Why |",
+            "|---|---|---|---|",
+        ]
+        seen = set()
+        for kind, name, url, status, detail in known:
+            _, why, issue = known_issue(url, status)
+            lines.append(f"| `{name}` | {status} | #{issue} | {why if issue not in seen else 'as above'} |")
+            seen.add(issue)
+        lines.append("")
 
     report = "\n".join(lines) + "\n"
     with open(os.path.join(ROOT, "health-report.md"), "w", encoding="utf-8") as f:
