@@ -37,7 +37,7 @@ Plain (non-flashy) components go in `fallback_basic.components[]` with just `nam
 ## Before you open a PR
 
 - `components.json` is valid JSON (CI checks this - see `.github/workflows/validate.yml`).
-- Every `source.ref` link/command resolves and works on a fresh project.
+- Every `ref` link/command resolves and works on a fresh project.
 - New component genuinely lacks a good existing entry (no duplicates by alias).
 - Fill out the PR template.
 

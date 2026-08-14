@@ -17,7 +17,7 @@ not patched.
 Please report privately rather than opening a public issue if the report
 involves a security risk. Examples worth reporting:
 
-- A `source.ref` that points to a typosquatted package or a compromised/hijacked
+- A `ref` that points to a typosquatted package or a compromised/hijacked
   domain.
 - A recommended `npx` command or copy source that pulls malicious code.
 - A license claim in an entry that is incorrect in a way that creates legal risk.

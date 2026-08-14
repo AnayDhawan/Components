@@ -1,6 +1,6 @@
 # Adaptation Rules (shared)
 
-Applied to EVERY component sourced via this skill. Keeps per-entry `adapt_rules` terse by holding the common logic here. **A sourced component is never pasted raw.**
+**This file is the adaptation ruleset.** It applies uniformly to EVERY component sourced via this skill; there is no per-entry adaptation field in `components.json` and entries are not expected to restate any of this. An entry says *what* to fetch (`ref`, `deps`, `license`); this file says what to do with it once fetched. **A sourced component is never pasted raw.**
 
 ## 1. Brand tokens (do this first)
 
