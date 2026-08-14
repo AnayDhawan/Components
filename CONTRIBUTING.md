@@ -36,7 +36,8 @@ Plain (non-flashy) components go in `fallback_basic.components[]` with just `nam
 
 ## Before you open a PR
 
-- `components.json` is valid JSON (CI checks this - see `.github/workflows/validate.yml`).
+- Run `python3 scripts/validate.py` locally before opening a PR. It is the exact check CI runs, and it prints every problem it finds rather than stopping at the first.
+- `components.json` is valid JSON (`validate.py` checks this, as does CI - see `.github/workflows/validate.yml`).
 - Every `ref` link/command resolves and works on a fresh project.
 - New component genuinely lacks a good existing entry (no duplicates by alias).
 - Fill out the PR template.
@@ -45,7 +46,7 @@ Plain (non-flashy) components go in `fallback_basic.components[]` with just `nam
 
 1. Fork + branch (`feat/<component>` or `fix/<entry>-link`).
 2. Make your change to `components.json` (and `references/` if adding a shared rule).
-3. Run a JSON lint locally (e.g. `python -m json.tool components.json > /dev/null`).
+3. Run `python3 scripts/validate.py`.
 4. Open a PR using the template. Link any related issue.
 
 ## Maintenance / removal
