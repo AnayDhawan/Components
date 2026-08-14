@@ -1,0 +1,9 @@
+node_modules/
+dist/
+
+# Fetched live from upstream registries at build time by
+# scripts/fetch-showpieces.mjs. Committing them would make this gallery a
+# vendored snapshot of other people's code, which is exactly the thing this
+# project does not do (see ATTRIBUTION.md and issue #4).
+src/components/
+src/showpieces.json

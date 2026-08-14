@@ -15,6 +15,8 @@
 
 *A stylized walkthrough of the workflow, not a screen recording ([higher-res clip](docs/media/demo.mp4)).*
 
+**▶ [Live gallery](https://anaydhawan.github.io/Components/)** - a curated showpiece per library, each one fetched from its real registry when that page was built.
+
 ## Quick start
 
 ```bash

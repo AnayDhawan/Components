@@ -1,0 +1,81 @@
+name: deploy gallery
+
+# GitHub Pages rather than Cloudflare/Vercel: the repo is already on GitHub, so
+# this adds no new account, no new dashboard, and no token to rotate.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "gallery/**"
+      - "components.json"
+      - ".github/workflows/deploy-gallery.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time; don't cancel a running one, so a half-published site is
+# never left behind.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: fetch showpieces + build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: gallery
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - uses: actions/configure-pages@v5
+        with:
+          # Turns Pages on the first time this runs, so the repo does not need to
+          # have it enabled by hand beforehand.
+          enablement: true
+
+      - name: Install
+        run: npm install --no-audit --no-fund
+
+      - name: Build
+        # `build` runs scripts/fetch-showpieces.mjs first, which pulls each
+        # curated component from its real registry. A registry that blocks
+        # automation degrades to a placeholder card rather than failing the
+        # deploy - see the script's KNOWN_BLOCKED.
+        run: npm run build
+
+      - name: Check something actually rendered
+        run: |
+          set -euo pipefail
+          test -f dist/index.html
+          fetched=$(node -e "const s=require('./src/showpieces.json');console.log(s.entries.filter(e=>e.available).length)")
+          echo "$fetched showpiece(s) fetched"
+          # A deploy where nothing resolved is worse than no deploy: it would
+          # publish a page of placeholders and look like the project is dead.
+          if [ "$fetched" -lt 2 ]; then
+            echo "Only $fetched showpiece(s) available - refusing to publish a mostly-empty gallery."
+            exit 1
+          fi
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: gallery/dist
+
+  deploy:
+    name: deploy to Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
