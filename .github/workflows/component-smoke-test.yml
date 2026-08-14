@@ -1,0 +1,47 @@
+name: component smoke test
+
+# Two modes on purpose.
+#
+# pull_request  -> hard fail. A PR that changes components.json is claiming a ref
+#                  works, and this is what checks that claim before it merges.
+# schedule      -> soft fail. Nothing is being claimed, so upstream rot must not
+#                  show up as a red X on a branch nobody touched. validate.yml
+#                  and this job are the only PR gates; registry health stays soft.
+on:
+  pull_request:
+    paths:
+      - "components.json"
+      - "scripts/smoke-test.mjs"
+      - ".github/workflows/component-smoke-test.yml"
+  schedule:
+    # Mondays 07:00 UTC, an hour after the registry health check.
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    name: fetch + build a curated sample
+    runs-on: ubuntu-latest
+    # Five from-scratch npm installs plus five Vite builds. Generous, but a hang
+    # on a dead registry should not burn a full runner hour.
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Smoke-test curated registry refs
+        # No `continue-on-error` here: the script itself decides. --soft makes it
+        # exit 0 while still writing the report, so a scheduled run surfaces the
+        # findings in the job summary without going red.
+        run: |
+          node scripts/smoke-test.mjs ${{ github.event_name == 'pull_request' && ' ' || '--soft' }}
