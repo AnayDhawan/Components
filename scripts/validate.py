@@ -16,8 +16,11 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 COMPONENTS_JSON = os.path.join(ROOT, "components.json")
 
-# CONTRIBUTING.md requires the same fields of both arrays.
+# CONTRIBUTING.md requires the same fields of both arrays. effect is showpiece-only:
+# it's the live-fetch match surface's descriptive half, and fallback_basic entries
+# never carried it.
 REQUIRED = ("aliases", "ref", "library", "license")
+SHOWPIECE_ONLY_REQUIRED = ("effect",)
 
 # A license field that is present but says nothing is worse than a missing one:
 # it passes the required-field check while still leaving the legal status unknown.
@@ -27,6 +30,7 @@ LICENSE_PLACEHOLDERS = {"", "tbd", "todo", "verify", "unknown", "n/a", "none", "
 def check_entries(entries, kind, errors):
     """Required fields, duplicate names, and field shapes, for one array."""
     names = set()
+    required = REQUIRED + SHOWPIECE_ONLY_REQUIRED if kind == "showpiece" else REQUIRED
     for c in entries:
         n = c.get("name")
         if not n:
@@ -35,7 +39,7 @@ def check_entries(entries, kind, errors):
         if n in names:
             errors.append(f"duplicate {kind} name: {n}")
         names.add(n)
-        for key in REQUIRED:
+        for key in required:
             if not c.get(key):
                 errors.append(f"{n}: {key} missing")
 

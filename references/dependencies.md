@@ -21,3 +21,11 @@ Checked each package's `latest` dist-tag on the npm registry and its declared
 point-in-time compatibility baseline, not a CI-enforced test matrix - `components` ships
 markdown and a JSON pointer file, so there is nothing here to run in CI against real
 component code.
+
+## Known setup gotcha: Vite's `baseUrl` + `paths` combo
+
+Setting `baseUrl` alongside `paths` in `tsconfig.json`, the exact setup shadcn's own Vite
+guide recommends for the `@/` import alias, currently errors with TS5101 (`baseUrl` is
+deprecated) under the TypeScript version Vite pulls in by default. Drop `baseUrl` and keep
+only `paths`; it still resolves relative to the tsconfig and the alias works the same way.
+Anyone following the shadcn Vite guide today will hit this once, not repeatedly.
