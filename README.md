@@ -9,6 +9,8 @@
 [![GitHub stars](https://img.shields.io/github/stars/AnayDhawan/Components?style=social)](https://github.com/AnayDhawan/Components/stargazers)
 ![Last commit](https://img.shields.io/github/last-commit/AnayDhawan/Components)
 
+[Quick start](#quick-start) · [Why](#why-components) · [Showpieces](#showpiece-effects-live-fetched) · [Installation](#installation) · [Sources & licenses](#sources--licenses) · [Contributing](#community--contributing) · [License](#license)
+
 ![A macbook-scroll showpiece, fetched live and adapted to brand tokens](docs/media/demo.gif)
 
 *A stylized walkthrough of the workflow, not a screen recording ([higher-res clip](docs/media/demo.mp4)).*
@@ -137,6 +139,8 @@ The agent auto-discovers it from the `description` in `SKILL.md`. It needs **net
 ```
 
 ## Sources & licenses
+
+<!-- keep in sync with ATTRIBUTION.md -->
 
 | Library | License | Notes |
 |---------|---------|-------|

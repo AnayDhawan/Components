@@ -4,6 +4,8 @@
 When you use it, the real component is fetched live from the library below and is governed by **that
 library's license**, not this repo's Apache-2.0 license. This file credits every upstream source.
 
+<!-- keep in sync with README.md#sources--licenses -->
+
 | Library | Author / Project | License | License link |
 |---------|------------------|---------|--------------|
 | Aceternity UI | Manu Arora | Aceternity License: free to use in unlimited personal/commercial end products; cannot redistribute the component/source itself (as a stock asset, template, or marketplace item) | https://ui.aceternity.com/licence |

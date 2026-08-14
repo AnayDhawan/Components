@@ -4,6 +4,16 @@ Thanks for improving **components**. The skill stores *pointers* to live-fetchab
 
 By participating you agree to the [Code of Conduct](./CODE_OF_CONDUCT.md).
 
+## Repo layout
+
+- **`SKILL.md`** - what the agent actually reads: the decision flow and the rules it follows when matching a request to a component.
+- **`components.json`** - the registry of pointers. Every entry names a component and how to fetch it live; this is what almost every PR touches.
+- **`references/`** - the shared rules that apply to every fetched component: `live-fetch.md` (how to fetch, plus known upstream issues), `adaptation.md` (brand tokens, dark mode, responsive, reduced motion), `dependencies.md`, `handoff.md`.
+- **`scripts/`** - maintenance tooling. `validate.py` checks `components.json` and is what CI runs; `health-check.py` pings every ref and library site on a schedule.
+- **`.github/`** - issue and PR templates plus the workflows that run the scripts above.
+
+No component source code lives here. The repo stores pointers, and the real code is fetched from upstream at build time.
+
 ## Add a showpiece entry (the main thing)
 
 1. Find a distinctive/animated component with a **proven, maintained, clearly-licensed** React + Tailwind source that is **live-fetchable** (registry command preferred). Code libraries: Aceternity, Magic UI, Cult UI, ReactBits, 21st.dev.
