@@ -156,8 +156,20 @@ Full attribution: [ATTRIBUTION.md](./ATTRIBUTION.md). Each `components.json` ent
 
 ## Supported tools
 
-- **Claude Code** (native - the skill auto-loads from `.claude/skills/`).
-- Any agent that can read a `SKILL.md` + run `npx` + WebFetch can use the same `components.json` registry.
+One source (`SKILL.md` + `components.json` + `references/`), packaged per harness by `scripts/build-agent-dirs.sh`:
+
+| Agent | Bundle | Notes |
+|-------|--------|-------|
+| **Claude Code** | `.claude/skills/components/` | Native. Auto-loads from the `description` in `SKILL.md`. Also emits a `.claude-plugin/plugin.json` manifest. |
+| **Codex CLI** | `.codex/skills/components/` | Same `SKILL.md` format, project-scoped. |
+| **Cursor** | `.cursor/rules/components.mdc` | Rule with frontmatter (`description`, `alwaysApply: false`); payload alongside at `.cursor/components/`. |
+| **Gemini CLI** | `.gemini/extensions/components/` | `gemini-extension.json` + `commands/components.toml` + a `GEMINI.md` generated from `SKILL.md`'s body. |
+
+```bash
+bash scripts/build-agent-dirs.sh    # writes every bundle to dist/
+```
+
+Each output directory is self-contained: copy it into a project (or your user config dir) and the skill works. `dist/` is build output and is not tracked. Beyond these four, any agent that can read a `SKILL.md`, run `npx`, and fetch a URL can use the same `components.json` registry directly.
 
 ## Community & contributing
 

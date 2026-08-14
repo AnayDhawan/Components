@@ -1,0 +1,85 @@
+name: build agent dirs
+
+# dist/ is gitignored, so nothing here is published. This exists to prove the
+# packaging script still runs after a change to the payload it packages -
+# otherwise the first time anyone notices it broke is when they try to install.
+on:
+  push:
+    paths:
+      - "SKILL.md"
+      - "components.json"
+      - "references/**"
+      - "scripts/build-agent-dirs.sh"
+      - ".github/workflows/build-agent-dirs.yml"
+  pull_request:
+    paths:
+      - "SKILL.md"
+      - "components.json"
+      - "references/**"
+      - "scripts/build-agent-dirs.sh"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: emit per-agent bundles
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # build-agent-dirs.sh falls back to `git describe --tags` for the
+          # version when components.json has no meta.version, which needs tags.
+          fetch-depth: 0
+
+      - name: Build
+        run: bash scripts/build-agent-dirs.sh
+
+      - name: Check every bundle came out complete
+        run: |
+          set -euo pipefail
+          fail=0
+          expect() {
+            if [ ! -e "$1" ]; then echo "missing: $1"; fail=1; fi
+          }
+
+          for base in \
+            "dist/.claude/skills/components" \
+            "dist/.codex/skills/components" \
+            "dist/.cursor/components" \
+            "dist/.gemini/extensions/components"
+          do
+            expect "$base/SKILL.md"
+            expect "$base/components.json"
+            expect "$base/references/live-fetch.md"
+            expect "$base/references/adaptation.md"
+          done
+
+          expect "dist/.cursor/rules/components.mdc"
+          expect "dist/.gemini/extensions/components/gemini-extension.json"
+          expect "dist/.gemini/extensions/components/commands/components.toml"
+          expect "dist/.gemini/extensions/components/GEMINI.md"
+          expect "dist/.claude-plugin/plugin.json"
+
+          # Manifests must be valid JSON and must not have fallen back to 0.0.0,
+          # which would mean the version lookup silently broke.
+          for f in dist/.claude-plugin/plugin.json dist/.gemini/extensions/components/gemini-extension.json; do
+            python3 -m json.tool "$f" > /dev/null || { echo "invalid JSON: $f"; fail=1; }
+            v=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['version'])" "$f")
+            if [ "$v" = "0.0.0" ]; then echo "version fell back to 0.0.0 in $f"; fail=1; fi
+          done
+
+          # The Cursor rule must carry a real description, not an empty one.
+          grep -q '^description: .\{40,\}' dist/.cursor/rules/components.mdc \
+            || { echo "components.mdc has no usable description"; fail=1; }
+
+          # GEMINI.md is SKILL.md's body, so it must not still contain frontmatter.
+          if head -1 dist/.gemini/extensions/components/GEMINI.md | grep -q '^---'; then
+            echo "GEMINI.md still starts with YAML frontmatter"; fail=1
+          fi
+
+          exit $fail
+
+      - name: Show tree
+        run: find dist -type f | sort
