@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# build-agent-dirs.sh — emits a ready-to-copy skill bundle per agent harness from the
+# build-agent-dirs.sh: emits a ready-to-copy skill bundle per agent harness from the
 # single SKILL.md + payload, into dist/. Each output dir is self-contained: copy it
 # straight into a project (or user config dir) and the skill works.
 #
@@ -10,7 +10,7 @@
 #   .gemini/extensions/<name>/ -- Gemini CLI: gemini-extension.json + commands/*.toml + GEMINI.md
 #
 # Ported from oss-launch's script of the same name. The one structural difference:
-# this skill's payload is data, not tooling — SKILL.md + components.json + references/.
+# this skill's payload is data, not tooling (SKILL.md + components.json + references/).
 # scripts/ here is repo maintenance (validate, health-check, this file) and is not
 # needed once the skill is installed somewhere else, so it is deliberately not copied.
 #
@@ -23,8 +23,8 @@ NAME="components"
 
 # Released version, for manifests that must declare one (Gemini's extension.json,
 # .claude-plugin/plugin.json). components.json's meta.version is the source of truth
-# here — unlike oss-launch, this repo ships a data file that already carries one.
-# Fall back to the nearest tag, then 0.0.0 — never a hardcoded literal that silently
+# here; unlike oss-launch, this repo ships a data file that already carries one.
+# Fall back to the nearest tag, then 0.0.0: never a hardcoded literal that silently
 # goes stale after a release.
 VERSION="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1],encoding="utf-8"))["meta"]["version"])' "$ROOT/components.json" 2>/dev/null || true)"
 [ -z "$VERSION" ] && VERSION="$(git -C "$ROOT" describe --tags --abbrev=0 2>/dev/null | sed 's/^v//' || true)"

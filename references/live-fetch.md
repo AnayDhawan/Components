@@ -38,11 +38,11 @@ dead ref.
 Magic console were reset and no longer work). The key is sent as an **`x-api-key`
 header**. Two documented consumers:
 
-- **Their MCP server** — `https://21st.dev/api/mcp` with `{"x-api-key": "<key>"}`,
+- **Their MCP server**: `https://21st.dev/api/mcp` with `{"x-api-key": "<key>"}`,
   set up via `npx @21st-dev/cli@latest install <client> --api-key <key>`, or the
   `API_KEY_21ST` env var. This is a component *search/generation* surface for
   agents, not a plain file fetch.
-- **shadcn CLI 3.0+ namespaced registries** — the only way to `add` from 21st.dev
+- **shadcn CLI 3.0+ namespaced registries**: the only way to `add` from 21st.dev
   directly. It needs the namespace declared in the *user's project*
   `components.json`, with the key read from the environment, never hardcoded:
 
