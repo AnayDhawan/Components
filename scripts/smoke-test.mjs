@@ -200,6 +200,15 @@ function setupProject(dir) {
   );
   appTs.compilerOptions = { ...appTs.compilerOptions, paths: { "@/*": ["./src/*"] } };
   delete appTs.compilerOptions.baseUrl;
+
+  // Vite's react-ts template turns these on. They are lint preferences, not
+  // correctness: several upstream showpieces ship unused event params (e.g.
+  // aceternity/3d-card) and would fail here for style reasons that say nothing
+  // about whether the ref works. The question this job asks is "does the fetched
+  // code compile and bundle in a real project", and a real project picks its own
+  // strictness. Genuine type errors - bad imports, wrong types - still fail.
+  appTs.compilerOptions.noUnusedLocals = false;
+  appTs.compilerOptions.noUnusedParameters = false;
   writeFileSync(join(app, "tsconfig.app.json"), JSON.stringify(appTs, null, 2));
 
   writeFileSync(

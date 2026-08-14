@@ -1,0 +1,75 @@
+name: cli
+
+# Never publishes. Releases are a human decision and need credentials that are
+# deliberately not available here - see cli/PUBLISHING.md.
+on:
+  push:
+    paths:
+      - "cli/**"
+      - "SKILL.md"
+      - "components.json"
+      - "references/**"
+      - "scripts/build-agent-dirs.sh"
+      - ".github/workflows/cli-ci.yml"
+  pull_request:
+    paths:
+      - "cli/**"
+      - "SKILL.md"
+      - "components.json"
+      - "references/**"
+      - "scripts/build-agent-dirs.sh"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: cli
+
+jobs:
+  test:
+    name: test + pack
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # The floor declared in package.json engines, and current LTS.
+        node-version: ["18", "22"]
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install
+        run: npm ci
+
+      - name: Build bundles
+        run: npm run build
+
+      - name: Test
+        run: npm test
+
+      - name: Check version is in sync with components.json
+        run: node scripts/check-version-sync.js
+
+      - name: Pack (dry run)
+        # Catches packaging mistakes - a missing files[] entry, a bad bin path -
+        # without needing npm credentials.
+        run: npm pack --dry-run
+
+      - name: Confirm the CLI actually runs
+        run: |
+          set -euo pipefail
+          node bin/components-skill.js --version
+          tmp="$(mktemp -d)"
+          cd "$tmp"
+          node "$GITHUB_WORKSPACE/cli/bin/components-skill.js" add --agent all
+          test -f .claude/skills/components/SKILL.md
+          test -f .codex/skills/components/SKILL.md
+          test -f .cursor/rules/components.mdc
+          test -f .gemini/extensions/components/gemini-extension.json
+          test -f .components-skill-manifest.json
+          echo "install layout OK"

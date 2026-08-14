@@ -104,7 +104,22 @@ Anthropic's `frontend-design` skill makes an agent design *well*. It does **not*
 
 ## Installation
 
-`components` is a [Claude Code](https://docs.claude.com/en/docs/claude-code) skill (markdown + a JSON registry - no executable code of its own). Copy the payload into a skills directory:
+`components` is a [Claude Code](https://docs.claude.com/en/docs/claude-code) skill (markdown + a JSON registry - no executable code of its own).
+
+### Recommended: CLI installer
+
+```bash
+npx components-skill@latest add                  # .claude/skills/components, this project
+npx components-skill@latest add --agent all      # Claude Code + Codex + Cursor + Gemini
+npx components-skill@latest add --global         # ~/.claude/skills/components
+npx components-skill@latest update               # refresh, keeping any local edits
+```
+
+Zero dependencies, and it never touches the network: the per-agent bundles are built into the package. `update` records a checksum of every file it writes, so a file you have edited is reported and left alone rather than silently overwritten. Details: [`cli/README.md`](./cli/README.md).
+
+### Manual (fallback)
+
+Copy the payload into a skills directory yourself. Note that a manual copy has no update path - it will not know when the registry upstream has changed.
 
 ```bash
 # project-scoped

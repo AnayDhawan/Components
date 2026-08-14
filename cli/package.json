@@ -1,0 +1,47 @@
+{
+  "name": "components-skill",
+  "version": "1.1.1",
+  "description": "Install the `components` skill (showpiece React + Tailwind UI for AI coding agents) into Claude Code, Codex, Cursor, or Gemini CLI.",
+  "type": "module",
+  "bin": {
+    "components-skill": "./bin/components-skill.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "bash ../scripts/build-agent-dirs.sh dist",
+    "test": "node --test \"test/**/*.test.js\"",
+    "prepack": "npm run build",
+    "prepublishOnly": "node scripts/check-version-sync.js && npm run build && node --test \"test/**/*.test.js\""
+  },
+  "keywords": [
+    "claude-code",
+    "skill",
+    "shadcn",
+    "react",
+    "tailwind",
+    "ui-components",
+    "aceternity",
+    "magicui",
+    "cursor",
+    "gemini-cli"
+  ],
+  "author": "Anay Dhawan",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/AnayDhawan/Components#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnayDhawan/Components.git",
+    "directory": "cli"
+  },
+  "bugs": {
+    "url": "https://github.com/AnayDhawan/Components/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
