@@ -26,8 +26,11 @@ By participating you agree to the [Code of Conduct](./CODE_OF_CONDUCT.md).
 - **`ref` must fetch live** - a registry command (preferred) or a resolvable component-page URL. No pasted code in this repo.
 - **`ref` must use the full registry URL form**, not a namespaced shorthand (`@aceternity/<name>` etc.) - shorthand requires the namespace pre-registered in the user's project `components.json` and fails cold on a fresh project.
 - **`aliases` are the match surface** - list how users phrase the effect, not just the canonical name.
-- **`library` must be listed in `code_libraries[]`** (add it there if new, with registry pattern + license).
-- **`license` is required.** Verify it (Aceternity = free/verify, 21st.dev = per-component).
+- **`aliases` must be a non-empty list of non-empty strings.** An entry with no aliases is unreachable by description, which is the only way users find it.
+- **No alias may be reused across two showpieces.** Aliases drive matching, so a duplicated string makes the match ambiguous and whichever entry sits first silently wins. Compared case- and whitespace-insensitively.
+- **`deps` must be a list**, never a bare string. `"motion"` iterates as characters, so anything consuming it installs garbage; write `["motion"]`.
+- **`library` must be listed in `code_libraries[]`** (add it there if new, with registry pattern + license). Showpieces only - `fallback_basic` points at shadcn/tremor on purpose and is exempt.
+- **`license` is required**, and must be a real license, not a placeholder. `TBD`, `todo`, `verify`, `unknown`, `n/a`, `none`, `?` and empty strings are rejected: a license field that is present but says nothing passes a required-field check while leaving the legal status just as unknown. Verify it (Aceternity = free/verify, 21st.dev = per-component).
 - **Galleries are not sources.** Dribbble / godly.website / Awwwards go in `galleries_visual_ref_only[]` - visual reference only, never `ref`.
 - **Adaptation is mandatory** at use time (brand tokens + `prefers-reduced-motion`); see `references/adaptation.md`.
 - Keep scope React + Tailwind. Other stacks need a separate discussion (open an issue).
