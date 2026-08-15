@@ -23,7 +23,7 @@ from collections import Counter
 
 TIMEOUT = 25
 DELAY = 0.4  # be a polite guest on other people's registries
-UA = "components-skill-health-check/1.0 (+https://github.com/AnayDhawan/Components)"
+UA = "components-skill-health-check/1.1.1 (+https://github.com/AnayDhawan/Components)"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Upstream breakage that is already diagnosed and written up in
