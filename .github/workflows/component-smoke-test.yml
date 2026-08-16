@@ -3,7 +3,11 @@ name: component smoke test
 # Two modes on purpose.
 #
 # pull_request  -> hard fail. A PR that changes components.json is claiming a ref
-#                  works, and this is what checks that claim before it merges.
+#                  works, and this is what checks that claim before it merges. On
+#                  pull_request this also tests the entries the PR itself added or
+#                  changed (scripts/smoke-test.mjs --diff), not just the fixed
+#                  curated sample below, and posts the combined results as a PR
+#                  comment (#12) so a contributor doesn't have to open the CI log.
 # schedule      -> soft fail. Nothing is being claimed, so upstream rot must not
 #                  show up as a red X on a branch nobody touched. validate.yml
 #                  and this job are the only PR gates; registry health stays soft.
@@ -20,6 +24,9 @@ on:
 
 permissions:
   contents: read
+  # Only exercised on pull_request (see the "Comment results" step's `if:`).
+  # schedule/workflow_dispatch runs have no PR to comment on and never touch it.
+  pull-requests: write
 
 concurrency:
   group: smoke-${{ github.ref }}
@@ -29,11 +36,16 @@ jobs:
   smoke:
     name: fetch + build a curated sample
     runs-on: ubuntu-latest
-    # Five from-scratch npm installs plus five Vite builds. Generous, but a hang
-    # on a dead registry should not burn a full runner hour.
+    # From-scratch npm installs plus Vite builds, curated sample plus whatever a
+    # PR touched. Generous, but a hang on a dead registry should not burn a full
+    # runner hour.
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
+        with:
+          # --diff needs the PR's base commit reachable to compare components.json
+          # against it; a shallow checkout only has the merge commit.
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -45,3 +57,55 @@ jobs:
         # findings in the job summary without going red.
         run: |
           node scripts/smoke-test.mjs ${{ github.event_name == 'pull_request' && ' ' || '--soft' }}
+
+      - name: Smoke-test entries this PR added or changed
+        # The curated sample above is a fixed regression baseline; it does not
+        # necessarily include whatever ref this PR actually touched. This is the
+        # step that checks the PR's own claim.
+        if: github.event_name == 'pull_request'
+        run: |
+          node scripts/smoke-test.mjs --diff "${{ github.event.pull_request.base.sha }}"
+
+      - name: Comment results on the PR
+        # Runs even if either smoke-test step failed above, so a broken ref shows
+        # up as a comment, not just a red check the contributor has to click into.
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("node:fs");
+
+            const summaryPath = process.env.GITHUB_STEP_SUMMARY;
+            let body = summaryPath && fs.existsSync(summaryPath)
+              ? fs.readFileSync(summaryPath, "utf8").trim()
+              : "";
+            if (!body) body = "No smoke-test summary was produced.";
+
+            const MAX = 60000; // GitHub comment bodies cap at 65536 chars
+            if (body.length > MAX) body = body.slice(0, MAX) + "\n\n...(truncated, see the full run for the rest)";
+
+            const marker = "<!-- component-smoke-test-bot -->";
+            body = `${marker}\n## Registry smoke test results\n\n${body}\n\n[Full run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find((c) => c.body && c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

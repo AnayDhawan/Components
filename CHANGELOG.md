@@ -6,6 +6,15 @@ All notable changes to this project are documented here. Format based on
 
 ## [Unreleased]
 
+### Added
+- `components-skill search <query>`: offline lookup of showpiece/fallback entries by
+  name, alias, effect, or library, plus `--library` to narrow it. Reads the same
+  bundled `components.json` as `add` (#11).
+- `component-smoke-test.yml` now also smoke-tests the showpiece entries a PR itself
+  adds or changes (`scripts/smoke-test.mjs --diff`), not just the fixed curated
+  sample, and posts the combined results as a sticky PR comment instead of leaving
+  them in the CI log only (#12).
+
 ## [1.1.1] - 2026-07-31
 
 ### Fixed

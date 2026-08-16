@@ -7,9 +7,10 @@
  * *true* - that the command in a `ref` field still pulls real code into a real
  * Vite + React + TS + Tailwind project and that the result builds.
  *
- *   node scripts/smoke-test.mjs            # hard-fail (PR gate)
+ *   node scripts/smoke-test.mjs            # hard-fail (PR gate), curated sample
  *   node scripts/smoke-test.mjs --soft     # report only, always exit 0 (schedule)
  *   node scripts/smoke-test.mjs --only marquee
+ *   node scripts/smoke-test.mjs --diff <base-sha>   # only entries new/changed since <base-sha>
  *
  * Each entry gets its own throwaway project in a temp dir, which is deleted
  * afterwards unless --keep is passed.
@@ -107,6 +108,7 @@ const args = process.argv.slice(2);
 const SOFT = args.includes("--soft");
 const KEEP = args.includes("--keep");
 const ONLY = args.includes("--only") ? args[args.indexOf("--only") + 1] : null;
+const DIFF_BASE = args.includes("--diff") ? args[args.indexOf("--diff") + 1] : null;
 
 const log = (...m) => console.log(...m);
 const group = (t) => log(`\n${"=".repeat(70)}\n${t}\n${"=".repeat(70)}`);
@@ -303,25 +305,85 @@ function smokeTest(entry) {
   }
 }
 
+/**
+ * Names of showpiece entries that are new, or whose `ref` changed, versus
+ * `base`. This is the actual claim a PR touching components.json makes ("this
+ * ref works"), as opposed to SAMPLE, which is a fixed regression baseline
+ * unrelated to what the PR changed.
+ *
+ * Renames, alias/license/effect edits, and fallback_basic changes are not
+ * "new/changed" here: none of them touch what gets live-fetched, so re-running
+ * the fetch+build would test something the PR didn't actually claim.
+ */
+function changedShowpieceNames(base, headData) {
+  let baseJson;
+  try {
+    const raw = execFileSync("git", ["show", `${base}:components.json`], {
+      cwd: ROOT,
+      encoding: "utf8",
+    });
+    baseJson = JSON.parse(raw);
+  } catch (err) {
+    // components.json is new in this PR, or `base` isn't reachable (e.g. a
+    // shallow checkout): nothing to diff against, so every showpiece with a
+    // ref is "new" relative to that base.
+    log(`Could not read components.json at ${base} (${String(err.message).split("\n")[0]}); treating all showpiece entries as new.`);
+    return headData.showpiece.filter((e) => e.ref).map((e) => e.name);
+  }
+
+  const baseByName = new Map((baseJson.showpiece || []).map((e) => [e.name, e]));
+  const changed = [];
+  for (const e of headData.showpiece) {
+    if (!e.ref) continue;
+    const prev = baseByName.get(e.name);
+    if (!prev || prev.ref !== e.ref) changed.push(e.name);
+  }
+  return changed;
+}
+
 function main() {
   const data = JSON.parse(readFileSync(join(ROOT, "components.json"), "utf8"));
   const byName = new Map(data.showpiece.map((e) => [e.name, e]));
 
-  const wanted = ONLY ? [ONLY] : SAMPLE;
+  let wanted;
+  let modeLabel;
+  if (DIFF_BASE) {
+    wanted = changedShowpieceNames(DIFF_BASE, data);
+    modeLabel = "new/changed";
+    if (wanted.length === 0) {
+      log(`No new or changed showpiece entries versus ${DIFF_BASE}. Nothing to smoke-test.`);
+      if (process.env.GITHUB_STEP_SUMMARY) {
+        writeFileSync(
+          process.env.GITHUB_STEP_SUMMARY,
+          "# Registry smoke test (new/changed entries)\n\nNo new or changed showpiece entries in this PR.\n\n",
+          { flag: "a" },
+        );
+      }
+      return 0;
+    }
+  } else if (ONLY) {
+    wanted = [ONLY];
+    modeLabel = "selected";
+  } else {
+    wanted = SAMPLE;
+    modeLabel = "curated";
+  }
+
   const entries = [];
   for (const name of wanted) {
     const e = byName.get(name);
     if (!e) {
-      // The sample is hard-coded, so a rename upstream in components.json must
-      // break loudly rather than silently shrink what gets tested.
-      console.error(`Curated sample entry '${name}' is not in components.json showpiece[].`);
+      // SAMPLE/ONLY name a specific entry by hand, so a miss must break loudly
+      // rather than silently shrink what gets tested. --diff never hits this:
+      // its names always come straight from data.showpiece.
+      console.error(`Entry '${name}' is not in components.json showpiece[].`);
       console.error(`Update SAMPLE in scripts/smoke-test.mjs if the entry was renamed or removed.`);
       process.exit(1);
     }
     entries.push(e);
   }
 
-  log(`Smoke-testing ${entries.length} curated entr${entries.length === 1 ? "y" : "ies"}`);
+  log(`Smoke-testing ${entries.length} ${modeLabel} entr${entries.length === 1 ? "y" : "ies"}`);
   log(`Mode: ${SOFT ? "soft (report only)" : "hard (blocks merge)"}`);
 
   const results = [];
@@ -353,7 +415,7 @@ function main() {
   const skipped = results.filter((r) => r.status === "skip");
 
   let md = [
-    "# Registry smoke test",
+    `# Registry smoke test (${modeLabel} entries)`,
     "",
     `${results.length - failed.length - skipped.length} passed, ${failed.length} failed, ${skipped.length} skipped.`,
     "",
