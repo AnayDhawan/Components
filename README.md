@@ -168,8 +168,17 @@ The agent auto-discovers it from the `description` in `SKILL.md`. It needs **net
 | [21st.dev](https://21st.dev) | Per-component - **verify each** | Community registry; registry endpoint needs an account/API key - curated entries use open mirrors or page-fetch |
 | [shadcn/ui](https://ui.shadcn.com) | MIT | Plain fallbacks |
 | [Tremor](https://tremor.so) | Apache-2.0 | Dashboards / charts |
+| [Vue Bits](https://vue-bits.dev) | MIT + Commons Clause | Official Vue port of ReactBits, same author. Framework-variant only (`frameworks.vue`, see below), one pilot entry so far |
 
 Full attribution: [ATTRIBUTION.md](./ATTRIBUTION.md). Each `components.json` entry records its source + license; fetched code carries its own upstream license, never this repo's.
+
+### Framework variants (Vue, pilot)
+
+This is still a **React + Tailwind** registry. One entry, `split-text`, additionally carries a
+`frameworks.vue` variant pointing at Vue Bits' `SplitText` - a real, live-verified port (`npx
+shadcn-vue@latest add`, builds clean under `vue-tsc -b && vite build`), proving the mechanism rather
+than claiming broad Vue support. See `components.json`'s `split-text` entry and `SKILL.md` §"How to
+fetch live" step 2.
 
 ## Supported tools
 

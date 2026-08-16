@@ -58,6 +58,15 @@ jobs:
         run: |
           node scripts/smoke-test.mjs ${{ github.event_name == 'pull_request' && ' ' || '--soft' }}
 
+      - name: Smoke-test framework variants (schedule only)
+        # Hand-picked and boring, same reasoning as SAMPLE above: only run on
+        # schedule/dispatch so an unrelated components.json PR doesn't pay for a
+        # framework's own npx CLI + build on every push. Add a line here whenever
+        # a new frameworks.<name> variant gets curated, same as SAMPLE.
+        if: github.event_name != 'pull_request'
+        run: |
+          node scripts/smoke-test.mjs --only split-text --framework vue --soft
+
       - name: Smoke-test entries this PR added or changed
         # The curated sample above is a fixed regression baseline; it does not
         # necessarily include whatever ref this PR actually touched. This is the

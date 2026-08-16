@@ -11,6 +11,7 @@
  *   node scripts/smoke-test.mjs --soft     # report only, always exit 0 (schedule)
  *   node scripts/smoke-test.mjs --only marquee
  *   node scripts/smoke-test.mjs --diff <base-sha>   # only entries new/changed since <base-sha>
+ *   node scripts/smoke-test.mjs --only split-text --framework vue   # a frameworks.<name> variant
  *
  * Each entry gets its own throwaway project in a temp dir, which is deleted
  * afterwards unless --keep is passed.
@@ -78,30 +79,50 @@ const ALLOWED_HOSTS = new Set([
   "reactbits.dev",
   "kokonutui.com",
   "21st.dev",
+  "vue-bits.dev",
 ]);
 
 /**
- * Parse `npx shadcn@latest add "<url>"` into an argv, rejecting anything else.
+ * CLI packages a ref is allowed to invoke, and which project setup each needs.
+ * Framework-variant refs (components.json `frameworks.<name>`) use the same
+ * shadcn registry-item schema as the React ones, just through that framework's
+ * own shadcn-family CLI, so the parser stays one regex with the package name as
+ * a capture group instead of a second copy-pasted parser per framework.
+ */
+const CLI_SETUP = {
+  "shadcn": "react",
+  "shadcn-vue": "vue",
+};
+
+/**
+ * Parse `npx <shadcn-family-cli>@latest add "<url>"` into an argv, rejecting
+ * anything else.
  *
- * Returns { argv } or { error }. Deliberately strict: the point is that no part
- * of a contributed string can reach a shell, so this refuses to be clever about
- * unusual forms rather than trying to accommodate them.
+ * Returns { argv, setup } or { error }. Deliberately strict: the point is that
+ * no part of a contributed string can reach a shell, so this refuses to be
+ * clever about unusual forms rather than trying to accommodate them.
  */
 function parseRef(ref) {
-  const m = /^npx\s+shadcn@latest\s+add\s+"([^"]+)"\s*$/.exec((ref || "").trim());
-  if (!m) return { error: "ref is not a plain `npx shadcn@latest add \"<url>\"` command" };
+  const m = /^npx\s+([a-z-]+)@latest\s+add\s+"([^"]+)"\s*$/.exec((ref || "").trim());
+  if (!m) return { error: "ref is not a plain `npx <cli>@latest add \"<url>\"` command" };
+
+  const cli = m[1];
+  const setup = CLI_SETUP[cli];
+  if (!setup) {
+    return { error: `ref CLI '${cli}' is not in the smoke-test allowlist (${Object.keys(CLI_SETUP).join(", ")})` };
+  }
 
   let url;
   try {
-    url = new URL(m[1]);
+    url = new URL(m[2]);
   } catch {
-    return { error: `ref URL is unparseable: ${m[1]}` };
+    return { error: `ref URL is unparseable: ${m[2]}` };
   }
   if (url.protocol !== "https:") return { error: `ref URL is not https: ${url.href}` };
   if (!ALLOWED_HOSTS.has(url.hostname)) {
     return { error: `ref host '${url.hostname}' is not in the smoke-test allowlist` };
   }
-  return { argv: ["shadcn@latest", "add", url.href, "--yes"], url };
+  return { argv: [`${cli}@latest`, "add", url.href, "--yes"], url, setup };
 }
 
 const args = process.argv.slice(2);
@@ -109,6 +130,7 @@ const SOFT = args.includes("--soft");
 const KEEP = args.includes("--keep");
 const ONLY = args.includes("--only") ? args[args.indexOf("--only") + 1] : null;
 const DIFF_BASE = args.includes("--diff") ? args[args.indexOf("--diff") + 1] : null;
+const FRAMEWORK = args.includes("--framework") ? args[args.indexOf("--framework") + 1] : null;
 
 const log = (...m) => console.log(...m);
 const group = (t) => log(`\n${"=".repeat(70)}\n${t}\n${"=".repeat(70)}`);
@@ -144,6 +166,23 @@ function run(bin, argv, cwd) {
     env: CHILD_ENV,
     shell: Boolean(bin.shell),
   });
+}
+
+/**
+ * Strip whole-line `/* ... *\/` and `//` comments from a Vite template's
+ * tsconfig (JSONC), so it can go through plain JSON.parse.
+ *
+ * Line-scoped on purpose, not a global `/\/\*[\s\S]*?\*\//` sweep: that pattern
+ * also matches the literal 4 characters `/**\/` inside a JSON string like
+ * `"src/**\/*.vue"` (Vue's template `include` array uses exactly that glob),
+ * silently eating the rest of the array. A comment that is the entire line has
+ * no such collision.
+ */
+function stripJsonc(text) {
+  return text
+    .split("\n")
+    .filter((line) => !/^\s*\/\*.*\*\/\s*$/.test(line) && !/^\s*\/\/.*$/.test(line))
+    .join("\n");
 }
 
 function listFiles(dir) {
@@ -198,7 +237,7 @@ function setupProject(dir) {
     ),
   );
   const appTs = JSON.parse(
-    readFileSync(join(app, "tsconfig.app.json"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, ""),
+    stripJsonc(readFileSync(join(app, "tsconfig.app.json"), "utf8")),
   );
   appTs.compilerOptions = { ...appTs.compilerOptions, paths: { "@/*": ["./src/*"] } };
   delete appTs.compilerOptions.baseUrl;
@@ -231,9 +270,73 @@ export default defineConfig({
   return app;
 }
 
+/**
+ * A fresh Vite + Vue + TS project with Tailwind v4 and shadcn-vue wired up, for
+ * `frameworks.vue` refs. Same shape as setupProject, one real difference found
+ * by hand: shadcn-vue's import-alias check reads the *root* tsconfig.json's
+ * own `compilerOptions.paths` directly, not tsconfig.app.json's (which is what
+ * shadcn/React reads via project references) - so the alias has to be written
+ * to both files here, not just the app one.
+ */
+function setupVueProject(dir) {
+  run(NPM, ["create", "vite@latest", "app", "--", "--template", "vue-ts"], dir);
+  const app = join(dir, "app");
+
+  run(NPM, ["install", "--no-audit", "--no-fund"], app);
+  run(NPM, ["install", "tailwindcss", "@tailwindcss/vite", "--no-audit", "--no-fund"], app);
+  run(NPM, ["install", "-D", "@types/node", "--no-audit", "--no-fund"], app);
+
+  writeFileSync(join(app, "src", "style.css"), `@import "tailwindcss";\n`);
+
+  writeFileSync(
+    join(app, "tsconfig.json"),
+    JSON.stringify(
+      {
+        files: [],
+        references: [{ path: "./tsconfig.app.json" }, { path: "./tsconfig.node.json" }],
+        compilerOptions: { paths: { "@/*": ["./src/*"] } },
+      },
+      null,
+      2,
+    ),
+  );
+  // Vue's template also ships a `/* Linting */`-style comment block, same as
+  // React's, so this needs the same JSONC strip before JSON.parse.
+  const appTs = JSON.parse(
+    stripJsonc(readFileSync(join(app, "tsconfig.app.json"), "utf8")),
+  );
+  appTs.compilerOptions = { ...appTs.compilerOptions, paths: { "@/*": ["./src/*"] } };
+
+  // Same rationale as setupProject: this job asks whether the fetched code
+  // compiles and bundles in a real project, not whether it matches a
+  // particular lint strictness a real project would choose for itself.
+  appTs.compilerOptions.noUnusedLocals = false;
+  appTs.compilerOptions.noUnusedParameters = false;
+  writeFileSync(join(app, "tsconfig.app.json"), JSON.stringify(appTs, null, 2));
+
+  writeFileSync(
+    join(app, "vite.config.ts"),
+    `import path from "path";
+import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
+import tailwindcss from "@tailwindcss/vite";
+
+export default defineConfig({
+  plugins: [vue(), tailwindcss()],
+  resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
+});
+`,
+  );
+
+  run(NPX, ["--yes", "shadcn-vue@latest", "init", "--defaults", "--yes"], app);
+  return app;
+}
+
+const SETUP = { react: setupProject, vue: setupVueProject };
+
 function checkReducedMotion(app, added) {
   // Upstream's code, not this repo's data, so this can only ever be a warning.
-  const sources = [...added].filter((f) => /\.(tsx?|jsx?|css)$/.test(f));
+  const sources = [...added].filter((f) => /\.(tsx?|jsx?|vue|css)$/.test(f));
   const hits = [];
   for (const f of sources) {
     let text;
@@ -247,16 +350,32 @@ function checkReducedMotion(app, added) {
   return { checked: sources.length, hits };
 }
 
-function smokeTest(entry) {
+/**
+ * `framework`, if given, tests entry.frameworks[framework] (ref + library)
+ * instead of the entry's top-level React ones. name/aliases/effect are always
+ * the parent's - only the fetch/license surface differs per framework.
+ */
+function smokeTest(entry, framework) {
+  let ref = entry.ref;
+  let library = entry.library;
+  if (framework) {
+    const variant = entry.frameworks?.[framework];
+    if (!variant) {
+      return { name: entry.name, status: "fail", detail: `no frameworks.${framework} entry` };
+    }
+    ref = variant.ref;
+    library = variant.library;
+  }
+
   const host = (() => {
-    const m = /https?:\/\/([^/\s"']+)/.exec(entry.ref || "");
+    const m = /https?:\/\/([^/\s"']+)/.exec(ref || "");
     return m ? m[1] : null;
   })();
 
   if (host && KNOWN_BLOCKED[host]) {
     return { name: entry.name, status: "skip", detail: KNOWN_BLOCKED[host] };
   }
-  if (!/^npx\s/.test(entry.ref || "")) {
+  if (!/^npx\s/.test(ref || "")) {
     return {
       name: entry.name,
       status: "skip",
@@ -264,7 +383,7 @@ function smokeTest(entry) {
     };
   }
 
-  const parsed = parseRef(entry.ref);
+  const parsed = parseRef(ref);
   if (parsed.error) {
     // A malformed or off-allowlist ref is a real failure: either the data is
     // wrong, or something is trying to run a command this job will not run.
@@ -273,7 +392,7 @@ function smokeTest(entry) {
 
   const tmp = mkdtempSync(join(tmpdir(), `components-smoke-${entry.name}-`));
   try {
-    const app = setupProject(tmp);
+    const app = SETUP[parsed.setup](tmp);
     const before = listFiles(join(app, "src"));
 
     log(`  $ npx ${parsed.argv.join(" ")}`);
@@ -345,6 +464,11 @@ function main() {
   const data = JSON.parse(readFileSync(join(ROOT, "components.json"), "utf8"));
   const byName = new Map(data.showpiece.map((e) => [e.name, e]));
 
+  if (FRAMEWORK && !ONLY) {
+    console.error("--framework needs --only <name>: it tests one entry's frameworks.<name> variant, not a batch.");
+    process.exit(1);
+  }
+
   let wanted;
   let modeLabel;
   if (DIFF_BASE) {
@@ -380,17 +504,23 @@ function main() {
       console.error(`Update SAMPLE in scripts/smoke-test.mjs if the entry was renamed or removed.`);
       process.exit(1);
     }
+    if (FRAMEWORK && !e.frameworks?.[FRAMEWORK]) {
+      console.error(`Entry '${name}' has no frameworks.${FRAMEWORK} in components.json.`);
+      process.exit(1);
+    }
     entries.push(e);
   }
 
-  log(`Smoke-testing ${entries.length} ${modeLabel} entr${entries.length === 1 ? "y" : "ies"}`);
+  const modeSuffix = FRAMEWORK ? ` (${FRAMEWORK})` : "";
+  log(`Smoke-testing ${entries.length} ${modeLabel}${modeSuffix} entr${entries.length === 1 ? "y" : "ies"}`);
   log(`Mode: ${SOFT ? "soft (report only)" : "hard (blocks merge)"}`);
 
   const results = [];
   for (const e of entries) {
-    group(`${e.library}/${e.name}`);
-    const r = smokeTest(e);
-    results.push({ ...r, library: e.library });
+    const library = FRAMEWORK ? e.frameworks[FRAMEWORK].library : e.library;
+    group(`${library}/${e.name}`);
+    const r = smokeTest(e, FRAMEWORK);
+    results.push({ ...r, library });
     log(`  -> ${r.status.toUpperCase()}: ${r.detail}`);
   }
 
@@ -415,7 +545,7 @@ function main() {
   const skipped = results.filter((r) => r.status === "skip");
 
   let md = [
-    `# Registry smoke test (${modeLabel} entries)`,
+    `# Registry smoke test (${modeLabel} entries${FRAMEWORK ? ` - ${FRAMEWORK}` : ""})`,
     "",
     `${results.length - failed.length - skipped.length} passed, ${failed.length} failed, ${skipped.length} skipped.`,
     "",

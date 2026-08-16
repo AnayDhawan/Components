@@ -14,6 +14,17 @@ All notable changes to this project are documented here. Format based on
   adds or changes (`scripts/smoke-test.mjs --diff`), not just the fixed curated
   sample, and posts the combined results as a sticky PR comment instead of leaving
   them in the CI log only (#12).
+- Multi-framework pilot (#13): showpiece entries may now carry an optional
+  `frameworks` object for a non-React port of the same effect. One real entry,
+  `split-text` -> `frameworks.vue` -> Vue Bits' `SplitText`, verified end-to-end
+  (live `npx shadcn-vue@latest add`, real `vue-tsc -b && vite build`).
+  `validate.py` and `scripts/smoke-test.mjs --framework <name>` both understand
+  the new field; the weekly schedule run smoke-tests the pilot entry. Still a
+  React + Tailwind registry otherwise - see README "Framework variants".
+
+### Fixed
+- `reactbits`' `code_libraries[]` entry still said plain `MIT`; the per-entry
+  license fix below only touched the 9 showpiece entries, not this row.
 
 ## [1.1.1] - 2026-07-31
 

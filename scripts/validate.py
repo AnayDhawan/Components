@@ -72,6 +72,53 @@ def check_entries(entries, kind, errors):
             errors.append(f"{n}: license must be a string, got {type(lic).__name__}")
 
 
+def check_framework_variants(showpiece, known_libs, errors):
+    """Optional per-entry `frameworks` object: an alternate ref/library/license/deps
+    for a non-React port of the same effect (e.g. `frameworks.vue`).
+
+    A variant inherits name/aliases/effect from its parent entry - only the
+    fetch/license surface differs per framework, so it only needs the fields that
+    actually change: ref, library, license, and optionally deps.
+    """
+    required = ("ref", "library", "license")
+    for c in showpiece:
+        name = c.get("name")
+        frameworks = c.get("frameworks")
+        if frameworks is None:
+            continue
+        if not isinstance(frameworks, dict):
+            errors.append(f"{name}: frameworks must be an object, got {type(frameworks).__name__}")
+            continue
+
+        for fw, variant in frameworks.items():
+            label = f"{name}.frameworks.{fw}"
+            if not isinstance(variant, dict):
+                errors.append(f"{label}: must be an object, got {type(variant).__name__}")
+                continue
+
+            for key in required:
+                if not variant.get(key):
+                    errors.append(f"{label}: {key} missing")
+
+            deps = variant.get("deps")
+            if deps is not None and not isinstance(deps, list):
+                errors.append(
+                    f"{label}: deps must be a list, got {type(deps).__name__} ({deps!r} - wrap it in [])"
+                )
+
+            lic = variant.get("license")
+            if isinstance(lic, str) and lic.strip().lower() in LICENSE_PLACEHOLDERS:
+                errors.append(f"{label}: license is a placeholder ({lic!r}), not a real license")
+            elif lic is not None and not isinstance(lic, str):
+                errors.append(f"{label}: license must be a string, got {type(lic).__name__}")
+
+            lib = variant.get("library")
+            if lib and lib not in known_libs:
+                errors.append(
+                    f"{label}: library '{lib}' is not in code_libraries[] ({', '.join(sorted(known_libs))})"
+                )
+
+
 def check_alias_collisions(showpiece, errors):
     """No alias may point at two different showpieces.
 
@@ -121,6 +168,7 @@ def validate(data):
     check_entries(showpiece, "showpiece", errors)
     check_entries(fb, "fallback", errors)
     check_alias_collisions(showpiece, errors)
+    check_framework_variants(showpiece, known_libs, errors)
 
     # Showpieces are live-fetched, so their library must be a real registry we
     # document. Fallbacks intentionally point at shadcn/tremor, which are not
