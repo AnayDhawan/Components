@@ -164,7 +164,7 @@ The agent auto-discovers it from the `description` in `SKILL.md`. It needs **net
 | [Aceternity UI](https://ui.aceternity.com) | Free for personal + commercial ([licence](https://ui.aceternity.com/licence)) | Attribution not required; verify the licence page before relaunch |
 | [Magic UI](https://magicui.design) | MIT | |
 | [Cult UI](https://www.cult-ui.com) | MIT | |
-| [ReactBits](https://www.reactbits.dev) | MIT | shadcn registry: `reactbits.dev/r/<Name>-TS-TW` |
+| [ReactBits](https://www.reactbits.dev) | MIT + Commons Clause (no reselling/redistributing the components themselves) | shadcn registry: `reactbits.dev/r/<Name>-TS-TW` |
 | [21st.dev](https://21st.dev) | Per-component - **verify each** | Community registry; registry endpoint needs an account/API key - curated entries use open mirrors or page-fetch |
 | [shadcn/ui](https://ui.shadcn.com) | MIT | Plain fallbacks |
 | [Tremor](https://tremor.so) | Apache-2.0 | Dashboards / charts |
