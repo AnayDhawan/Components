@@ -20,16 +20,34 @@ npx components-skill@latest add --agent all      # every supported agent
 npx components-skill@latest add --agent cursor   # just Cursor
 npx components-skill@latest add --global         # ~/.claude/skills/components
 npx components-skill@latest update               # refresh, keeping your edits
+npx components-skill@latest search "laptop opening"   # find a showpiece before installing
 ```
 
 ### Options
 
 | Flag | Meaning |
 |------|---------|
-| `--agent <name>` | `claude` \| `codex` \| `cursor` \| `gemini` \| `all`. Default `claude`. Comma-separated lists work too. |
+| `--agent <name>` | `claude` \| `codex` \| `cursor` \| `gemini` \| `all`. Default `claude`. Comma-separated lists work too. `add`/`update` only. |
 | `--global` | Install into your user config dir instead of the current project. Not supported for Cursor, which has no documented user-level rules directory. |
 | `--force` | On `update`, overwrite files you have edited locally. |
+| `--library <name>` | On `search`, restrict results to one source library (`aceternity`, `magicui`, `cult-ui`, `reactbits`, `21st.dev`, `shadcn`, `tremor`). |
 | `-v`, `--version` | Print the version. |
+
+## `search`: find a showpiece before you install
+
+The registry has 39 showpieces plus 12 plain fallbacks; `search` looks up name, alias, effect, and library entirely offline, against the same `components.json` `add` bundles:
+
+```
+$ npx components-skill@latest search marquee
+  marquee            [showpiece/magicui]  infinite scrolling row/grid of logos or cards
+      aliases: logo wall, infinite scroll row, testimonial carousel
+
+$ npx components-skill@latest search card --library cult-ui
+  texture-card       [showpiece/cult-ui]  layered texture/border card with tactile depth
+      aliases: tactile card, textured gradient card, layered border card
+```
+
+Every query term must match (name, alias, effect, or library); exits `1` with no results.
 
 ### Where things land
 
