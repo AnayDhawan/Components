@@ -42,6 +42,6 @@
     "url": "https://github.com/AnayDhawan/Components/issues"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   }
 }
