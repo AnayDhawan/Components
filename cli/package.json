@@ -14,9 +14,9 @@
   ],
   "scripts": {
     "build": "bash ../scripts/build-agent-dirs.sh dist",
-    "test": "node --test \"test/**/*.test.js\"",
+    "test": "node --test",
     "prepack": "npm run build",
-    "prepublishOnly": "node scripts/check-version-sync.js && npm run build && node --test \"test/**/*.test.js\""
+    "prepublishOnly": "node scripts/check-version-sync.js && npm run build && node --test"
   },
   "keywords": [
     "claude-code",
