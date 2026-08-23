@@ -60,6 +60,20 @@ header**. Two documented consumers:
   npx shadcn@latest add @21st/kokonutd/matrix-text
   ```
 
+**The `registry_alt` field.** An entry whose `ref` points at a mirror instead of
+its `library`'s own registry (as these three do) records that fact in an optional
+`registry_alt` string on the entry, e.g.:
+
+```jsonc
+"registry_alt": "author's own open registry; 21st.dev page: https://21st.dev/@kokonutd/components/matrix-text"
+```
+
+It's free text, not a structured object: a short reason the `ref` isn't the
+library's usual registry, plus the equivalent page URL on that library's site
+(useful for verifying the component or its license against the original
+listing). `library` still names the library the component conceptually belongs
+to for matching/licensing purposes even when `ref` fetches from elsewhere.
+
 **When to prefer it, and when not to.** Default to the fallbacks. The API-key path
 requires the user to hold an account, export a secret, and pre-register a namespace
 in their project, which breaks the cold-start property every other entry in this

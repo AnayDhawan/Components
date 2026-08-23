@@ -27,7 +27,8 @@ No component source code lives here. The repo stores pointers, and the real code
   "library": "aceternity",            // must exist in code_libraries[]
   "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/<name>.json\"",  // the live-fetch command - REQUIRED, full registry URL (not namespaced shorthand, see #14)
   "license": "MIT",                   // upstream license - REQUIRED
-  "deps": ["motion"]                  // peer deps to install (framer-motion, cobe, ...)
+  "deps": ["motion"],                 // peer deps to install (framer-motion, cobe, ...)
+  "registry_alt": "..."               // optional - see registry_alt below
 }
 ```
 
@@ -44,6 +45,7 @@ No component source code lives here. The repo stores pointers, and the real code
 - **Galleries are not sources.** Dribbble / godly.website / Awwwards go in `galleries_visual_ref_only[]` - visual reference only, never `ref`.
 - **Adaptation is mandatory** at use time (brand tokens + `prefers-reduced-motion`); see `references/adaptation.md`.
 - Keep scope React + Tailwind. Other stacks need a separate discussion (open an issue).
+- **`registry_alt` is optional, free-text.** Use it when `ref` deliberately points somewhere other than the entry's own `library` registry - e.g. an author's own open mirror used in place of an auth-gated one - to record why, plus a page URL for the library it's mirroring. See the 21st.dev / KokonutUI entries and `references/live-fetch.md` § 21st.dev for the worked example.
 
 Plain (non-flashy) components go in `fallback_basic.components[]` with just `name`, `aliases`, `ref`, `library`, `license`.
 

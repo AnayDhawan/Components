@@ -8,7 +8,7 @@
 
 - [ ] New showpiece entry (`showpiece[]`)
 - [ ] New plain entry (`fallback_basic.components[]`)
-- [ ] Update an existing entry (`ref` / `aliases` / `deps` / `license` / `gotchas`)
+- [ ] Update an existing entry (`ref` / `aliases` / `deps` / `license` / `gotchas` / `registry_alt`)
 - [ ] Fix a dead or wrong `ref`
 - [ ] New or updated source library (`code_libraries[]`)
 - [ ] Docs / `references/`
