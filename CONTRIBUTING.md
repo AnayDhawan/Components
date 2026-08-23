@@ -9,7 +9,7 @@ By participating you agree to the [Code of Conduct](./CODE_OF_CONDUCT.md).
 - **`SKILL.md`** - what the agent actually reads: the decision flow and the rules it follows when matching a request to a component.
 - **`components.json`** - the registry of pointers. Every entry names a component and how to fetch it live; this is what almost every PR touches.
 - **`references/`** - the shared rules that apply to every fetched component: `live-fetch.md` (how to fetch, plus known upstream issues), `adaptation.md` (brand tokens, dark mode, responsive, reduced motion), `dependencies.md`, `handoff.md`.
-- **`scripts/`** - maintenance tooling. `validate.py` checks `components.json` and is what CI runs; `health-check.py` pings every ref and library site on a schedule.
+- **`scripts/`** - maintenance tooling. `validate.py` checks `components.json` and is what CI runs; `health-check.py` pings every ref and library site on a schedule; both load the registry via the shared `_registry.py`.
 - **`.github/`** - issue and PR templates plus the workflows that run the scripts above.
 
 No component source code lives here. The repo stores pointers, and the real code is fetched from upstream at build time.

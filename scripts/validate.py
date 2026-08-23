@@ -10,11 +10,9 @@ printed, not just the first, so one run tells you everything to fix.
 """
 
 import json
-import os
 import sys
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-COMPONENTS_JSON = os.path.join(ROOT, "components.json")
+from _registry import COMPONENTS_JSON, load
 
 # CONTRIBUTING.md requires the same fields of both arrays. effect is showpiece-only:
 # it's the live-fetch match surface's descriptive half, and fallback_basic entries
@@ -186,8 +184,7 @@ def validate(data):
 
 def main():
     try:
-        with open(COMPONENTS_JSON, encoding="utf-8") as f:
-            data = json.load(f)
+        data = load()
     except FileNotFoundError:
         print(f"components.json not found at {COMPONENTS_JSON}")
         return 1

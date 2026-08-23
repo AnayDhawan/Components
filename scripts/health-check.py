@@ -11,7 +11,6 @@ Exit code is 0 unless the check itself could not run. A dead upstream registry
 is data, not a script failure, which is what makes this safe to schedule.
 """
 
-import json
 import os
 import re
 import sys
@@ -21,10 +20,11 @@ import urllib.parse
 import urllib.request
 from collections import Counter
 
+from _registry import ROOT, load
+
 TIMEOUT = 25
 DELAY = 0.4  # be a polite guest on other people's registries
 UA = "components-skill-health-check/1.1.1 (+https://github.com/AnayDhawan/Components)"
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Upstream breakage that is already diagnosed and written up in
 # references/live-fetch.md § Known registry issues. These still get probed and
@@ -85,8 +85,7 @@ def probe(url):
 
 
 def main():
-    with open(os.path.join(ROOT, "components.json"), encoding="utf-8") as f:
-        data = json.load(f)
+    data = load()
 
     targets = []
     for entry in data.get("showpiece", []):
