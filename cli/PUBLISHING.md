@@ -16,7 +16,7 @@ npm publish --access public
 
 `npm publish` triggers `prepublishOnly`, which will abort the publish if anything is off:
 
-1. **`scripts/check-version-sync.js`** - fails if `cli/package.json`'s `version` disagrees with `components.json`'s `meta.version`. The package embeds a snapshot of the registry, so a version claiming to be 1.2.0 while shipping 1.1.1 data is a lie nobody can spot from outside.
+1. **`scripts/check-version-sync.js`** - fails if `cli/package.json`, `gallery/package.json`, or the README status badge disagree with `components.json`'s `meta.version`. The package embeds a snapshot of the registry, so a version claiming to be 1.2.0 while shipping 1.1.1 data is a lie nobody can spot from outside.
 2. **`npm run build`** - regenerates `dist/` from `scripts/build-agent-dirs.sh`, so the published bundles always match the current `SKILL.md` / `components.json` / `references/`.
 3. **The test suite** - `add` writes the expected files, `update` refuses to clobber locally-edited ones.
 
@@ -25,7 +25,7 @@ npm publish --access public
 ## Release checklist
 
 1. Land the change and update `components.json`'s `meta.version`.
-2. Set `cli/package.json`'s `version` to match.
+2. Set `cli/package.json`'s and `gallery/package.json`'s `version` to match, and update the README status badge.
 3. Update the root `CHANGELOG.md`.
 4. `cd cli && npm pack --dry-run` - confirm the file list and size look sane (~25 kB, ~36 files).
 5. `npm publish --access public`.
