@@ -47,62 +47,464 @@
   ],
 
   "showpiece": [
-    { "name": "macbook-scroll",        "aliases": ["laptop opening", "macbook open on scroll", "laptop screen lift", "device scroll reveal"], "effect": "MacBook lid opens + screen content scales as you scroll", "library": "aceternity", "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/macbook-scroll.json\"", "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)", "deps": ["motion"] },
-    { "name": "3d-card",               "aliases": ["3d tilt card", "card perspective hover", "tilt on hover"], "effect": "card tilts in 3D toward cursor with layered depth", "library": "aceternity", "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/3d-card.json\"", "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)", "deps": ["motion"] },
-    { "name": "spotlight",             "aliases": ["cursor spotlight", "hero spotlight", "radial light follow"], "effect": "radial spotlight glow on hero / following cursor", "library": "aceternity", "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/spotlight.json\"", "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)", "deps": ["motion"] },
-    { "name": "background-beams",      "aliases": ["animated beams background", "svg beams", "collision beams"], "effect": "animated SVG light beams as section background", "library": "aceternity", "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/background-beams.json\"", "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)", "deps": ["motion"] },
-    { "name": "lamp",                  "aliases": ["lamp glow heading", "spotlight heading reveal"], "effect": "conic lamp glow that reveals a heading", "library": "aceternity", "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/lamp.json\"", "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)", "deps": ["motion"] },
-    { "name": "wavy-background",       "aliases": ["animated waves", "fluid wave background"], "effect": "animated flowing wave background", "library": "aceternity", "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/wavy-background.json\"", "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)", "deps": ["motion", "simplex-noise"] },
-    { "name": "infinite-moving-cards", "aliases": ["marquee testimonials", "looping card row", "auto-scroll cards"], "effect": "infinite horizontal looping cards (testimonials/logos)", "library": "aceternity", "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/infinite-moving-cards.json\"", "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)", "deps": ["motion"] },
-    { "name": "text-generate-effect",  "aliases": ["text reveal", "staggered word fade-in", "ai typing text"], "effect": "words fade/blur in sequentially", "library": "aceternity", "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/text-generate-effect.json\"", "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)", "deps": ["motion"] },
-    { "name": "card-hover-effect",     "aliases": ["grid hover glow", "feature card hover spotlight"], "effect": "grid cards with moving hover highlight", "library": "aceternity", "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/card-hover-effect.json\"", "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)", "deps": ["motion"] },
-    { "name": "animated-beam",         "aliases": ["beam between nodes", "connection beam", "integration diagram beam"], "effect": "animated beam connecting two nodes (integration diagrams)", "library": "magicui", "ref": "npx shadcn@latest add \"https://magicui.design/r/animated-beam.json\"", "license": "MIT", "deps": ["motion"] },
-    { "name": "marquee",               "aliases": ["logo marquee", "infinite scroll strip", "ticker"], "effect": "infinite scrolling row of logos/cards", "library": "magicui", "ref": "npx shadcn@latest add \"https://magicui.design/r/marquee.json\"", "license": "MIT", "deps": ["motion"] },
-    { "name": "bento-grid",            "aliases": ["bento", "feature bento", "asymmetric grid"], "effect": "animated asymmetric bento feature grid", "library": "magicui", "ref": "npx shadcn@latest add \"https://magicui.design/r/bento-grid.json\"", "license": "MIT", "deps": ["motion"] },
-    { "name": "globe",                 "aliases": ["interactive globe", "3d earth", "spinning globe"], "effect": "interactive WebGL globe", "library": "magicui", "ref": "npx shadcn@latest add \"https://magicui.design/r/globe.json\"", "license": "MIT", "deps": ["cobe", "motion"] },
-    { "name": "meteors",               "aliases": ["meteor shower", "shooting stars bg"], "effect": "meteor-shower background effect", "library": "magicui", "ref": "npx shadcn@latest add \"https://magicui.design/r/meteors.json\"", "license": "MIT", "deps": ["motion"] },
-    { "name": "shimmer-button",        "aliases": ["shiny button", "shimmer cta", "animated gradient button"], "effect": "button with traveling shimmer/border light", "library": "magicui", "ref": "npx shadcn@latest add \"https://magicui.design/r/shimmer-button.json\"", "license": "MIT", "deps": [] },
-    { "name": "dock",                  "aliases": ["macos dock", "magnify dock", "icon dock"], "effect": "macOS-style magnifying icon dock", "library": "magicui", "ref": "npx shadcn@latest add \"https://magicui.design/r/dock.json\"", "license": "MIT", "deps": ["motion"] },
-    { "name": "animated-shiny-text",   "aliases": ["shiny text", "shimmer text", "announcement pill text"], "effect": "subtle shine sweeping across text", "library": "magicui", "ref": "npx shadcn@latest add \"https://magicui.design/r/animated-shiny-text.json\"", "license": "MIT", "deps": [] },
-    { "name": "particles",             "aliases": ["particle background", "interactive dots bg", "sparkles"], "effect": "interactive particle field background", "library": "magicui", "ref": "npx shadcn@latest add \"https://magicui.design/r/particles.json\"", "license": "MIT", "deps": [] },
-    { "name": "split-text",            "aliases": ["staggered text entrance", "per-letter animation", "gsap text intro"], "effect": "text splits into chars/words animating in with stagger", "library": "reactbits", "ref": "npx shadcn@latest add \"https://reactbits.dev/r/SplitText-TS-TW\"", "license": "MIT + Commons Clause", "deps": ["gsap", "@gsap/react"], "frameworks": { "vue": { "library": "vue-bits", "ref": "npx shadcn-vue@latest add \"https://vue-bits.dev/r/SplitText.json\"", "license": "MIT + Commons Clause", "deps": ["gsap"] } } },
-    { "name": "blur-text",             "aliases": ["blur fade-in text", "text unblur reveal"], "effect": "words blur-fade into focus sequentially", "library": "reactbits", "ref": "npx shadcn@latest add \"https://reactbits.dev/r/BlurText-TS-TW\"", "license": "MIT + Commons Clause", "deps": ["motion"] },
-    { "name": "decrypted-text",        "aliases": ["scramble text", "hacker text decode", "matrix decode text"], "effect": "characters scramble then settle into the real text", "library": "reactbits", "ref": "npx shadcn@latest add \"https://reactbits.dev/r/DecryptedText-TS-TW\"", "license": "MIT + Commons Clause", "deps": ["motion"] },
-    { "name": "count-up",              "aliases": ["animated number counter", "stat count animation"], "effect": "number animates from 0 to target when scrolled into view", "library": "reactbits", "ref": "npx shadcn@latest add \"https://reactbits.dev/r/CountUp-TS-TW\"", "license": "MIT + Commons Clause", "deps": ["motion"] },
-    { "name": "aurora",                "aliases": ["aurora background", "northern lights bg", "flowing gradient waves"], "effect": "WebGL aurora ribbon background", "library": "reactbits", "ref": "npx shadcn@latest add \"https://reactbits.dev/r/Aurora-TS-TW\"", "license": "MIT + Commons Clause", "deps": ["ogl"] },
-    { "name": "particles-webgl",       "aliases": ["webgl particles", "3d particle field", "gpu particles"], "effect": "GPU particle field background (heavier, richer than magicui particles)", "library": "reactbits", "ref": "npx shadcn@latest add \"https://reactbits.dev/r/Particles-TS-TW\"", "license": "MIT + Commons Clause", "deps": ["ogl"] },
-    { "name": "hyperspeed",            "aliases": ["warp speed background", "highway light tunnel", "hyperspace bg"], "effect": "3D hyperspeed highway/light-tunnel background", "library": "reactbits", "ref": "npx shadcn@latest add \"https://reactbits.dev/r/Hyperspeed-TS-TW\"", "license": "MIT + Commons Clause", "deps": ["three", "postprocessing"] },
-    { "name": "letter-glitch",         "aliases": ["glitch letters bg", "terminal glitch wall", "matrix wall"], "effect": "canvas wall of randomly glitching letters", "library": "reactbits", "ref": "npx shadcn@latest add \"https://reactbits.dev/r/LetterGlitch-TS-TW\"", "license": "MIT + Commons Clause", "deps": [] },
-    { "name": "splash-cursor",         "aliases": ["fluid cursor", "fluid simulation", "fluid motion", "liquid cursor", "navier-stokes fluid", "splash cursor", "ink fluid trail"], "effect": "interactive WebGL fluid-simulation that splashes flowing color trails following the cursor", "library": "reactbits", "ref": "npx shadcn@latest add \"https://reactbits.dev/r/SplashCursor-TS-TW\"", "license": "MIT + Commons Clause", "deps": [] },
-    { "name": "dynamic-island",        "aliases": ["ios dynamic island", "expanding pill notification", "morphing status pill"], "effect": "iOS-style dynamic island that morphs between compact/expanded states", "library": "cult-ui", "ref": "npx shadcn@latest add \"https://www.cult-ui.com/r/dynamic-island.json\"", "license": "MIT", "deps": ["motion"] },
-    { "name": "shader-lens-blur",      "aliases": ["shader blur hero", "lens blur shader", "liquid blur surface"], "effect": "interactive WebGL lens-blur shader surface", "library": "cult-ui", "ref": "npx shadcn@latest add \"https://www.cult-ui.com/r/shader-lens-blur.json\"", "license": "MIT", "deps": ["motion", "three", "jotai"] },
-    { "name": "canvas-fractal-grid",   "aliases": ["fractal grid background", "animated canvas grid"], "effect": "animated fractal grid canvas background", "library": "cult-ui", "ref": "npx shadcn@latest add \"https://www.cult-ui.com/r/canvas-fractal-grid.json\"", "license": "MIT", "deps": ["motion"] },
-    { "name": "texture-card",          "aliases": ["tactile card", "textured gradient card", "layered border card"], "effect": "layered texture/border card with tactile depth", "library": "cult-ui", "ref": "npx shadcn@latest add \"https://www.cult-ui.com/r/texture-card.json\"", "license": "MIT", "deps": [] },
-    { "name": "typewriter",            "aliases": ["typing text", "terminal typing effect", "type and delete loop"], "effect": "typewriter typing/deleting text loop", "library": "cult-ui", "ref": "npx shadcn@latest add \"https://www.cult-ui.com/r/typewriter.json\"", "license": "MIT", "deps": ["motion"] },
-    { "name": "animated-number",       "aliases": ["number ticker", "smooth number transition", "springy counter"], "effect": "number springs smoothly between values on change", "library": "cult-ui", "ref": "npx shadcn@latest add \"https://www.cult-ui.com/r/animated-number.json\"", "license": "MIT", "deps": ["motion"] },
-    { "name": "shape-landing-hero",    "aliases": ["geometric hero", "floating shapes hero", "modern gradient hero"], "effect": "hero section with floating animated geometric shapes", "library": "21st.dev", "ref": "fetch page https://21st.dev/@kokonutd/components/shape-landing-hero via webfetch/playwright (registry needs 21st.dev auth)", "license": "MIT (KokonutUI, github.com/kokonut-labs/kokonutui)", "deps": ["motion"] },
-    { "name": "matrix-text",           "aliases": ["matrix text reveal", "raining code text"], "effect": "matrix-style character rain resolving into text", "library": "21st.dev", "ref": "npx shadcn@latest add \"https://kokonutui.com/r/matrix-text.json\"", "registry_alt": "author's own open registry; 21st.dev page: https://21st.dev/@kokonutd/components/matrix-text", "license": "MIT (KokonutUI)", "deps": ["motion"] },
-    { "name": "beams-background",      "aliases": ["light beams background", "diagonal beam rays bg"], "effect": "animated diagonal light beams background", "library": "21st.dev", "ref": "npx shadcn@latest add \"https://kokonutui.com/r/beams-background.json\"", "registry_alt": "author's own open registry; 21st.dev page: https://21st.dev/@kokonutd/components/beams-background", "license": "MIT (KokonutUI)", "deps": ["motion"] },
-    { "name": "background-paths",      "aliases": ["flowing path lines bg", "animated svg paths hero"], "effect": "hero background of flowing animated SVG paths", "library": "21st.dev", "ref": "npx shadcn@latest add \"https://kokonutui.com/r/background-paths.json\"", "registry_alt": "author's own open registry; 21st.dev page: https://21st.dev/@kokonutd/components/background-paths", "license": "MIT (KokonutUI)", "deps": ["motion"] },
-    { "name": "v0-ai-chat",            "aliases": ["ai chat input", "v0 style prompt box", "llm input"], "effect": "v0-style AI chat input with attachments + actions", "library": "21st.dev", "ref": "fetch page https://21st.dev/@kokonutd/components/v0-ai-chat via webfetch/playwright (registry needs 21st.dev auth)", "license": "MIT (KokonutUI)", "deps": [] },
-    { "name": "cobe-globe-interactive","aliases": ["draggable globe", "cobe globe", "interactive 3d earth"], "effect": "interactive draggable cobe globe (by cobe's author)", "library": "21st.dev", "ref": "fetch page https://21st.dev/@shuding/components/cobe-globe-interactive via webfetch/playwright (registry needs 21st.dev auth)", "license": "MIT (cobe, github.com/shuding/cobe)", "deps": ["cobe"] }
+    {
+      "name": "macbook-scroll",
+      "aliases": ["laptop opening", "macbook open on scroll", "laptop screen lift", "device scroll reveal"],
+      "effect": "MacBook lid opens + screen content scales as you scroll",
+      "library": "aceternity",
+      "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/macbook-scroll.json\"",
+      "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)",
+      "deps": ["motion"]
+    },
+    {
+      "name": "3d-card",
+      "aliases": ["3d tilt card", "card perspective hover", "tilt on hover"],
+      "effect": "card tilts in 3D toward cursor with layered depth",
+      "library": "aceternity",
+      "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/3d-card.json\"",
+      "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)",
+      "deps": ["motion"]
+    },
+    {
+      "name": "spotlight",
+      "aliases": ["cursor spotlight", "hero spotlight", "radial light follow"],
+      "effect": "radial spotlight glow on hero / following cursor",
+      "library": "aceternity",
+      "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/spotlight.json\"",
+      "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)",
+      "deps": ["motion"]
+    },
+    {
+      "name": "background-beams",
+      "aliases": ["animated beams background", "svg beams", "collision beams"],
+      "effect": "animated SVG light beams as section background",
+      "library": "aceternity",
+      "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/background-beams.json\"",
+      "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)",
+      "deps": ["motion"]
+    },
+    {
+      "name": "lamp",
+      "aliases": ["lamp glow heading", "spotlight heading reveal"],
+      "effect": "conic lamp glow that reveals a heading",
+      "library": "aceternity",
+      "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/lamp.json\"",
+      "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)",
+      "deps": ["motion"]
+    },
+    {
+      "name": "wavy-background",
+      "aliases": ["animated waves", "fluid wave background"],
+      "effect": "animated flowing wave background",
+      "library": "aceternity",
+      "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/wavy-background.json\"",
+      "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)",
+      "deps": ["motion", "simplex-noise"]
+    },
+    {
+      "name": "infinite-moving-cards",
+      "aliases": ["marquee testimonials", "looping card row", "auto-scroll cards"],
+      "effect": "infinite horizontal looping cards (testimonials/logos)",
+      "library": "aceternity",
+      "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/infinite-moving-cards.json\"",
+      "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)",
+      "deps": ["motion"]
+    },
+    {
+      "name": "text-generate-effect",
+      "aliases": ["text reveal", "staggered word fade-in", "ai typing text"],
+      "effect": "words fade/blur in sequentially",
+      "library": "aceternity",
+      "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/text-generate-effect.json\"",
+      "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)",
+      "deps": ["motion"]
+    },
+    {
+      "name": "card-hover-effect",
+      "aliases": ["grid hover glow", "feature card hover spotlight"],
+      "effect": "grid cards with moving hover highlight",
+      "library": "aceternity",
+      "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/card-hover-effect.json\"",
+      "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)",
+      "deps": ["motion"]
+    },
+    {
+      "name": "animated-beam",
+      "aliases": ["beam between nodes", "connection beam", "integration diagram beam"],
+      "effect": "animated beam connecting two nodes (integration diagrams)",
+      "library": "magicui",
+      "ref": "npx shadcn@latest add \"https://magicui.design/r/animated-beam.json\"",
+      "license": "MIT",
+      "deps": ["motion"]
+    },
+    {
+      "name": "marquee",
+      "aliases": ["logo marquee", "infinite scroll strip", "ticker"],
+      "effect": "infinite scrolling row of logos/cards",
+      "library": "magicui",
+      "ref": "npx shadcn@latest add \"https://magicui.design/r/marquee.json\"",
+      "license": "MIT",
+      "deps": ["motion"]
+    },
+    {
+      "name": "bento-grid",
+      "aliases": ["bento", "feature bento", "asymmetric grid"],
+      "effect": "animated asymmetric bento feature grid",
+      "library": "magicui",
+      "ref": "npx shadcn@latest add \"https://magicui.design/r/bento-grid.json\"",
+      "license": "MIT",
+      "deps": ["motion"]
+    },
+    {
+      "name": "globe",
+      "aliases": ["interactive globe", "3d earth", "spinning globe"],
+      "effect": "interactive WebGL globe",
+      "library": "magicui",
+      "ref": "npx shadcn@latest add \"https://magicui.design/r/globe.json\"",
+      "license": "MIT",
+      "deps": ["cobe", "motion"]
+    },
+    {
+      "name": "meteors",
+      "aliases": ["meteor shower", "shooting stars bg"],
+      "effect": "meteor-shower background effect",
+      "library": "magicui",
+      "ref": "npx shadcn@latest add \"https://magicui.design/r/meteors.json\"",
+      "license": "MIT",
+      "deps": ["motion"]
+    },
+    {
+      "name": "shimmer-button",
+      "aliases": ["shiny button", "shimmer cta", "animated gradient button"],
+      "effect": "button with traveling shimmer/border light",
+      "library": "magicui",
+      "ref": "npx shadcn@latest add \"https://magicui.design/r/shimmer-button.json\"",
+      "license": "MIT",
+      "deps": []
+    },
+    {
+      "name": "dock",
+      "aliases": ["macos dock", "magnify dock", "icon dock"],
+      "effect": "macOS-style magnifying icon dock",
+      "library": "magicui",
+      "ref": "npx shadcn@latest add \"https://magicui.design/r/dock.json\"",
+      "license": "MIT",
+      "deps": ["motion"]
+    },
+    {
+      "name": "animated-shiny-text",
+      "aliases": ["shiny text", "shimmer text", "announcement pill text"],
+      "effect": "subtle shine sweeping across text",
+      "library": "magicui",
+      "ref": "npx shadcn@latest add \"https://magicui.design/r/animated-shiny-text.json\"",
+      "license": "MIT",
+      "deps": []
+    },
+    {
+      "name": "particles",
+      "aliases": ["particle background", "interactive dots bg", "sparkles"],
+      "effect": "interactive particle field background",
+      "library": "magicui",
+      "ref": "npx shadcn@latest add \"https://magicui.design/r/particles.json\"",
+      "license": "MIT",
+      "deps": []
+    },
+    {
+      "name": "split-text",
+      "aliases": ["staggered text entrance", "per-letter animation", "gsap text intro"],
+      "effect": "text splits into chars/words animating in with stagger",
+      "library": "reactbits",
+      "ref": "npx shadcn@latest add \"https://reactbits.dev/r/SplitText-TS-TW\"",
+      "license": "MIT + Commons Clause",
+      "deps": ["gsap", "@gsap/react"],
+      "frameworks": {
+        "vue": {
+          "library": "vue-bits",
+          "ref": "npx shadcn-vue@latest add \"https://vue-bits.dev/r/SplitText.json\"",
+          "license": "MIT + Commons Clause",
+          "deps": ["gsap"]
+        }
+      }
+    },
+    {
+      "name": "blur-text",
+      "aliases": ["blur fade-in text", "text unblur reveal"],
+      "effect": "words blur-fade into focus sequentially",
+      "library": "reactbits",
+      "ref": "npx shadcn@latest add \"https://reactbits.dev/r/BlurText-TS-TW\"",
+      "license": "MIT + Commons Clause",
+      "deps": ["motion"]
+    },
+    {
+      "name": "decrypted-text",
+      "aliases": ["scramble text", "hacker text decode", "matrix decode text"],
+      "effect": "characters scramble then settle into the real text",
+      "library": "reactbits",
+      "ref": "npx shadcn@latest add \"https://reactbits.dev/r/DecryptedText-TS-TW\"",
+      "license": "MIT + Commons Clause",
+      "deps": ["motion"]
+    },
+    {
+      "name": "count-up",
+      "aliases": ["animated number counter", "stat count animation"],
+      "effect": "number animates from 0 to target when scrolled into view",
+      "library": "reactbits",
+      "ref": "npx shadcn@latest add \"https://reactbits.dev/r/CountUp-TS-TW\"",
+      "license": "MIT + Commons Clause",
+      "deps": ["motion"]
+    },
+    {
+      "name": "aurora",
+      "aliases": ["aurora background", "northern lights bg", "flowing gradient waves"],
+      "effect": "WebGL aurora ribbon background",
+      "library": "reactbits",
+      "ref": "npx shadcn@latest add \"https://reactbits.dev/r/Aurora-TS-TW\"",
+      "license": "MIT + Commons Clause",
+      "deps": ["ogl"]
+    },
+    {
+      "name": "particles-webgl",
+      "aliases": ["webgl particles", "3d particle field", "gpu particles"],
+      "effect": "GPU particle field background (heavier, richer than magicui particles)",
+      "library": "reactbits",
+      "ref": "npx shadcn@latest add \"https://reactbits.dev/r/Particles-TS-TW\"",
+      "license": "MIT + Commons Clause",
+      "deps": ["ogl"]
+    },
+    {
+      "name": "hyperspeed",
+      "aliases": ["warp speed background", "highway light tunnel", "hyperspace bg"],
+      "effect": "3D hyperspeed highway/light-tunnel background",
+      "library": "reactbits",
+      "ref": "npx shadcn@latest add \"https://reactbits.dev/r/Hyperspeed-TS-TW\"",
+      "license": "MIT + Commons Clause",
+      "deps": ["three", "postprocessing"]
+    },
+    {
+      "name": "letter-glitch",
+      "aliases": ["glitch letters bg", "terminal glitch wall", "matrix wall"],
+      "effect": "canvas wall of randomly glitching letters",
+      "library": "reactbits",
+      "ref": "npx shadcn@latest add \"https://reactbits.dev/r/LetterGlitch-TS-TW\"",
+      "license": "MIT + Commons Clause",
+      "deps": []
+    },
+    {
+      "name": "splash-cursor",
+      "aliases": ["fluid cursor", "fluid simulation", "fluid motion", "liquid cursor", "navier-stokes fluid", "splash cursor", "ink fluid trail"],
+      "effect": "interactive WebGL fluid-simulation that splashes flowing color trails following the cursor",
+      "library": "reactbits",
+      "ref": "npx shadcn@latest add \"https://reactbits.dev/r/SplashCursor-TS-TW\"",
+      "license": "MIT + Commons Clause",
+      "deps": []
+    },
+    {
+      "name": "dynamic-island",
+      "aliases": ["ios dynamic island", "expanding pill notification", "morphing status pill"],
+      "effect": "iOS-style dynamic island that morphs between compact/expanded states",
+      "library": "cult-ui",
+      "ref": "npx shadcn@latest add \"https://www.cult-ui.com/r/dynamic-island.json\"",
+      "license": "MIT",
+      "deps": ["motion"]
+    },
+    {
+      "name": "shader-lens-blur",
+      "aliases": ["shader blur hero", "lens blur shader", "liquid blur surface"],
+      "effect": "interactive WebGL lens-blur shader surface",
+      "library": "cult-ui",
+      "ref": "npx shadcn@latest add \"https://www.cult-ui.com/r/shader-lens-blur.json\"",
+      "license": "MIT",
+      "deps": ["motion", "three", "jotai"]
+    },
+    {
+      "name": "canvas-fractal-grid",
+      "aliases": ["fractal grid background", "animated canvas grid"],
+      "effect": "animated fractal grid canvas background",
+      "library": "cult-ui",
+      "ref": "npx shadcn@latest add \"https://www.cult-ui.com/r/canvas-fractal-grid.json\"",
+      "license": "MIT",
+      "deps": ["motion"]
+    },
+    {
+      "name": "texture-card",
+      "aliases": ["tactile card", "textured gradient card", "layered border card"],
+      "effect": "layered texture/border card with tactile depth",
+      "library": "cult-ui",
+      "ref": "npx shadcn@latest add \"https://www.cult-ui.com/r/texture-card.json\"",
+      "license": "MIT",
+      "deps": []
+    },
+    {
+      "name": "typewriter",
+      "aliases": ["typing text", "terminal typing effect", "type and delete loop"],
+      "effect": "typewriter typing/deleting text loop",
+      "library": "cult-ui",
+      "ref": "npx shadcn@latest add \"https://www.cult-ui.com/r/typewriter.json\"",
+      "license": "MIT",
+      "deps": ["motion"]
+    },
+    {
+      "name": "animated-number",
+      "aliases": ["number ticker", "smooth number transition", "springy counter"],
+      "effect": "number springs smoothly between values on change",
+      "library": "cult-ui",
+      "ref": "npx shadcn@latest add \"https://www.cult-ui.com/r/animated-number.json\"",
+      "license": "MIT",
+      "deps": ["motion"]
+    },
+    {
+      "name": "shape-landing-hero",
+      "aliases": ["geometric hero", "floating shapes hero", "modern gradient hero"],
+      "effect": "hero section with floating animated geometric shapes",
+      "library": "21st.dev",
+      "ref": "fetch page https://21st.dev/@kokonutd/components/shape-landing-hero via webfetch/playwright (registry needs 21st.dev auth)",
+      "license": "MIT (KokonutUI, github.com/kokonut-labs/kokonutui)",
+      "deps": ["motion"]
+    },
+    {
+      "name": "matrix-text",
+      "aliases": ["matrix text reveal", "raining code text"],
+      "effect": "matrix-style character rain resolving into text",
+      "library": "21st.dev",
+      "ref": "npx shadcn@latest add \"https://kokonutui.com/r/matrix-text.json\"",
+      "registry_alt": "author's own open registry; 21st.dev page: https://21st.dev/@kokonutd/components/matrix-text",
+      "license": "MIT (KokonutUI)",
+      "deps": ["motion"]
+    },
+    {
+      "name": "beams-background",
+      "aliases": ["light beams background", "diagonal beam rays bg"],
+      "effect": "animated diagonal light beams background",
+      "library": "21st.dev",
+      "ref": "npx shadcn@latest add \"https://kokonutui.com/r/beams-background.json\"",
+      "registry_alt": "author's own open registry; 21st.dev page: https://21st.dev/@kokonutd/components/beams-background",
+      "license": "MIT (KokonutUI)",
+      "deps": ["motion"]
+    },
+    {
+      "name": "background-paths",
+      "aliases": ["flowing path lines bg", "animated svg paths hero"],
+      "effect": "hero background of flowing animated SVG paths",
+      "library": "21st.dev",
+      "ref": "npx shadcn@latest add \"https://kokonutui.com/r/background-paths.json\"",
+      "registry_alt": "author's own open registry; 21st.dev page: https://21st.dev/@kokonutd/components/background-paths",
+      "license": "MIT (KokonutUI)",
+      "deps": ["motion"]
+    },
+    {
+      "name": "v0-ai-chat",
+      "aliases": ["ai chat input", "v0 style prompt box", "llm input"],
+      "effect": "v0-style AI chat input with attachments + actions",
+      "library": "21st.dev",
+      "ref": "fetch page https://21st.dev/@kokonutd/components/v0-ai-chat via webfetch/playwright (registry needs 21st.dev auth)",
+      "license": "MIT (KokonutUI)",
+      "deps": []
+    },
+    {
+      "name": "cobe-globe-interactive",
+      "aliases": ["draggable globe", "cobe globe", "interactive 3d earth"],
+      "effect": "interactive draggable cobe globe (by cobe's author)",
+      "library": "21st.dev",
+      "ref": "fetch page https://21st.dev/@shuding/components/cobe-globe-interactive via webfetch/playwright (registry needs 21st.dev auth)",
+      "license": "MIT (cobe, github.com/shuding/cobe)",
+      "deps": ["cobe"]
+    }
   ],
 
   "fallback_basic": {
     "note": "Plain, non-flashy components. Use ONLY when the user wants a standard element (not a showpiece effect). shadcn primary, Tremor for data. Adapt to brand tokens (references/adaptation.md).",
     "components": [
-      { "name": "button",               "aliases": ["btn", "cta button"],                 "ref": "npx shadcn@latest add button",            "library": "shadcn", "license": "MIT" },
-      { "name": "navbar",                "aliases": ["nav", "header menu"],                 "ref": "npx shadcn@latest add navigation-menu sheet", "library": "shadcn", "license": "MIT", "gotchas": "compose into header; sheet for mobile" },
-      { "name": "hero",                  "aliases": ["hero section", "above the fold"],     "ref": "compose: heading + supporting copy + button (or use a showpiece bg)", "library": "shadcn", "license": "MIT" },
-      { "name": "pricing-table",         "aliases": ["pricing", "plans", "tiers"],          "ref": "compose: card + badge + button", "library": "shadcn", "license": "MIT", "gotchas": "equal-height feature lists via grid" },
-      { "name": "feature-grid",          "aliases": ["features", "feature cards"],          "ref": "npx shadcn@latest add card",  "library": "shadcn", "license": "MIT" },
-      { "name": "form",                  "aliases": ["contact form", "auth", "login"],      "ref": "npx shadcn@latest add form input label", "library": "shadcn", "license": "MIT", "gotchas": "react-hook-form + zod" },
-      { "name": "modal",                 "aliases": ["dialog", "popup"],                    "ref": "npx shadcn@latest add dialog", "library": "shadcn", "license": "MIT", "gotchas": "alert-dialog for destructive confirms" },
-      { "name": "tabs",                  "aliases": ["tab group", "segmented"],             "ref": "npx shadcn@latest add tabs",  "library": "shadcn", "license": "MIT" },
-      { "name": "data-table",            "aliases": ["table", "datagrid"],                  "ref": "npx shadcn@latest add table  (+ @tanstack/react-table)", "library": "shadcn", "license": "MIT", "gotchas": "sorting/filtering = TanStack" },
-      { "name": "dashboard-stat-cards",  "aliases": ["kpi cards", "metrics", "charts"],     "ref": "npm i @tremor/react  (Card + Metric + charts)", "library": "tremor", "license": "Apache-2.0", "gotchas": "needs Tremor tailwind preset/content paths" },
-      { "name": "toast",                 "aliases": ["notification", "snackbar", "sonner"], "ref": "npx shadcn@latest add sonner", "library": "shadcn", "license": "MIT", "gotchas": "single <Toaster/> at root" },
-      { "name": "empty-state",           "aliases": ["empty", "zero state", "no data"],     "ref": "compose: icon + heading + guidance + one primary action", "library": "shadcn", "license": "MIT" }
+      {
+        "name": "button",
+        "aliases": ["btn", "cta button"],
+        "ref": "npx shadcn@latest add button",
+        "library": "shadcn",
+        "license": "MIT"
+      },
+      {
+        "name": "navbar",
+        "aliases": ["nav", "header menu"],
+        "ref": "npx shadcn@latest add navigation-menu sheet",
+        "library": "shadcn",
+        "license": "MIT",
+        "gotchas": "compose into header; sheet for mobile"
+      },
+      {
+        "name": "hero",
+        "aliases": ["hero section", "above the fold"],
+        "ref": "compose: heading + supporting copy + button (or use a showpiece bg)",
+        "library": "shadcn",
+        "license": "MIT"
+      },
+      {
+        "name": "pricing-table",
+        "aliases": ["pricing", "plans", "tiers"],
+        "ref": "compose: card + badge + button",
+        "library": "shadcn",
+        "license": "MIT",
+        "gotchas": "equal-height feature lists via grid"
+      },
+      {
+        "name": "feature-grid",
+        "aliases": ["features", "feature cards"],
+        "ref": "npx shadcn@latest add card",
+        "library": "shadcn",
+        "license": "MIT"
+      },
+      {
+        "name": "form",
+        "aliases": ["contact form", "auth", "login"],
+        "ref": "npx shadcn@latest add form input label",
+        "library": "shadcn",
+        "license": "MIT",
+        "gotchas": "react-hook-form + zod"
+      },
+      {
+        "name": "modal",
+        "aliases": ["dialog", "popup"],
+        "ref": "npx shadcn@latest add dialog",
+        "library": "shadcn",
+        "license": "MIT",
+        "gotchas": "alert-dialog for destructive confirms"
+      },
+      {
+        "name": "tabs",
+        "aliases": ["tab group", "segmented"],
+        "ref": "npx shadcn@latest add tabs",
+        "library": "shadcn",
+        "license": "MIT"
+      },
+      {
+        "name": "data-table",
+        "aliases": ["table", "datagrid"],
+        "ref": "npx shadcn@latest add table  (+ @tanstack/react-table)",
+        "library": "shadcn",
+        "license": "MIT",
+        "gotchas": "sorting/filtering = TanStack"
+      },
+      {
+        "name": "dashboard-stat-cards",
+        "aliases": ["kpi cards", "metrics", "charts"],
+        "ref": "npm i @tremor/react  (Card + Metric + charts)",
+        "library": "tremor",
+        "license": "Apache-2.0",
+        "gotchas": "needs Tremor tailwind preset/content paths"
+      },
+      {
+        "name": "toast",
+        "aliases": ["notification", "snackbar", "sonner"],
+        "ref": "npx shadcn@latest add sonner",
+        "library": "shadcn",
+        "license": "MIT",
+        "gotchas": "single <Toaster/> at root"
+      },
+      {
+        "name": "empty-state",
+        "aliases": ["empty", "zero state", "no data"],
+        "ref": "compose: icon + heading + guidance + one primary action",
+        "library": "shadcn",
+        "license": "MIT"
+      }
     ]
   }
 }

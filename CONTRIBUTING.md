@@ -9,7 +9,7 @@ By participating you agree to the [Code of Conduct](./CODE_OF_CONDUCT.md).
 - **`SKILL.md`** - what the agent actually reads: the decision flow and the rules it follows when matching a request to a component.
 - **`components.json`** - the registry of pointers. Every entry names a component and how to fetch it live; this is what almost every PR touches.
 - **`references/`** - the shared rules that apply to every fetched component: `live-fetch.md` (how to fetch, plus known upstream issues), `adaptation.md` (brand tokens, dark mode, responsive, reduced motion), `dependencies.md`, `handoff.md`.
-- **`scripts/`** - maintenance tooling. `validate.py` checks `components.json` and is what CI runs; `health-check.py` pings every ref and library site on a schedule.
+- **`scripts/`** - maintenance tooling. `validate.py` checks `components.json` and is what CI runs; `health-check.py` pings every ref and library site on a schedule; both load the registry via the shared `_registry.py`.
 - **`.github/`** - issue and PR templates plus the workflows that run the scripts above.
 
 No component source code lives here. The repo stores pointers, and the real code is fetched from upstream at build time.
@@ -27,7 +27,8 @@ No component source code lives here. The repo stores pointers, and the real code
   "library": "aceternity",            // must exist in code_libraries[]
   "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/<name>.json\"",  // the live-fetch command - REQUIRED, full registry URL (not namespaced shorthand, see #14)
   "license": "MIT",                   // upstream license - REQUIRED
-  "deps": ["motion"]                  // peer deps to install (framer-motion, cobe, ...)
+  "deps": ["motion"],                 // peer deps to install (framer-motion, cobe, ...)
+  "registry_alt": "..."               // optional - see registry_alt below
 }
 ```
 
@@ -44,8 +45,9 @@ No component source code lives here. The repo stores pointers, and the real code
 - **Galleries are not sources.** Dribbble / godly.website / Awwwards go in `galleries_visual_ref_only[]` - visual reference only, never `ref`.
 - **Adaptation is mandatory** at use time (brand tokens + `prefers-reduced-motion`); see `references/adaptation.md`.
 - Keep scope React + Tailwind. Other stacks need a separate discussion (open an issue).
+- **`registry_alt` is optional, free-text.** Use it when `ref` deliberately points somewhere other than the entry's own `library` registry - e.g. an author's own open mirror used in place of an auth-gated one - to record why, plus a page URL for the library it's mirroring. See the 21st.dev / KokonutUI entries and `references/live-fetch.md` § 21st.dev for the worked example.
 
-Plain (non-flashy) components go in `fallback_basic.components[]` with just `name`, `aliases`, `ref`, `library`, `license`.
+Plain (non-flashy) components go in `fallback_basic.components[]` with `name`, `aliases`, `ref`, `library`, `license`, and an optional one-line `gotchas` string for a usage note worth surfacing at fetch time (composition advice, a required peer setup, which variant to prefer for a given case). About half of the current fallback entries carry one.
 
 ## Before you open a PR
 
