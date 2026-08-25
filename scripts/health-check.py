@@ -33,27 +33,22 @@ UA = "components-skill-health-check/1.1.1 (+https://github.com/AnayDhawan/Compon
 # Without this, a permanent upstream condition re-files an issue every Monday
 # forever and the signal stops meaning anything.
 #
-# Keyed by hostname -> (status we expect to see, why, tracking issue).
-# A host only gets excused for the exact status documented; anything else about
-# it is still a real, countable failure.
-KNOWN_ISSUES = {
-    "www.cult-ui.com": (
-        "rate-limited",
-        "Vercel Attack Challenge Mode returns HTTP 429 to every non-browser "
-        "client. The registry is healthy; a real browser fetches valid JSON. "
-        "Use the Playwright method. See references/live-fetch.md.",
-        31,
-    ),
-}
+# Sourced from components.json's own `known_issues[]` (host, status, why, issue)
+# instead of a hand-maintained copy here - scripts/smoke-test.mjs and
+# gallery/scripts/fetch-showpieces.mjs read the same array. A host only gets
+# excused for the exact status documented; anything else about it is still a
+# real, countable failure.
+def _known_issues_by_host(data):
+    return {rec["host"]: rec for rec in data.get("known_issues", [])}
 
 
-def known_issue(url, status):
-    """Return the KNOWN_ISSUES record if this exact failure is already documented."""
+def known_issue(known_issues, url, status):
+    """Return the known_issues record if this exact failure is already documented."""
     if not url:
         return None
     host = urllib.parse.urlparse(url).hostname
-    record = KNOWN_ISSUES.get(host)
-    if record and record[0] == status:
+    record = known_issues.get(host)
+    if record and record["status"] == status:
         return record
     return None
 
@@ -86,6 +81,7 @@ def probe(url):
 
 def main():
     data = load()
+    known_issues = _known_issues_by_host(data)
 
     targets = []
     for entry in data.get("showpiece", []):
@@ -111,14 +107,14 @@ def main():
             continue
         status, detail = probe(url)
         results.append((kind, name, url, status, detail))
-        flag = " (known issue)" if known_issue(url, status) else ""
+        flag = " (known issue)" if known_issue(known_issues, url, status) else ""
         print(f"{status:<13} {name:<40} {detail}{flag}", flush=True)
         time.sleep(DELAY)
 
     counts = Counter(r[3] for r in results)
     failing = [r for r in results if r[3] != "ok"]
-    known = [r for r in failing if known_issue(r[2], r[3])]
-    bad = [r for r in failing if not known_issue(r[2], r[3])]
+    known = [r for r in failing if known_issue(known_issues, r[2], r[3])]
+    bad = [r for r in failing if not known_issue(known_issues, r[2], r[3])]
 
     lines = [
         "# Registry health check",
@@ -160,7 +156,8 @@ def main():
         ]
         seen = set()
         for kind, name, url, status, detail in known:
-            _, why, issue = known_issue(url, status)
+            rec = known_issue(known_issues, url, status)
+            why, issue = rec["why"], rec["issue"]
             lines.append(f"| `{name}` | {status} | #{issue} | {why if issue not in seen else 'as above'} |")
             seen.add(issue)
         lines.append("")

@@ -13,6 +13,15 @@
     ]
   },
 
+  "known_issues": [
+    {
+      "host": "www.cult-ui.com",
+      "status": "rate-limited",
+      "why": "Vercel Attack Challenge Mode returns HTTP 429 to every non-browser client. The registry is healthy; a real browser fetches valid JSON. Use the Playwright method. See references/live-fetch.md.",
+      "issue": 31
+    }
+  ],
+
   "fetch_methods": {
     "registry_cli": {
       "how": "Run the shadcn registry command, e.g. `npx shadcn@latest add \"https://magicui.design/r/marquee.json\"`. Most reliable; resolves deps + files automatically.",

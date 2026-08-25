@@ -57,12 +57,17 @@ const SAMPLE = [
  * catch a contributor's broken ref, and failing their PR because a third party
  * turned on bot protection teaches everyone to ignore the job.
  *
- * Keep in sync with KNOWN_ISSUES in scripts/health-check.py.
+ * Sourced from components.json's own `known_issues[]`, the same array
+ * scripts/health-check.py and gallery/scripts/fetch-showpieces.mjs read - one
+ * place to update instead of three hand-maintained copies.
  */
-const KNOWN_BLOCKED = {
-  "www.cult-ui.com":
-    "Vercel Attack Challenge Mode returns HTTP 429 to every non-browser client (#31)",
-};
+function knownBlockedHosts(data) {
+  const out = {};
+  for (const rec of data.known_issues ?? []) {
+    out[rec.host] = `${rec.why} (#${rec.issue})`;
+  }
+  return out;
+}
 
 /**
  * Registry hosts this job is willing to execute a fetch against.
@@ -355,7 +360,7 @@ function checkReducedMotion(app, added) {
  * instead of the entry's top-level React ones. name/aliases/effect are always
  * the parent's - only the fetch/license surface differs per framework.
  */
-function smokeTest(entry, framework) {
+function smokeTest(entry, framework, knownBlocked) {
   let ref = entry.ref;
   let library = entry.library;
   if (framework) {
@@ -372,8 +377,8 @@ function smokeTest(entry, framework) {
     return m ? m[1] : null;
   })();
 
-  if (host && KNOWN_BLOCKED[host]) {
-    return { name: entry.name, status: "skip", detail: KNOWN_BLOCKED[host] };
+  if (host && knownBlocked[host]) {
+    return { name: entry.name, status: "skip", detail: knownBlocked[host] };
   }
   if (!/^npx\s/.test(ref || "")) {
     return {
@@ -463,6 +468,7 @@ function changedShowpieceNames(base, headData) {
 function main() {
   const data = JSON.parse(readFileSync(join(ROOT, "components.json"), "utf8"));
   const byName = new Map(data.showpiece.map((e) => [e.name, e]));
+  const knownBlocked = knownBlockedHosts(data);
 
   if (FRAMEWORK && !ONLY) {
     console.error("--framework needs --only <name>: it tests one entry's frameworks.<name> variant, not a batch.");
@@ -519,7 +525,7 @@ function main() {
   for (const e of entries) {
     const library = FRAMEWORK ? e.frameworks[FRAMEWORK].library : e.library;
     group(`${library}/${e.name}`);
-    const r = smokeTest(e, FRAMEWORK);
+    const r = smokeTest(e, FRAMEWORK, knownBlocked);
     results.push({ ...r, library });
     log(`  -> ${r.status.toUpperCase()}: ${r.detail}`);
   }

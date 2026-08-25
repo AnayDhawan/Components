@@ -39,11 +39,18 @@ const ALLOWED_HOSTS = new Set([
   "21st.dev",
 ]);
 
-/** Keep in sync with KNOWN_ISSUES in scripts/health-check.py. */
-const KNOWN_BLOCKED = {
-  "www.cult-ui.com":
-    "cult-ui.com serves a Vercel security challenge to every non-browser client (#31)",
-};
+/**
+ * Sourced from components.json's own `known_issues[]` at load time (see
+ * main()), the same array scripts/health-check.py and scripts/smoke-test.mjs
+ * read - one place to update instead of three hand-maintained copies.
+ */
+function knownBlockedHosts(data) {
+  const out = {};
+  for (const rec of data.known_issues ?? []) {
+    out[rec.host] = `${rec.why} (#${rec.issue})`;
+  }
+  return out;
+}
 
 const NPX =
   process.platform === "win32"
@@ -67,6 +74,7 @@ function parseRef(ref) {
 function main() {
   const registry = JSON.parse(readFileSync(join(REPO, "components.json"), "utf8"));
   const byName = new Map(registry.showpiece.map((e) => [e.name, e]));
+  const KNOWN_BLOCKED = knownBlockedHosts(registry);
 
   mkdirSync(join(GALLERY, "src", "components"), { recursive: true });
 
