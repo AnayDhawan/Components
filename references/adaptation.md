@@ -2,6 +2,16 @@
 
 **This file is the adaptation ruleset.** It applies uniformly to EVERY component sourced via this skill; there is no per-entry adaptation field in `components.json` and entries are not expected to restate any of this. An entry says *what* to fetch (`ref`, `deps`, `license`); this file says what to do with it once fetched. **A sourced component is never pasted raw.**
 
+## Checklist (every showpiece, every time)
+
+None of the source libraries ship these by default - spot-checking Aceternity, Magic UI, ReactBits, and KokonutUI entries found none of them handle it upstream. Adaptation is where it gets added, not upstream, so treat it as a required step, not an implied one:
+
+- [ ] **`prefers-reduced-motion` is honored** - wrap scroll/loop/parallax motion in a `useReducedMotion()` check (framer-motion) or a `motion-reduce:` Tailwind variant. See § 5b below.
+- [ ] Brand tokens replace hardcoded demo colors (§ 1).
+- [ ] Dark mode works, no light-only hardcoded colors (§ 2).
+- [ ] Responsive down to mobile, collapses/scrolls sanely (§ 3).
+- [ ] Existing accessibility (focus traps, aria, labels) from the source is kept, not stripped (§ 4).
+
 ## 1. Brand tokens (do this first)
 
 Source libraries ship neutral defaults (shadcn = zinc/neutral, Tremor = its own palette). Map them to the project's tokens.
