@@ -33,6 +33,11 @@ Useful detail: the error body still names the component and its **public page pa
 which is exactly what the WebFetch/Playwright fallback needs. A 403 here is not a
 dead ref.
 
+`scripts/health-check.py` re-derives this page URL from the 403 body for every
+page-fetch-form 21st.dev entry and diffs it against the hand-typed URL in `ref`,
+reporting `drifted` in `health-report.md` § 21st.dev page-fetch URLs if the
+component's author/page path changed upstream since the entry was added.
+
 **How auth actually works.** 21st.dev issues API keys at
 [21st.dev/settings/api-keys](https://21st.dev/settings/api-keys) (keys from the old
 Magic console were reset and no longer work). The key is sent as an **`x-api-key`

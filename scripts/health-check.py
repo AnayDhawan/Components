@@ -11,6 +11,7 @@ Exit code is 0 unless the check itself could not run. A dead upstream registry
 is data, not a script failure, which is what makes this safe to schedule.
 """
 
+import json
 import os
 import re
 import sys
@@ -124,6 +125,60 @@ def probe(url):
     return "dead", f"HTTP {code}"
 
 
+# A 21st.dev showpiece entry with no working registry ref instead hand-types a
+# page-fetch instruction in `ref`, e.g.:
+#   fetch page https://21st.dev/@kokonutd/components/matrix-text via webfetch/playwright
+# Unauthenticated 21st.dev registry requests 403, but the body already names
+# the component and its public page path:
+#   {"error":"Authentication required","component":{"name":"matrix-text","author":"kokonutd","url":"/@kokonutd/components/matrix-text"}}
+# so the page URL a contributor hand-typed can be *checked* against what the
+# registry itself reports, instead of trusted as prose that only gets updated
+# when someone happens to notice a rename. See #40.
+PAGE_FETCH_RE = re.compile(
+    r"fetch page https://21st\.dev/(@[^/]+)/components/([^\s]+) via webfetch/playwright"
+)
+
+
+def derive_21st_page_url(author, name):
+    """Hit the 21st.dev registry endpoint and pull the page URL out of its 403
+    body. Returns (page_url, None) on success, (None, reason) otherwise."""
+    registry_url = f"https://21st.dev/r/{author.lstrip('@')}/{name}"
+    try:
+        code, body = _request(registry_url, "GET")
+    except Exception as e:  # noqa: BLE001 - report, don't crash the whole check
+        return None, f"{type(e).__name__}: {e}"
+    if code != 403:
+        return None, f"expected HTTP 403 from registry endpoint, got {code}"
+    try:
+        payload = json.loads((body or b"{}").decode("utf-8", errors="replace"))
+        path = payload["component"]["url"]
+    except Exception as e:  # noqa: BLE001 - malformed/changed 403 body shape
+        return None, f"could not parse component.url from 403 body: {e}"
+    return f"https://21st.dev{path}", None
+
+
+def check_21st_page_urls(data):
+    """For every 21st.dev showpiece using the page-fetch ref form, verify the
+    hand-typed URL still matches what the registry's own 403 body derives.
+    Returns a list of (name, stored_url, status, detail)."""
+    rows = []
+    for entry in data.get("showpiece", []):
+        m = PAGE_FETCH_RE.search(entry.get("ref") or "")
+        if not m:
+            continue
+        author, name = m.group(1), m.group(2)
+        stored_url = f"https://21st.dev/{author}/components/{name}"
+        derived, err = derive_21st_page_url(author, name)
+        if err:
+            rows.append((entry["name"], stored_url, "unverifiable", err))
+        elif derived == stored_url:
+            rows.append((entry["name"], stored_url, "match", "-"))
+        else:
+            rows.append((entry["name"], stored_url, "drifted", f"registry now says {derived}"))
+        time.sleep(DELAY)
+    return rows
+
+
 def main():
     data = load()
     known_issues = _known_issues_by_host(data)
@@ -228,6 +283,22 @@ def main():
             why, issue = rec["why"], rec["issue"]
             lines.append(f"| `{name}` | {status} | #{issue} | {why if issue not in seen else 'as above'} |")
             seen.add(issue)
+        lines.append("")
+
+    page_url_checks = check_21st_page_urls(data)
+    if page_url_checks:
+        lines += [
+            "## 21st.dev page-fetch URLs",
+            "",
+            "Entries with no working registry ref hand-type a page-fetch URL "
+            "instead. Verified against what the registry's own 403 body reports "
+            "for the component today (see #40).",
+            "",
+            "| Entry | Stored URL | Status | Detail |",
+            "|---|---|---|---|",
+        ]
+        for name, stored_url, status, detail in page_url_checks:
+            lines.append(f"| `{name}` | {stored_url} | **{status}** | {detail} |")
         lines.append("")
 
     report = "\n".join(lines) + "\n"
