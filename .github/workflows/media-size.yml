@@ -1,0 +1,59 @@
+name: media size guard
+
+# docs/media holds demo.gif and demo.mp4 as committed binaries. A repo whose
+# actual content is ~25KB of JSON can get dominated by a careless media
+# commit, so this catches an oversized file (or a new file dropped in
+# docs/media/) before it merges, rather than after.
+
+on:
+  pull_request:
+    paths:
+      - "docs/media/**"
+
+permissions:
+  contents: read
+
+jobs:
+  check-size:
+    name: check docs/media file sizes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Enforce per-file and total size caps
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Generous over today's largest committed file (demo.mp4/demo.gif,
+          # ~2.1MB each) so it only trips on a genuinely careless commit, not
+          # on re-encoding the existing demo at similar quality.
+          PER_FILE_LIMIT=$((4 * 1024 * 1024))   # 4MB
+          TOTAL_LIMIT=$((10 * 1024 * 1024))     # 10MB
+
+          if [ ! -d docs/media ]; then
+            echo "docs/media does not exist, nothing to check."
+            exit 0
+          fi
+
+          total=0
+          failed=0
+          while IFS= read -r -d '' f; do
+            size=$(stat -c%s "$f")
+            total=$((total + size))
+            human=$(numfmt --to=iec --suffix=B "$size")
+            if [ "$size" -gt "$PER_FILE_LIMIT" ]; then
+              echo "::error file=$f::$f is $human, over the $(numfmt --to=iec --suffix=B "$PER_FILE_LIMIT") per-file cap"
+              failed=1
+            else
+              echo "ok   $f ($human)"
+            fi
+          done < <(find docs/media -type f -print0)
+
+          total_human=$(numfmt --to=iec --suffix=B "$total")
+          echo "docs/media total: $total_human"
+          if [ "$total" -gt "$TOTAL_LIMIT" ]; then
+            echo "::error::docs/media total is $total_human, over the $(numfmt --to=iec --suffix=B "$TOTAL_LIMIT") cap"
+            failed=1
+          fi
+
+          exit "$failed"
