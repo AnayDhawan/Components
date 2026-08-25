@@ -1,0 +1,29 @@
+# Path-based auto-labeling, applied by .github/workflows/label.yml (actions/labeler).
+# Keyed on the paths CONTRIBUTING.md says a PR almost always touches.
+
+new-entry:
+  - changed-files:
+      - any-glob-to-any-file: components.json
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "references/**"
+          - "*.md"
+          - "docs/**"
+
+scripts:
+  - changed-files:
+      - any-glob-to-any-file: "scripts/**"
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file: ".github/workflows/**"
+
+gallery:
+  - changed-files:
+      - any-glob-to-any-file: "gallery/**"
+
+cli:
+  - changed-files:
+      - any-glob-to-any-file: "cli/**"

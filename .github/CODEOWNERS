@@ -1,0 +1,13 @@
+# Review ownership. See https://docs.github.com/articles/about-code-owners
+#
+# One owner today, but the paths are split out on purpose: as the contributor
+# base grows (#51), a path can get a second/different owner by editing just
+# that line, and the file already reads as ownership-by-area rather than one
+# blanket rule someone has to un-learn later.
+
+* @AnayDhawan
+
+components.json      @AnayDhawan
+references/           @AnayDhawan
+scripts/               @AnayDhawan
+.github/               @AnayDhawan
