@@ -18,12 +18,14 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from collections import Counter
+from collections import Counter, defaultdict
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from _registry import ROOT, load
 
 TIMEOUT = 25
-DELAY = 0.4  # be a polite guest on other people's registries
+DELAY = 0.4  # be a polite guest on other people's registries, per host
+MAX_HOST_WORKERS = 8  # distinct hosts probed at once; within a host, still serial+DELAY
 UA = "components-skill-health-check/1.1.1 (+https://github.com/AnayDhawan/Components)"
 
 # Upstream breakage that is already diagnosed and written up in
@@ -68,30 +70,58 @@ def extract_url(ref):
 CHALLENGE_MARKERS = ("Attack Challenge Mode", "_vercel_challenge", "Vercel Security Checkpoint")
 
 
-def probe(url):
-    """Return (status, detail). status is one of ok / rate-limited / challenged / dead / error."""
-    req = urllib.request.Request(url, headers={"User-Agent": UA})
+def _request(url, method):
+    """One HTTP request. Returns (code, body_bytes_or_None). body is only ever
+    populated for GET, since that's the only method any caller needs a body
+    from. Raises urllib.error.URLError / other exceptions for the caller."""
+    req = urllib.request.Request(url, headers={"User-Agent": UA}, method=method)
     try:
         with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
-            return "ok", f"HTTP {r.status}"
+            return r.status, None
     except urllib.error.HTTPError as e:
-        if e.code == 429:
-            body = ""
+        body = None
+        if method == "GET":
             try:
-                body = e.read(8192).decode("utf-8", errors="replace")
+                body = e.read(8192)
             except Exception:  # noqa: BLE001 - body read is best-effort
-                pass
-            if any(marker in body for marker in CHALLENGE_MARKERS):
-                return "challenged", "HTTP 429 (bot-challenge page, not throttling)"
-            # 429 with no challenge markers is upstream throttling, not a
-            # missing component. Worth reporting, but a different problem from
-            # a ref that no longer exists.
-            return "rate-limited", "HTTP 429"
-        return "dead", f"HTTP {e.code}"
+                body = None
+        return e.code, body
+
+
+def probe(url):
+    """Return (status, detail). status is one of ok / rate-limited / challenged / dead / error.
+
+    Most checks only need the status code, so this HEADs first - a fraction of
+    the bandwidth of downloading a full registry JSON or docs page just to read
+    a code. Falls back to GET when a host rejects HEAD (405), and always
+    re-fetches with GET on a 429 since distinguishing a bot-challenge page from
+    real throttling needs the response body.
+    """
+    try:
+        code, _ = _request(url, "HEAD")
+        if code == 405:  # HEAD not allowed here; this host only answers GET
+            code, _ = _request(url, "GET")
     except urllib.error.URLError as e:
         return "dead", f"{type(e.reason).__name__}: {e.reason}"
     except Exception as e:  # noqa: BLE001 - a check that crashes is a broken check
         return "error", f"{type(e).__name__}: {e}"
+
+    if code == 429:
+        try:
+            _, body = _request(url, "GET")
+        except Exception:  # noqa: BLE001 - fall through with no body, still report 429
+            body = None
+        text = (body or b"").decode("utf-8", errors="replace")
+        if any(marker in text for marker in CHALLENGE_MARKERS):
+            return "challenged", "HTTP 429 (bot-challenge page, not throttling)"
+        # 429 with no challenge markers is upstream throttling, not a missing
+        # component. Worth reporting, but a different problem from a ref that
+        # no longer exists.
+        return "rate-limited", "HTTP 429"
+
+    if 200 <= code < 300:
+        return "ok", f"HTTP {code}"
+    return "dead", f"HTTP {code}"
 
 
 def main():
@@ -115,16 +145,36 @@ def main():
         if lib.get("mirror_site"):
             targets.append(("library mirror", f"{lib['name']} mirror", lib["mirror_site"]))
 
-    results = []
+    # All 45+ targets used to queue behind one fixed DELAY regardless of host, so
+    # a slow host held up every other host's checks too. Group by host instead:
+    # different hosts run concurrently, but requests to the *same* host stay
+    # serial with DELAY between them, which is the actual point of being polite.
+    by_host = defaultdict(list)
     for kind, name, url in targets:
-        if url is None:
-            results.append((kind, name, "-", "error", "no URL found in ref"))
-            continue
-        status, detail = probe(url)
-        results.append((kind, name, url, status, detail))
-        flag = " (known issue)" if known_issue(known_issues, url, status) else ""
-        print(f"{status:<13} {name:<40} {detail}{flag}", flush=True)
-        time.sleep(DELAY)
+        host = urllib.parse.urlparse(url).hostname if url else None
+        by_host[host].append((kind, name, url))
+
+    def process_host(host_targets):
+        out = []
+        for kind, name, url in host_targets:
+            if url is None:
+                out.append((kind, name, "-", "error", "no URL found in ref"))
+                continue
+            status, detail = probe(url)
+            out.append((kind, name, url, status, detail))
+            flag = " (known issue)" if known_issue(known_issues, url, status) else ""
+            print(f"{status:<13} {name:<40} {detail}{flag}", flush=True)
+            time.sleep(DELAY)
+        return out
+
+    results = []
+    with ThreadPoolExecutor(max_workers=min(MAX_HOST_WORKERS, len(by_host) or 1)) as ex:
+        futures = [ex.submit(process_host, group) for group in by_host.values()]
+        for f in as_completed(futures):
+            results.extend(f.result())
+
+    # Concurrency reorders completion; sort back to a stable, readable order.
+    results.sort(key=lambda r: (r[0], r[1]))
 
     counts = Counter(r[3] for r in results)
     failing = [r for r in results if r[3] != "ok"]
