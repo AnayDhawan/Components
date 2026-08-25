@@ -52,6 +52,16 @@ const SAMPLE = [
 ];
 
 /**
+ * Entries whose upstream source ships unused event params (TS6133 under
+ * Vite's default react-ts template's `noUnusedParameters`). Scoped here
+ * instead of relaxing the check for every entry, so a genuinely broken import
+ * or type error in some *other* entry still fails loudly. Add an entry here
+ * only after confirming by hand that the failure is exactly this lint, not a
+ * real type error - see #44.
+ */
+const NEEDS_RELAXED_STRICTNESS = new Set(["3d-card"]);
+
+/**
  * Hosts known to be blocked for automated clients, with the tracking issue.
  * These are reported as SKIP, never FAIL: the whole point of the PR gate is to
  * catch a contributor's broken ref, and failing their PR because a third party
@@ -216,7 +226,7 @@ function listFiles(dir) {
  * cn() util, and the @/* path alias), which is exactly the state the README
  * tells users they need, so setting it up here keeps the test honest.
  */
-function setupProject(dir) {
+function setupProject(dir, relaxStrictness) {
   run(NPM, ["create", "vite@latest", "app", "--", "--template", "react-ts"], dir);
   const app = join(dir, "app");
 
@@ -248,13 +258,15 @@ function setupProject(dir) {
   delete appTs.compilerOptions.baseUrl;
 
   // Vite's react-ts template turns these on. They are lint preferences, not
-  // correctness: several upstream showpieces ship unused event params (e.g.
-  // aceternity/3d-card) and would fail here for style reasons that say nothing
-  // about whether the ref works. The question this job asks is "does the fetched
-  // code compile and bundle in a real project", and a real project picks its own
-  // strictness. Genuine type errors - bad imports, wrong types - still fail.
-  appTs.compilerOptions.noUnusedLocals = false;
-  appTs.compilerOptions.noUnusedParameters = false;
+  // correctness, and a couple of upstream showpieces (see
+  // NEEDS_RELAXED_STRICTNESS) ship unused event params that would fail here for
+  // style reasons unrelated to whether the ref works. Scoped to just those
+  // entries rather than every future one: a real type error - bad imports,
+  // wrong types - should still fail for everything else.
+  if (relaxStrictness) {
+    appTs.compilerOptions.noUnusedLocals = false;
+    appTs.compilerOptions.noUnusedParameters = false;
+  }
   writeFileSync(join(app, "tsconfig.app.json"), JSON.stringify(appTs, null, 2));
 
   writeFileSync(
@@ -283,7 +295,7 @@ export default defineConfig({
  * shadcn/React reads via project references) - so the alias has to be written
  * to both files here, not just the app one.
  */
-function setupVueProject(dir) {
+function setupVueProject(dir, relaxStrictness) {
   run(NPM, ["create", "vite@latest", "app", "--", "--template", "vue-ts"], dir);
   const app = join(dir, "app");
 
@@ -312,11 +324,11 @@ function setupVueProject(dir) {
   );
   appTs.compilerOptions = { ...appTs.compilerOptions, paths: { "@/*": ["./src/*"] } };
 
-  // Same rationale as setupProject: this job asks whether the fetched code
-  // compiles and bundles in a real project, not whether it matches a
-  // particular lint strictness a real project would choose for itself.
-  appTs.compilerOptions.noUnusedLocals = false;
-  appTs.compilerOptions.noUnusedParameters = false;
+  // Same rationale as setupProject, same scoping to NEEDS_RELAXED_STRICTNESS.
+  if (relaxStrictness) {
+    appTs.compilerOptions.noUnusedLocals = false;
+    appTs.compilerOptions.noUnusedParameters = false;
+  }
   writeFileSync(join(app, "tsconfig.app.json"), JSON.stringify(appTs, null, 2));
 
   writeFileSync(
@@ -397,7 +409,7 @@ function smokeTest(entry, framework, knownBlocked) {
 
   const tmp = mkdtempSync(join(tmpdir(), `components-smoke-${entry.name}-`));
   try {
-    const app = SETUP[parsed.setup](tmp);
+    const app = SETUP[parsed.setup](tmp, NEEDS_RELAXED_STRICTNESS.has(entry.name));
     const before = listFiles(join(app, "src"));
 
     log(`  $ npx ${parsed.argv.join(" ")}`);
