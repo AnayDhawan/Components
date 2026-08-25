@@ -85,7 +85,7 @@
     },
     {
       "name": "background-beams",
-      "aliases": ["animated beams background", "svg beams", "collision beams"],
+      "aliases": ["scattered beam collision bg", "svg beams", "collision beams"],
       "effect": "animated SVG light beams as section background",
       "library": "aceternity",
       "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/background-beams.json\"",
@@ -121,7 +121,7 @@
     },
     {
       "name": "text-generate-effect",
-      "aliases": ["text reveal", "staggered word fade-in", "ai typing text"],
+      "aliases": ["text reveal", "staggered word fade-in", "sequential word reveal"],
       "effect": "words fade/blur in sequentially",
       "library": "aceternity",
       "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/text-generate-effect.json\"",
@@ -246,7 +246,7 @@
     },
     {
       "name": "decrypted-text",
-      "aliases": ["scramble text", "hacker text decode", "matrix decode text"],
+      "aliases": ["scramble text", "hacker text decode", "cipher decode text"],
       "effect": "characters scramble then settle into the real text",
       "library": "reactbits",
       "ref": "npx shadcn@latest add \"https://reactbits.dev/r/DecryptedText-TS-TW\"",
@@ -382,7 +382,7 @@
     },
     {
       "name": "beams-background",
-      "aliases": ["light beams background", "diagonal beam rays bg"],
+      "aliases": ["diagonal light beams bg", "diagonal beam rays bg"],
       "effect": "animated diagonal light beams background",
       "library": "21st.dev",
       "ref": "npx shadcn@latest add \"https://kokonutui.com/r/beams-background.json\"",
