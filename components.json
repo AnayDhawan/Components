@@ -16,7 +16,7 @@
   "known_issues": [
     {
       "host": "www.cult-ui.com",
-      "status": "rate-limited",
+      "status": "challenged",
       "why": "Vercel Attack Challenge Mode returns HTTP 429 to every non-browser client. The registry is healthy; a real browser fetches valid JSON. Use the Playwright method. See references/live-fetch.md.",
       "issue": 31
     }

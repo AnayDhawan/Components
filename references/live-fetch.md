@@ -125,8 +125,9 @@ registry-item JSON**.
 - **Use method 3 (Playwright).** A real browser clears the checkpoint, so open the
   `ref` URL directly and read the returned registry JSON, then write the `files[]`
   entries into the project and install `dependencies[]` by hand.
-- `scripts/health-check.py` will keep reporting these six as `rate-limited` until
-  the domain's challenge mode is turned off. That is a known false alarm, not rot.
+- `scripts/health-check.py` detects the Vercel challenge page body and reports
+  these six as `challenged` (not `rate-limited`) until the domain's challenge
+  mode is turned off. That is a known false alarm, not rot.
 - Re-check periodically: if `curl -sI https://www.cult-ui.com/r/dynamic-island.json`
   returns 200, the challenge is off and this note should be deleted.
 

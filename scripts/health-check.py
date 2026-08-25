@@ -61,16 +61,31 @@ def extract_url(ref):
     return m.group(0) if m else None
 
 
+# A 429 body containing any of these is Vercel's Attack Challenge Mode (a bot
+# fingerprint check), not real throttling: it never clears on its own, unlike
+# a rate limit, which is transient by definition. Conflating the two makes the
+# weekly report imply "retry later" for a condition retrying will never fix.
+CHALLENGE_MARKERS = ("Attack Challenge Mode", "_vercel_challenge", "Vercel Security Checkpoint")
+
+
 def probe(url):
-    """Return (status, detail). status is one of ok / rate-limited / dead / error."""
+    """Return (status, detail). status is one of ok / rate-limited / challenged / dead / error."""
     req = urllib.request.Request(url, headers={"User-Agent": UA})
     try:
         with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
             return "ok", f"HTTP {r.status}"
     except urllib.error.HTTPError as e:
-        # 429 is upstream throttling, not a missing component. Worth reporting,
-        # but it is a different problem from a ref that no longer exists.
         if e.code == 429:
+            body = ""
+            try:
+                body = e.read(8192).decode("utf-8", errors="replace")
+            except Exception:  # noqa: BLE001 - body read is best-effort
+                pass
+            if any(marker in body for marker in CHALLENGE_MARKERS):
+                return "challenged", "HTTP 429 (bot-challenge page, not throttling)"
+            # 429 with no challenge markers is upstream throttling, not a
+            # missing component. Worth reporting, but a different problem from
+            # a ref that no longer exists.
             return "rate-limited", "HTTP 429"
         return "dead", f"HTTP {e.code}"
     except urllib.error.URLError as e:
@@ -121,6 +136,7 @@ def main():
         "",
         f"Checked **{len(results)}** targets: "
         f"{counts.get('ok', 0)} ok, {counts.get('rate-limited', 0)} rate-limited, "
+        f"{counts.get('challenged', 0)} challenged, "
         f"{counts.get('dead', 0)} dead, {counts.get('error', 0)} error.",
         "",
         f"**{len(bad)}** need attention. "
@@ -138,8 +154,10 @@ def main():
             lines.append(f"| {kind} | `{name}` | **{status}** | {detail} | {url} |")
         lines += [
             "",
-            "`rate-limited` may be transient; `dead` means the ref no longer resolves "
-            "and any user asking for that showpiece gets a failure.",
+            "`rate-limited` may be transient; `challenged` is a bot-detection page "
+            "(e.g. Vercel Attack Challenge Mode) and will not clear on retry; `dead` "
+            "means the ref no longer resolves and any user asking for that showpiece "
+            "gets a failure.",
             "",
         ]
     else:
