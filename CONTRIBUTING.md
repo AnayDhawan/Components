@@ -54,6 +54,7 @@ Plain (non-flashy) components go in `fallback_basic.components[]` with `name`, `
 - Run `python3 scripts/validate.py` locally before opening a PR. It is the exact check CI runs, and it prints every problem it finds rather than stopping at the first.
 - `components.json` is valid JSON (`validate.py` checks this, as does CI - see `.github/workflows/validate.yml`).
 - Every `ref` link/command resolves and works on a fresh project. **PRs touching `components.json` run a real Vite + Tailwind smoke test**: CI scaffolds a throwaway React + TS project, runs the registry command for a curated sample (one entry per library), and fails if the fetched code does not build. Run it yourself with `node scripts/smoke-test.mjs --only <entry-name>`.
+  - `smoke-test.mjs` scaffolds into a fresh temp dir every run, so this doesn't apply to it. But if you ever run `npm create vite` yourself in a directory that already has `scripts/` or `src/` present, it silently no-ops: exits without creating anything and without a clear error, leaving a half-scaffolded state that's easy to miss. Use an empty directory.
 - New component genuinely lacks a good existing entry (no duplicates by alias).
 - Fill out the PR template.
 
