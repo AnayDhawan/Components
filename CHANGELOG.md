@@ -22,6 +22,26 @@ All notable changes to this project are documented here. Format based on
   the new field; the weekly schedule run smoke-tests the pilot entry. Still a
   React + Tailwind registry otherwise - see README "Framework variants".
 
+- `scripts/health-check.py`: HEAD requests instead of full GETs where possible, per-host
+  concurrency instead of one fixed delay serializing all 45+ targets (#36). A 429's body
+  is now sniffed for Vercel's Attack Challenge Mode markers and reported as its own
+  `challenged` status, distinct from a real `rate-limited` (#34). 21st.dev page-fetch
+  entries' hand-typed URLs are now auto-derived from the registry's own 403 body and
+  diffed against what's stored (#40).
+- `components.json`'s new `known_issues[]` array centralizes the cult-ui workaround that
+  `health-check.py`, `smoke-test.mjs`, and `gallery/scripts/fetch-showpieces.mjs` each used
+  to hand-maintain separately (#45).
+- `scripts/smoke-test.mjs`: TS strictness relaxation scoped to only the entries that need
+  it instead of repo-wide (#44). Declared `deps` are now cross-checked against the
+  registry item's own `dependencies` array as a soft warning (#53).
+- `.github/`: `CODEOWNERS` + path-based PR auto-labeling (#51). CI guard on `docs/media`
+  binary size (#42).
+- `references/adaptation.md`: explicit checklist, leading with `prefers-reduced-motion`
+  (#43). New `references/conventions.md` documents per-library fetched file-path and
+  export-shape conventions, verified against a real fetch per library (#48).
+- 3 showpiece aliases sharpened where token-overlap analysis found genuine matching
+  ambiguity, not just shared generic words (#39).
+
 ### Fixed
 - `reactbits`' `code_libraries[]` entry still said plain `MIT`; the per-entry
   license fix below only touched the 9 showpiece entries, not this row.
