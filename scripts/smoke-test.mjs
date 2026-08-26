@@ -368,13 +368,48 @@ function checkReducedMotion(app, added) {
 }
 
 /**
+ * Diff components.json's declared `deps` against the registry item's own
+ * `dependencies` array (fetched separately from the `npx ... add` call, since
+ * that call installs but never surfaces the list this job wants to compare).
+ * Not every registry declares `dependencies` (aceternity/magicui's registry
+ * JSON often omits it even for entries with real peer deps) - silently skip
+ * the check rather than reporting a false drift when it's simply absent.
+ *
+ * Only reports deps *declared but not found upstream* - the direction that
+ * means components.json has drifted (renamed/dropped dep, typo). The reverse
+ * (upstream deps not in components.json) is expected noise: entry.deps is a
+ * curated "peer deps worth calling out" list, not a mirror of every package
+ * the registry installs, so it will always be a subset.
+ */
+async function checkDeclaredDeps(url) {
+  let registryDeps;
+  try {
+    const res = await fetch(url);
+    const json = await res.json();
+    registryDeps = json.dependencies;
+  } catch {
+    return null; // network hiccup fetching the JSON a second time - not this check's job to fail the run
+  }
+  if (!Array.isArray(registryDeps) || registryDeps.length === 0) return null;
+
+  // "framer-motion@^11.0.0" -> "framer-motion"; scoped packages keep their
+  // leading "@scope/" and split on the *second* "@" (version pin), if any.
+  const stripVersion = (spec) => {
+    const at = spec.startsWith("@") ? spec.indexOf("@", 1) : spec.indexOf("@");
+    return at === -1 ? spec : spec.slice(0, at);
+  };
+  return new Set(registryDeps.map((d) => stripVersion(d).toLowerCase()));
+}
+
+/**
  * `framework`, if given, tests entry.frameworks[framework] (ref + library)
  * instead of the entry's top-level React ones. name/aliases/effect are always
  * the parent's - only the fetch/license surface differs per framework.
  */
-function smokeTest(entry, framework, knownBlocked) {
+async function smokeTest(entry, framework, knownBlocked) {
   let ref = entry.ref;
   let library = entry.library;
+  let declaredDeps = entry.deps ?? [];
   if (framework) {
     const variant = entry.frameworks?.[framework];
     if (!variant) {
@@ -382,6 +417,7 @@ function smokeTest(entry, framework, knownBlocked) {
     }
     ref = variant.ref;
     library = variant.library;
+    declaredDeps = variant.deps ?? [];
   }
 
   const host = (() => {
@@ -425,11 +461,16 @@ function smokeTest(entry, framework, knownBlocked) {
     run(NPM, ["run", "build"], app);
 
     const motion = checkReducedMotion(app, added);
+    const registryDeps = await checkDeclaredDeps(parsed.url.href);
+    const missingDeps = registryDeps
+      ? declaredDeps.filter((d) => !registryDeps.has(d.toLowerCase()))
+      : [];
     return {
       name: entry.name,
       status: "pass",
       added,
       motion,
+      missingDeps,
       detail: `${added.length} file(s), build OK`,
     };
   } catch (err) {
@@ -477,7 +518,7 @@ function changedShowpieceNames(base, headData) {
   return changed;
 }
 
-function main() {
+async function main() {
   const data = JSON.parse(readFileSync(join(ROOT, "components.json"), "utf8"));
   const byName = new Map(data.showpiece.map((e) => [e.name, e]));
   const knownBlocked = knownBlockedHosts(data);
@@ -537,7 +578,7 @@ function main() {
   for (const e of entries) {
     const library = FRAMEWORK ? e.frameworks[FRAMEWORK].library : e.library;
     group(`${library}/${e.name}`);
-    const r = smokeTest(e, FRAMEWORK, knownBlocked);
+    const r = await smokeTest(e, FRAMEWORK, knownBlocked);
     results.push({ ...r, library });
     log(`  -> ${r.status.toUpperCase()}: ${r.detail}`);
   }
@@ -556,6 +597,12 @@ function main() {
       const w = `\`${r.name}\`: no useReducedMotion / motion-reduce: / prefers-reduced-motion in ${r.motion.checked} fetched file(s)`;
       warnings.push(w);
       log(`      warning: no reduced-motion handling found upstream`);
+    }
+
+    if (r.status === "pass" && r.missingDeps && r.missingDeps.length > 0) {
+      const w = `\`${r.name}\`: declared dep(s) ${r.missingDeps.map((d) => `\`${d}\``).join(", ")} not found in the registry's own dependencies - components.json may have drifted from upstream`;
+      warnings.push(w);
+      log(`      warning: declared dep(s) not in upstream registry: ${r.missingDeps.join(", ")}`);
     }
   }
 
@@ -593,4 +640,4 @@ function main() {
   return 0;
 }
 
-process.exit(main());
+main().then((code) => process.exit(code));
