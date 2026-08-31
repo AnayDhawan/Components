@@ -1,6 +1,6 @@
 {
   "name": "components-skill",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Install the `components` skill (showpiece React + Tailwind UI for AI coding agents) into Claude Code, Codex, Cursor, or Gemini CLI.",
   "type": "module",
   "bin": {

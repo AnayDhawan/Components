@@ -1,15 +1,16 @@
 {
   "meta": {
-    "version": "1.1.1",
+    "version": "1.2.0",
     "stack": "react+tailwind",
-    "updated": "2026-07-31",
+    "updated": "2026-08-30",
     "purpose": "PRIMARY: fetch flashy showpiece animated components LIVE from code libraries at build time, based on the user's prompt. FALLBACK: a curated map of plain components. Inspiration galleries are VISUAL REFERENCE ONLY (no code).",
     "rules": [
       "Match the user's described effect to a showpiece entry OR search the code_libraries live.",
       "Fetch live via the entry's registry command (preferred) or WebFetch/Playwright the component page (fallback).",
       "NEVER paste raw: adapt colors to brand tokens, respect prefers-reduced-motion, install the right deps. See references/adaptation.md + references/live-fetch.md.",
       "galleries[] have NO code. Use only for visual direction. Never try to fetch components from them.",
-      "After placing, hand off final polish to the impeccable / frontend-design skills."
+      "After placing, hand off final polish to the impeccable / frontend-design skills.",
+      "Before picking or composing a layouts[] entry, read TASTE.md's curation criteria (web or video section as applicable)."
     ]
   },
 
@@ -417,6 +418,67 @@
       "ref": "fetch page https://21st.dev/@shuding/components/cobe-globe-interactive via webfetch/playwright (registry needs 21st.dev auth)",
       "license": "MIT (cobe, github.com/shuding/cobe)",
       "deps": ["cobe"]
+    }
+  ],
+
+  "layouts": [
+    {
+      "name": "animated-saas-hero",
+      "kind": "web",
+      "description": "Hero with a spotlight/beam background, animated headline reveal, and a shimmer CTA - the most common 'wow' request pattern.",
+      "composedFrom": ["spotlight", "split-text", "shimmer-button"],
+      "preview": null,
+      "sections": ["hero"]
+    },
+    {
+      "name": "bento-feature-grid",
+      "kind": "web",
+      "description": "Bento-style multi-feature showcase: animated bento grid with per-cell showpiece effects for a product feature-overview section.",
+      "composedFrom": ["bento-grid", "marquee", "globe"],
+      "preview": null,
+      "sections": ["feature-grid"]
+    },
+    {
+      "name": "simple-demo-arc",
+      "kind": "video",
+      "description": "Single core-feature product demo: hook, problem, demo x2-3, differentiator, cta. 60-75s.",
+      "composedFrom": ["hook", "problem", "demo", "demo", "differentiator", "cta"],
+      "preview": null,
+      "source": "vidstudio PIPELINE.md (beat arcs)",
+      "beats": ["hook", "problem", "demo", "demo", "differentiator", "cta"]
+    },
+    {
+      "name": "packed-hook-multi-feature-arc",
+      "kind": "video",
+      "description": "Multi-feature product: one dense ~15s hook stating every core claim up front, one demo beat per claim, differentiator, cta.",
+      "composedFrom": ["packed-hook", "demo-per-feature", "differentiator", "cta"],
+      "preview": null,
+      "source": "vidstudio PIPELINE.md (beat arcs); proven on pepiros v3",
+      "beats": ["packed-hook", "demo", "demo", "demo", "differentiator", "cta"]
+    },
+    {
+      "name": "tiered-claim-cycling-demo",
+      "kind": "video",
+      "description": "Mechanism/credibility beat: identical BrowserFrame position/size across 3 sequential real screenshots, each a different claim tier, so only inner content swaps.",
+      "composedFrom": ["BrowserFrame", "CinematicScene", "Caption"],
+      "preview": null,
+      "source": "vidstudio pepiros v3, src/videos/pepiros/scenes/Mechanism.tsx"
+    },
+    {
+      "name": "constructed-plus-real-bridge",
+      "kind": "video",
+      "description": "Two-panel beat: top is a hand-built mockup in the project's real tokens for a claimed-but-unwired feature; bottom is a genuine screenshot of an adjacent real page.",
+      "composedFrom": ["BrowserFrame", "CinematicScene", "Caption"],
+      "preview": null,
+      "source": "vidstudio pepiros v3, src/videos/pepiros/scenes/Publish.tsx"
+    },
+    {
+      "name": "claim-discussion-mockup",
+      "kind": "video",
+      "description": "Single-panel constructed mockup reusing an exact card/badge convention captured live in an earlier real-screenshot beat, so it reads as continuation not invention.",
+      "composedFrom": ["CinematicScene", "Caption"],
+      "preview": null,
+      "source": "vidstudio pepiros v3, src/videos/pepiros/scenes/Discuss.tsx"
     }
   ],
 

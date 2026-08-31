@@ -7,4 +7,5 @@ dist/
 # project does not do (see ATTRIBUTION.md and issue #4).
 src/components/
 src/showpieces.json
+src/layouts.json
 *.tsbuildinfo

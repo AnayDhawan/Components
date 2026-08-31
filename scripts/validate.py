@@ -117,6 +117,41 @@ def check_framework_variants(showpiece, known_libs, errors):
                 )
 
 
+def check_layouts(layouts, showpiece_names, errors):
+    """layouts[] compose showpiece[] entries (web) or document external vidstudio
+    patterns (video, unenforceable here - see TASTE.md for that asymmetry).
+    """
+    required = ("name", "description", "composedFrom")
+    valid_kinds = {"web", "video"}
+    names = set()
+    for entry in layouts:
+        n = entry.get("name")
+        if not n:
+            errors.append("layouts entry missing 'name'")
+            continue
+        if n in names:
+            errors.append(f"duplicate layouts name: {n}")
+        names.add(n)
+
+        for key in required:
+            if not entry.get(key):
+                errors.append(f"layouts.{n}: {key} missing")
+
+        kind = entry.get("kind")
+        if kind not in valid_kinds:
+            errors.append(f"layouts.{n}: kind must be one of {sorted(valid_kinds)}, got {kind!r}")
+
+        composed = entry.get("composedFrom")
+        if composed is not None and not isinstance(composed, list):
+            errors.append(f"layouts.{n}: composedFrom must be a list")
+        elif kind == "web" and isinstance(composed, list):
+            for ref in composed:
+                if ref not in showpiece_names:
+                    errors.append(
+                        f"layouts.{n}: composedFrom references '{ref}', not a showpiece[] name"
+                    )
+
+
 def check_alias_collisions(showpiece, errors):
     """No alias may point at two different showpieces.
 
@@ -168,6 +203,10 @@ def validate(data):
     check_alias_collisions(showpiece, errors)
     check_framework_variants(showpiece, known_libs, errors)
 
+    layouts = data.get("layouts", [])
+    showpiece_names = {c.get("name") for c in showpiece}
+    check_layouts(layouts, showpiece_names, errors)
+
     # Showpieces are live-fetched, so their library must be a real registry we
     # document. Fallbacks intentionally point at shadcn/tremor, which are not
     # code_libraries entries, so they are exempt from this check.
@@ -201,8 +240,10 @@ def main():
     showpiece = data.get("showpiece", [])
     fb = data.get("fallback_basic", {}).get("components", [])
     libs = data.get("code_libraries", [])
+    layouts = data.get("layouts", [])
     print(
-        f"OK: {len(showpiece)} showpiece + {len(fb)} fallback + {len(libs)} libraries"
+        f"OK: {len(showpiece)} showpiece + {len(fb)} fallback + {len(libs)} libraries "
+        f"+ {len(layouts)} layouts"
     )
     return 0
 

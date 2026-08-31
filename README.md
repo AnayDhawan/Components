@@ -4,7 +4,7 @@
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
 ![Stack](https://img.shields.io/badge/stack-React%20%2B%20Tailwind-38bdf8)
-![Status](https://img.shields.io/badge/status-v1.1.1-brightgreen)
+![Status](https://img.shields.io/badge/status-v1.2.0-brightgreen)
 ![Skill](https://img.shields.io/badge/Claude%20Code-skill-8a5cf6)
 [![GitHub stars](https://img.shields.io/github/stars/AnayDhawan/Components?style=social)](https://github.com/AnayDhawan/Components/stargazers)
 ![Last commit](https://img.shields.io/github/last-commit/AnayDhawan/Components)
@@ -46,7 +46,13 @@ Anthropic's `frontend-design` skill makes an agent design *well*. It does **not*
 ## What's included
 
 ### The skill
-`SKILL.md` (decision flow + rules) · `components.json` (the registry of pointers) · `references/live-fetch.md` (registry-CLI / WebFetch / Playwright methods) · `references/adaptation.md` (brand tokens, dark mode, responsive, `prefers-reduced-motion`) · `references/handoff.md` (optional `impeccable` / `frontend-design` polish handoff + graceful degradation when neither is installed) · `references/dependencies.md` (React / Tailwind / shadcn CLI / peer-dep version matrix) · `references/conventions.md` (per-library fetched-file path + export-shape conventions).
+`SKILL.md` (decision flow + rules) · `components.json` (the registry of pointers, plus `layouts[]` - pre-composed web/video arrangements) · `TASTE.md` (layout curation & anti-slop taste standards, plus a pointer table to compatible third-party Claude Code skills) · `references/live-fetch.md` (registry-CLI / WebFetch / Playwright methods) · `references/adaptation.md` (brand tokens, dark mode, responsive, `prefers-reduced-motion`) · `references/handoff.md` (optional `impeccable` / `frontend-design` polish handoff + graceful degradation when neither is installed) · `references/dependencies.md` (React / Tailwind / shadcn CLI / peer-dep version matrix) · `references/conventions.md` (per-library fetched-file path + export-shape conventions).
+
+### Prerequisites (for full effect, optional)
+`components` works standalone with zero dependencies. To get its `layouts[]` picks judged against a real
+taste standard instead of "whatever's first," install the companion skills `TASTE.md` points at - see its
+[Recommended companion skills](./TASTE.md#recommended-companion-skills-if-installed) table for exact
+`claude plugin install` commands. None are required; the registry and skill both work without them.
 
 ### Showpiece effects (live-fetched)
 

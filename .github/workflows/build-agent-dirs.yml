@@ -7,6 +7,7 @@ on:
   push:
     paths:
       - "SKILL.md"
+      - "TASTE.md"
       - "components.json"
       - "references/**"
       - "scripts/build-agent-dirs.sh"
@@ -14,6 +15,7 @@ on:
   pull_request:
     paths:
       - "SKILL.md"
+      - "TASTE.md"
       - "components.json"
       - "references/**"
       - "scripts/build-agent-dirs.sh"
@@ -51,6 +53,7 @@ jobs:
             "dist/.gemini/extensions/components"
           do
             expect "$base/SKILL.md"
+            expect "$base/TASTE.md"
             expect "$base/components.json"
             expect "$base/references/live-fetch.md"
             expect "$base/references/adaptation.md"

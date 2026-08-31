@@ -52,6 +52,7 @@ copy_payload() {  # copy_payload <dest-dir>
   local dest="$1"
   mkdir -p "$dest"
   cp "$ROOT/SKILL.md" "$dest/"
+  cp "$ROOT/TASTE.md" "$dest/"
   cp "$ROOT/components.json" "$dest/"
   cp -r "$ROOT/references" "$dest/"
 }

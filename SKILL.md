@@ -13,6 +13,7 @@ description: Use when building a frontend and the user wants a distinctive / ani
 - **FALLBACK: plain components.** Standard button/form/modal/table when no "wow" is asked.
 - **SOURCE layer only.** After placing the component, hand off final polish/distinctiveness to `impeccable` / `frontend-design` **if installed** - both are optional sibling skills, not dependencies of this repo. See `references/handoff.md` for what to do when neither is available.
 - **Galleries ≠ code.** Dribbble, godly.website, Awwwards = visual reference ONLY. Never fetch components from them.
+- **Layout curation.** `layouts[]` are pre-composed arrangements (web sections or video beat patterns). `TASTE.md` is the required-reading standard for picking or building one - read it before selecting a layout.
 
 ## Decision flow
 

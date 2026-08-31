@@ -6,6 +6,8 @@ All notable changes to this project are documented here. Format based on
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-08-30
+
 ### Added
 - `components-skill search <query>`: offline lookup of showpiece/fallback entries by
   name, alias, effect, or library, plus `--library` to narrow it. Reads the same
@@ -41,10 +43,18 @@ All notable changes to this project are documented here. Format based on
   export-shape conventions, verified against a real fetch per library (#48).
 - 3 showpiece aliases sharpened where token-overlap analysis found genuine matching
   ambiguity, not just shared generic words (#39).
+- **Layout browsing layer**: new `layouts[]` array composing existing `showpiece[]` entries (or, for
+  video, patterns proven in the separate `vidstudio`/`openvidstudio` pipeline) into full page/scene
+  arrangements an agent can browse and pick, instead of one effect at a time. Two web layouts, five video
+  layouts. `TASTE.md` (new, repo root) is the required-reading curation standard for picking or composing
+  one, with a pointer table to compatible third-party Claude Code skills - no third-party content
+  reproduced, pointer-only. Wired into `gallery/` as a new "Layouts" tab alongside the existing showpiece
+  grid, and into every `dist/` agent bundle via `scripts/build-agent-dirs.sh`.
 
 ### Fixed
-- `reactbits`' `code_libraries[]` entry still said plain `MIT`; the per-entry
-  license fix below only touched the 9 showpiece entries, not this row.
+- `code_libraries[]`'s `reactbits` entry still declared plain `MIT`; the earlier per-entry license
+  correction only touched the 9 showpiece entries, not this row (closed alongside the multi-framework
+  pilot work).
 
 ## [1.1.1] - 2026-07-31
 
@@ -114,5 +124,6 @@ dependency list.
   curated entries use the author's open registry mirror (kokonutui.com) or the public
   component page via WebFetch/Playwright.
 
+[1.2.0]: https://github.com/AnayDhawan/Components/releases/tag/v1.2.0
 [1.1.0]: https://github.com/AnayDhawan/Components/releases/tag/v1.1.0
 [1.0.0]: https://github.com/AnayDhawan/Components/releases/tag/v1.0.0

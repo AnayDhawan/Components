@@ -7,6 +7,7 @@ on:
     paths:
       - "cli/**"
       - "SKILL.md"
+      - "TASTE.md"
       - "components.json"
       - "references/**"
       - "scripts/build-agent-dirs.sh"
@@ -15,6 +16,7 @@ on:
     paths:
       - "cli/**"
       - "SKILL.md"
+      - "TASTE.md"
       - "components.json"
       - "references/**"
       - "scripts/build-agent-dirs.sh"
@@ -68,6 +70,7 @@ jobs:
           cd "$tmp"
           node "$GITHUB_WORKSPACE/cli/bin/components-skill.js" add --agent all
           test -f .claude/skills/components/SKILL.md
+          test -f .claude/skills/components/TASTE.md
           test -f .codex/skills/components/SKILL.md
           test -f .cursor/rules/components.mdc
           test -f .gemini/extensions/components/gemini-extension.json

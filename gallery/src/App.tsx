@@ -1,6 +1,7 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 import showpieces from "./showpieces.json";
+import layouts from "./layouts.json";
 import { Demo3dCard } from "./demos/Demo3dCard";
 import { DemoMarquee } from "./demos/DemoMarquee";
 import { DemoBlurText } from "./demos/DemoBlurText";
@@ -16,6 +17,17 @@ type Entry = {
   ref: string;
   available: boolean;
   reason?: string;
+};
+
+type LayoutEntry = {
+  name: string;
+  kind: "web" | "video";
+  description: string;
+  composedFrom: string[];
+  preview: string | null;
+  sections?: string[];
+  source?: string;
+  beats?: string[];
 };
 
 const DEMOS: Record<string, () => ReactNode> = {
@@ -78,8 +90,68 @@ function Card({ entry }: { entry: Entry }) {
   );
 }
 
+function LayoutCard({ layout }: { layout: LayoutEntry }) {
+  return (
+    <section
+      id={`layout-${layout.name}`}
+      className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950 p-5"
+    >
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <h2 className="font-mono text-base text-neutral-100">{layout.name}</h2>
+        <span className="rounded-full border border-neutral-700 px-2 py-0.5 text-[11px] text-neutral-400">
+          {layout.kind}
+        </span>
+      </div>
+
+      <p className="mt-3 text-sm text-neutral-400">{layout.description}</p>
+
+      {layout.kind === "web" && layout.sections && (
+        <ul className="mt-3 list-inside list-disc text-xs text-neutral-500">
+          {layout.sections.map((s) => (
+            <li key={s}>{s}</li>
+          ))}
+        </ul>
+      )}
+
+      {layout.kind === "video" && layout.beats && (
+        <>
+          <p className="mt-3 text-[11px] uppercase tracking-wide text-neutral-600">
+            Reference pattern — not a live demo
+          </p>
+          <ol className="mt-1 list-inside list-decimal text-xs text-neutral-500">
+            {layout.beats.map((b, i) => (
+              <li key={`${b}-${i}`}>{b}</li>
+            ))}
+          </ol>
+          {layout.source && <p className="mt-2 text-[11px] text-neutral-600">source: {layout.source}</p>}
+        </>
+      )}
+
+      <div className="mt-3 flex flex-wrap gap-1.5">
+        {layout.composedFrom.map((name) =>
+          layout.kind === "web" ? (
+            <a
+              key={name}
+              href={`#showpiece-${name}`}
+              className="rounded bg-neutral-900 px-1.5 py-0.5 text-[11px] text-neutral-500 underline decoration-neutral-700 hover:text-neutral-300"
+            >
+              {name}
+            </a>
+          ) : (
+            <span key={name} className="rounded bg-neutral-900 px-1.5 py-0.5 text-[11px] text-neutral-500">
+              {name}
+            </span>
+          ),
+        )}
+      </div>
+    </section>
+  );
+}
+
 export default function App() {
   const entries = showpieces.entries as Entry[];
+  const layoutEntries = layouts as LayoutEntry[];
+  const [tab, setTab] = useState<"showpieces" | "layouts">("showpieces");
 
   return (
     <main className="min-h-screen bg-neutral-950 text-neutral-200">
@@ -119,11 +191,42 @@ export default function App() {
           </p>
         </header>
 
-        <div className="mt-14 grid gap-8 md:grid-cols-2">
-          {entries.map((e) => (
-            <Card key={e.name} entry={e} />
-          ))}
+        <div className="mt-12 flex gap-2 text-sm">
+          <button
+            type="button"
+            onClick={() => setTab("showpieces")}
+            className={`rounded-lg px-4 py-2 font-medium transition ${
+              tab === "showpieces" ? "bg-white text-neutral-950" : "border border-neutral-800 text-neutral-400 hover:text-neutral-200"
+            }`}
+          >
+            Showpieces
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab("layouts")}
+            className={`rounded-lg px-4 py-2 font-medium transition ${
+              tab === "layouts" ? "bg-white text-neutral-950" : "border border-neutral-800 text-neutral-400 hover:text-neutral-200"
+            }`}
+          >
+            Layouts
+          </button>
         </div>
+
+        {tab === "showpieces" ? (
+          <div className="mt-8 grid gap-8 md:grid-cols-2">
+            {entries.map((e) => (
+              <div id={`showpiece-${e.name}`} key={e.name}>
+                <Card entry={e} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-8 grid gap-8 md:grid-cols-2">
+            {layoutEntries.map((l) => (
+              <LayoutCard key={l.name} layout={l} />
+            ))}
+          </div>
+        )}
 
         <footer className="mt-16 border-t border-neutral-800 pt-8 text-xs text-neutral-600">
           <p>

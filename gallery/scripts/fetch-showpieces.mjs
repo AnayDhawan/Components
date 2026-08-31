@@ -131,6 +131,13 @@ function main() {
 
   const ok = status.filter((s) => s.available).length;
   console.log(`\n${ok}/${status.length} showpieces fetched.`);
+
+  // layouts[] are pointers/descriptions, not independently renderable, so there is
+  // nothing to fetch - write the array straight through for the gallery's Layouts tab.
+  writeFileSync(
+    join(GALLERY, "src", "layouts.json"),
+    JSON.stringify(registry.layouts ?? [], null, 2) + "\n",
+  );
 }
 
 function pick(e) {
