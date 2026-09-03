@@ -79,7 +79,7 @@ jobs:
         # Runs even if either smoke-test step failed above, so a broken ref shows
         # up as a comment, not just a red check the contributor has to click into.
         if: github.event_name == 'pull_request' && always()
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const fs = require("node:fs");
