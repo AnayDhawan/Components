@@ -36,7 +36,7 @@ jobs:
         with:
           node-version: "20"
 
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
         with:
           # Turns Pages on the first time this runs, so the repo does not need to
           # have it enabled by hand beforehand.
