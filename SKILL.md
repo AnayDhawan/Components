@@ -38,10 +38,10 @@ user wants a UI component (React + Tailwind)?
 ## How to fetch live
 
 1. Read `components.json`. Find the `showpiece` entry by name/alias, else pick a `code_libraries` source and search it live.
-2. **Target project is Vue, not React?** Check whether the matched entry has a `frameworks.vue` object. If it does, use *its* `ref`/`library`/`license`/`deps` instead of the entry's top-level (React) ones - the rest of this flow is unchanged. If it doesn't, say so; don't improvise a port. Only a small, growing subset of entries currently carry a Vue variant.
+2. **Target project is Vue or Svelte, not React?** Check whether the matched entry has a `frameworks.vue` / `frameworks.svelte` object. If it does, use *its* `ref`/`fetch`/`library`/`license`/`deps` instead of the entry's top-level (React) ones - the rest of this flow is unchanged. If it doesn't, say so; don't improvise a port. Coverage today: all 9 ReactBits entries have both Vue (Vue Bits) and Svelte (Svelte Bits) variants; the Aceternity and Magic UI entries with a verified Inspira UI equivalent have Vue variants. Everything else is React-only.
 3. **Show the user the registry command before running it** (it pulls code into their project).
-4. Run `ref`. If the registry shorthand fails (library changed it), open the `site` page, confirm the current command, retry. Last resort: WebFetch the page and write the code manually.
-5. Install `deps`. Most need `motion` (framer-motion). 3D globe needs `cobe`; wavy bg needs `simplex-noise`.
+4. Run `ref`. If the registry shorthand fails (library changed it), open the `site` page, confirm the current command, retry. Last resort: WebFetch the page and write the code manually. (`ref` is the display form of the entry's `fetch` object; if you are writing tooling, read `fetch.url` / `fetch.cli` and never parse the command string.)
+5. Install `deps`. Most need `motion` (framer-motion). 3D globe needs `cobe`; wavy bg needs `simplex-noise`. **`deps` is not optional detail**: it records peer dependencies the registry item itself does not declare, and the component will not compile without them (every Inspira UI variant needs `@inspira-ui/plugins` for `cn()`, which its registry JSON omits).
 6. Adapt (mandatory - never raw): map demo colors to brand tokens, wrap motion in `prefers-reduced-motion`, check mobile.
 7. Verify it compiles + renders, then hand off to a quality skill if one is installed
    (`references/handoff.md`). Otherwise the adapted component is already the final output.

@@ -95,7 +95,38 @@ const ALLOWED_HOSTS = new Set([
   "kokonutui.com",
   "21st.dev",
   "vue-bits.dev",
+  "sveltebits.xyz",
+  // inspira-ui.com 307-redirects registry items to registry.inspira-ui.com, so both
+  // the documented host and the one the fetch actually lands on must be allowed.
+  "inspira-ui.com",
+  "registry.inspira-ui.com",
 ]);
+
+/**
+ * Which project setup a framework variant needs, independent of the CLI its ref
+ * invokes.
+ *
+ * These are not the same axis. Svelte Bits documents installation through plain
+ * `shadcn` with a direct URL, not through a `shadcn-svelte` CLI, so CLI_SETUP
+ * would resolve its refs to a React project and fail them for the wrong reason.
+ * A framework listed here with a setup this file does not implement is reported
+ * as SKIP, not FAIL: the data is fine, the harness just cannot compile it yet.
+ */
+const FRAMEWORK_SETUP = {
+  vue: "vue",
+  svelte: null, // no SvelteKit + shadcn project builder here yet
+};
+
+/**
+ * A conservative npm package name: optional `@scope/`, then lowercase name.
+ *
+ * `deps` is contributor-editable data on a job that runs on pull_request, same
+ * threat model as `ref`. Entries are free-text by design (some read "motion
+ * (framer-motion)" or "varies per component"), so anything that is not
+ * unambiguously a package name is reported and skipped rather than handed to
+ * `npm install`. No leading dash, so a value can never be read as a flag.
+ */
+const NPM_PACKAGE_NAME = /^(@[a-z0-9][a-z0-9._-]*\/)?[a-z0-9][a-z0-9._-]*$/;
 
 /**
  * CLI packages a ref is allowed to invoke, and which project setup each needs.
@@ -117,25 +148,29 @@ const CLI_SETUP = {
  * no part of a contributed string can reach a shell, so this refuses to be
  * clever about unusual forms rather than trying to accommodate them.
  */
-function parseRef(ref) {
-  const m = /^npx\s+([a-z-]+)@latest\s+add\s+"([^"]+)"\s*$/.exec((ref || "").trim());
-  if (!m) return { error: "ref is not a plain `npx <cli>@latest add \"<url>\"` command" };
+function parseRef(fetchSpec) {
+  if (!fetchSpec || typeof fetchSpec !== "object") {
+    return { error: "entry has no structured `fetch` object (see CONTRIBUTING.md)" };
+  }
+  if (fetchSpec.method !== "registry_cli") {
+    return { error: `fetch.method is '${fetchSpec.method}', not a runnable registry command` };
+  }
 
-  const cli = m[1];
+  const cli = fetchSpec.cli;
   const setup = CLI_SETUP[cli];
   if (!setup) {
-    return { error: `ref CLI '${cli}' is not in the smoke-test allowlist (${Object.keys(CLI_SETUP).join(", ")})` };
+    return { error: `fetch.cli '${cli}' is not in the smoke-test allowlist (${Object.keys(CLI_SETUP).join(", ")})` };
   }
 
   let url;
   try {
-    url = new URL(m[2]);
+    url = new URL(fetchSpec.url);
   } catch {
-    return { error: `ref URL is unparseable: ${m[2]}` };
+    return { error: `fetch.url is unparseable: ${fetchSpec.url}` };
   }
-  if (url.protocol !== "https:") return { error: `ref URL is not https: ${url.href}` };
+  if (url.protocol !== "https:") return { error: `fetch.url is not https: ${url.href}` };
   if (!ALLOWED_HOSTS.has(url.hostname)) {
-    return { error: `ref host '${url.hostname}' is not in the smoke-test allowlist` };
+    return { error: `fetch.url host '${url.hostname}' is not in the smoke-test allowlist` };
   }
   return { argv: [`${cli}@latest`, "add", url.href, "--yes"], url, setup };
 }
@@ -407,7 +442,7 @@ async function checkDeclaredDeps(url) {
  * the parent's - only the fetch/license surface differs per framework.
  */
 async function smokeTest(entry, framework, knownBlocked) {
-  let ref = entry.ref;
+  let fetchSpec = entry.fetch;
   let library = entry.library;
   let declaredDeps = entry.deps ?? [];
   if (framework) {
@@ -415,28 +450,42 @@ async function smokeTest(entry, framework, knownBlocked) {
     if (!variant) {
       return { name: entry.name, status: "fail", detail: `no frameworks.${framework} entry` };
     }
-    ref = variant.ref;
+    fetchSpec = variant.fetch;
     library = variant.library;
     declaredDeps = variant.deps ?? [];
+
+    // A framework whose project setup this file does not implement is skipped
+    // before anything is installed, rather than built in the wrong framework's
+    // template and failed for a reason that has nothing to do with the entry.
+    if (framework in FRAMEWORK_SETUP && FRAMEWORK_SETUP[framework] === null) {
+      return {
+        name: entry.name,
+        status: "skip",
+        detail: `no ${framework} project setup in smoke-test.mjs yet; ref is validated but not compiled`,
+      };
+    }
   }
 
   const host = (() => {
-    const m = /https?:\/\/([^/\s"']+)/.exec(ref || "");
-    return m ? m[1] : null;
+    try {
+      return new URL(fetchSpec?.url ?? "").hostname;
+    } catch {
+      return null;
+    }
   })();
 
   if (host && knownBlocked[host]) {
     return { name: entry.name, status: "skip", detail: knownBlocked[host] };
   }
-  if (!/^npx\s/.test(ref || "")) {
+  if (fetchSpec && fetchSpec.method !== "registry_cli") {
     return {
       name: entry.name,
       status: "skip",
-      detail: "ref is a page-fetch instruction, not a runnable command",
+      detail: `fetch.method is '${fetchSpec.method}': a page fetch, not a runnable command`,
     };
   }
 
-  const parsed = parseRef(ref);
+  const parsed = parseRef(fetchSpec);
   if (parsed.error) {
     // A malformed or off-allowlist ref is a real failure: either the data is
     // wrong, or something is trying to run a command this job will not run.
@@ -458,20 +507,48 @@ async function smokeTest(entry, framework, knownBlocked) {
     }
     log(`  + ${added.length} file(s): ${added.join(", ")}`);
 
+    // Install the entry's curated `deps` before building.
+    //
+    // `deps` exists to record the peer dependencies a registry item needs but
+    // does not declare, and until now nothing proved those were right: the job
+    // ran the registry command and built, so an entry whose only problem was a
+    // missing curated dep passed. Installing them makes the build a real test of
+    // the curated data, not just of upstream's. Inspira UI is the case that
+    // forced this - every one of its components imports `@inspira-ui/plugins`
+    // for cn(), and its registry item's `dependencies` array is empty.
+    const installable = declaredDeps.filter((d) => NPM_PACKAGE_NAME.test(d));
+    const rejected = declaredDeps.filter((d) => !NPM_PACKAGE_NAME.test(d));
+    if (installable.length > 0) {
+      log(`  $ npm install ${installable.join(" ")}`);
+      run(NPM, ["install", ...installable, "--no-audit", "--no-fund"], app);
+    }
+
     run(NPM, ["run", "build"], app);
 
     const motion = checkReducedMotion(app, added);
     const registryDeps = await checkDeclaredDeps(parsed.url.href);
-    const missingDeps = registryDeps
-      ? declaredDeps.filter((d) => !registryDeps.has(d.toLowerCase()))
+    // A declared dep the registry does not list used to read as drift. Now that
+    // the build above actually installs these and compiles, a dep in this list
+    // has just been proven necessary, which is curation working, not drift. So
+    // only the ones that were NOT installed (unparseable as package names, so
+    // never proven either way) are worth a warning.
+    const unprovenDeps = registryDeps
+      ? declaredDeps.filter(
+          (d) => !registryDeps.has(d.toLowerCase()) && !NPM_PACKAGE_NAME.test(d),
+        )
       : [];
     return {
       name: entry.name,
       status: "pass",
       added,
       motion,
-      missingDeps,
-      detail: `${added.length} file(s), build OK`,
+      missingDeps: unprovenDeps,
+      installedDeps: installable,
+      rejectedDeps: rejected,
+      detail:
+        `${added.length} file(s), build OK` +
+        (installable.length ? `, ${installable.length} declared dep(s) installed` : "") +
+        (rejected.length ? `, ${rejected.length} dep(s) not installable as written` : ""),
     };
   } catch (err) {
     const msg = (err.stderr || err.stdout || err.message || "").toString().trim().split("\n").slice(-12).join("\n");
@@ -483,14 +560,16 @@ async function smokeTest(entry, framework, knownBlocked) {
 }
 
 /**
- * Names of showpiece entries that are new, or whose `ref` changed, versus
- * `base`. This is the actual claim a PR touching components.json makes ("this
- * ref works"), as opposed to SAMPLE, which is a fixed regression baseline
- * unrelated to what the PR changed.
+ * Names of showpiece entries that are new, or whose fetch surface changed,
+ * versus `base`. This is the actual claim a PR touching components.json makes
+ * ("this fetches and builds"), as opposed to SAMPLE, which is a fixed regression
+ * baseline unrelated to what the PR changed.
  *
- * Renames, alias/license/effect edits, and fallback_basic changes are not
- * "new/changed" here: none of them touch what gets live-fetched, so re-running
- * the fetch+build would test something the PR didn't actually claim.
+ * "Fetch surface" is `fetch` plus `deps`, since the build now installs declared
+ * deps: changing a dep changes what this job would prove. Renames, alias,
+ * license and effect edits, and fallback_basic changes are not "new/changed":
+ * none of them touch what gets fetched or installed, so re-running the
+ * fetch+build would test something the PR didn't actually claim.
  */
 function changedShowpieceNames(base, headData) {
   let baseJson;
@@ -505,15 +584,19 @@ function changedShowpieceNames(base, headData) {
     // shallow checkout): nothing to diff against, so every showpiece with a
     // ref is "new" relative to that base.
     log(`Could not read components.json at ${base} (${String(err.message).split("\n")[0]}); treating all showpiece entries as new.`);
-    return headData.showpiece.filter((e) => e.ref).map((e) => e.name);
+    return headData.showpiece.filter((e) => e.fetch).map((e) => e.name);
   }
+
+  // Compared as JSON so a reordered key or an added field still counts as a
+  // change. These objects are tiny and hand-written, so this is exact enough.
+  const fetchSurface = (e) => JSON.stringify([e?.fetch ?? null, e?.deps ?? []]);
 
   const baseByName = new Map((baseJson.showpiece || []).map((e) => [e.name, e]));
   const changed = [];
   for (const e of headData.showpiece) {
-    if (!e.ref) continue;
+    if (!e.fetch) continue;
     const prev = baseByName.get(e.name);
-    if (!prev || prev.ref !== e.ref) changed.push(e.name);
+    if (!prev || fetchSurface(prev) !== fetchSurface(e)) changed.push(e.name);
   }
   return changed;
 }
@@ -600,9 +683,9 @@ async function main() {
     }
 
     if (r.status === "pass" && r.missingDeps && r.missingDeps.length > 0) {
-      const w = `\`${r.name}\`: declared dep(s) ${r.missingDeps.map((d) => `\`${d}\``).join(", ")} not found in the registry's own dependencies - components.json may have drifted from upstream`;
+      const w = `\`${r.name}\`: declared dep(s) ${r.missingDeps.map((d) => `\`${d}\``).join(", ")} are neither in the registry's own dependencies nor installable as written, so nothing verified them - either fix the spelling or move the prose into the entry's note`;
       warnings.push(w);
-      log(`      warning: declared dep(s) not in upstream registry: ${r.missingDeps.join(", ")}`);
+      log(`      warning: unverifiable declared dep(s): ${r.missingDeps.join(", ")}`);
     }
   }
 

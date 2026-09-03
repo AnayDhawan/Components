@@ -55,12 +55,25 @@ def known_issue(known_issues, url, status):
         return record
     return None
 
-# `npx shadcn@latest add "<url>"` and `fetch page <url> via webfetch/playwright`
+# Legacy fallback only. Every showpiece entry and framework variant now carries a
+# structured `fetch` object, and validate.py fails the build if one is missing or
+# disagrees with `ref`, so this regex should never fire in practice. Kept so a
+# hand-edited working copy mid-edit still produces a useful report instead of a
+# crash, not as a supported second source of truth.
 URL_RE = re.compile(r'https?://[^\s"\'<>)]+')
 
 
-def extract_url(ref):
-    m = URL_RE.search(ref or "")
+def target_url(entry):
+    """The URL to probe for one entry or framework variant.
+
+    Reads the structured `fetch.url` rather than re-deriving a URL from the `ref`
+    command string: `ref` is a display string, and three separate consumers
+    parsing it by regex is exactly the duplication #47 called out.
+    """
+    fetch = entry.get("fetch")
+    if isinstance(fetch, dict) and fetch.get("url"):
+        return fetch["url"]
+    m = URL_RE.search(entry.get("ref") or "")
     return m.group(0) if m else None
 
 
@@ -185,11 +198,19 @@ def main():
 
     targets = []
     for entry in data.get("showpiece", []):
-        url = extract_url(entry.get("ref"))
+        url = target_url(entry)
         if url:
             targets.append(("showpiece", f"{entry['library']}/{entry['name']}", url))
         else:
             targets.append(("showpiece", f"{entry['library']}/{entry['name']}", None))
+
+        # Framework variants point at entirely different registries (vue-bits,
+        # svelte-bits, inspira-ui), so a React ref staying healthy says nothing
+        # about them. They were unprobed while there was only the one vue pilot;
+        # with a real rollout that is a blind spot the size of the rollout.
+        for framework, variant in (entry.get("frameworks") or {}).items():
+            label = f"{variant.get('library')}/{entry['name']} [{framework}]"
+            targets.append(("variant", label, target_url(variant)))
     for lib in data.get("code_libraries", []):
         if lib.get("site"):
             targets.append(("library site", lib["name"], lib["site"]))

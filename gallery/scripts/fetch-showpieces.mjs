@@ -57,14 +57,23 @@ const NPX =
     ? { file: process.execPath, prefix: [join(dirname(process.execPath), "node_modules", "npm", "bin", "npx-cli.js")] }
     : { file: "npx", prefix: [] };
 
-function parseRef(ref) {
-  const m = /^npx\s+shadcn@latest\s+add\s+"([^"]+)"\s*$/.exec((ref || "").trim());
-  if (!m) return { error: "not a runnable registry command" };
+/**
+ * Read an entry's structured `fetch` object.
+ *
+ * This gallery renders React only, so it takes just `shadcn` refs; a Vue or
+ * Svelte variant's CLI is rejected here rather than fetched into a React app.
+ * Reads `fetch` rather than regex-parsing `ref`: `ref` is the display string,
+ * and three consumers each parsing it was the duplication #47 called out.
+ */
+function parseRef(fetchSpec) {
+  if (!fetchSpec || typeof fetchSpec !== "object") return { error: "no structured `fetch` object" };
+  if (fetchSpec.method !== "registry_cli") return { error: "not a runnable registry command" };
+  if (fetchSpec.cli !== "shadcn") return { error: `cli '${fetchSpec.cli}' is not React's shadcn` };
   let url;
   try {
-    url = new URL(m[1]);
+    url = new URL(fetchSpec.url);
   } catch {
-    return { error: `unparseable URL: ${m[1]}` };
+    return { error: `unparseable URL: ${fetchSpec.url}` };
   }
   if (url.protocol !== "https:") return { error: `not https: ${url.href}` };
   if (!ALLOWED_HOSTS.has(url.hostname)) return { error: `host not allowlisted: ${url.hostname}` };
@@ -87,8 +96,11 @@ function main() {
     }
 
     const host = (() => {
-      const m = /https?:\/\/([^/\s"']+)/.exec(entry.ref || "");
-      return m ? m[1] : null;
+      try {
+        return new URL(entry.fetch?.url ?? "").hostname;
+      } catch {
+        return null;
+      }
     })();
 
     if (host && KNOWN_BLOCKED[host]) {
@@ -99,7 +111,7 @@ function main() {
       continue;
     }
 
-    const parsed = parseRef(entry.ref);
+    const parsed = parseRef(entry.fetch);
     if (parsed.error) {
       console.log(`skip  ${entry.library}/${name}: ${parsed.error}`);
       status.push({ ...pick(entry), available: false, reason: parsed.error });

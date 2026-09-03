@@ -24,6 +24,67 @@ SHOWPIECE_ONLY_REQUIRED = ("effect",)
 # it passes the required-field check while still leaving the legal status unknown.
 LICENSE_PLACEHOLDERS = {"", "tbd", "todo", "verify", "unknown", "n/a", "none", "?"}
 
+# The structured half of a showpiece's fetch surface. `ref` is the human- and
+# agent-facing command string; `fetch` is what tooling reads.
+#
+# Why both exist: three separate consumers (smoke-test.mjs, health-check.py,
+# gallery/scripts/fetch-showpieces.mjs) each used to re-derive a URL and a CLI by
+# regex-parsing `ref`. That made `exec(entry.ref)` the obvious way to "run the
+# ref" for anyone writing a fourth consumer, which is the footgun #47 is about.
+# With `fetch` present, the obvious move is reading two fields, and the checks
+# below guarantee the string can never disagree with them.
+FETCH_METHODS = {"registry_cli", "webfetch", "playwright"}
+# Only these CLIs may appear in fetch.cli. Consumers map them to a project setup,
+# so an unknown one is a data error, not something to accommodate at runtime.
+KNOWN_CLIS = {"shadcn", "shadcn-vue"}
+
+
+def canonical_ref(fetch):
+    """The one `ref` string a registry_cli fetch is allowed to have."""
+    return 'npx %s@latest add "%s"' % (fetch.get("cli"), fetch.get("url"))
+
+
+def check_fetch(label, entry, errors):
+    """Validate one entry's `fetch` object and its agreement with `ref`."""
+    fetch = entry.get("fetch")
+    if fetch is None:
+        errors.append(f"{label}: fetch missing (structured registry_url + method, see CONTRIBUTING.md)")
+        return
+    if not isinstance(fetch, dict):
+        errors.append(f"{label}: fetch must be an object, got {type(fetch).__name__}")
+        return
+
+    method = fetch.get("method")
+    if method not in FETCH_METHODS:
+        errors.append(f"{label}: fetch.method must be one of {sorted(FETCH_METHODS)}, got {method!r}")
+
+    url = fetch.get("url")
+    if not isinstance(url, str) or not url:
+        errors.append(f"{label}: fetch.url missing")
+        return
+    # https only. A registry command is executed and a page fetch is read, so
+    # neither has any business being plaintext.
+    if not url.startswith("https://"):
+        errors.append(f"{label}: fetch.url must be https, got {url!r}")
+
+    ref = entry.get("ref") or ""
+    if method == "registry_cli":
+        cli = fetch.get("cli")
+        if cli not in KNOWN_CLIS:
+            errors.append(f"{label}: fetch.cli must be one of {sorted(KNOWN_CLIS)}, got {cli!r}")
+        elif ref.strip() != canonical_ref(fetch):
+            # Drift between the two is the whole failure mode this pairing has to
+            # rule out, so it is an error rather than a warning.
+            errors.append(
+                f"{label}: ref does not match fetch. "
+                f"ref is {ref.strip()!r}, fetch renders to {canonical_ref(fetch)!r}"
+            )
+    else:
+        if "cli" in fetch:
+            errors.append(f"{label}: fetch.cli is only meaningful for method 'registry_cli'")
+        if url not in ref:
+            errors.append(f"{label}: fetch.url {url!r} does not appear in ref {ref.strip()!r}")
+
 
 def check_entries(entries, kind, errors):
     """Required fields, duplicate names, and field shapes, for one array."""
@@ -200,6 +261,15 @@ def validate(data):
 
     check_entries(showpiece, "showpiece", errors)
     check_entries(fb, "fallback", errors)
+
+    # showpiece[] only. fallback_basic refs are shadcn shorthand ("npx shadcn@latest
+    # add button") or prose compose instructions with no URL at all, and no consumer
+    # executes or fetches them, so there is nothing for a structured form to protect.
+    for c in showpiece:
+        check_fetch(c.get("name"), c, errors)
+        for fw, variant in (c.get("frameworks") or {}).items():
+            if isinstance(variant, dict):
+                check_fetch(f"{c.get('name')}.frameworks.{fw}", variant, errors)
     check_alias_collisions(showpiece, errors)
     check_framework_variants(showpiece, known_libs, errors)
 

@@ -25,7 +25,13 @@ No component source code lives here. The repo stores pointers, and the real code
   "aliases": ["laptop opening", "..."], // how a user might DESCRIBE the effect - drives matching
   "effect": "one-line description of what it does",
   "library": "aceternity",            // must exist in code_libraries[]
-  "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/<name>.json\"",  // the live-fetch command - REQUIRED, full registry URL (not namespaced shorthand, see #14)
+  // What tooling reads - REQUIRED. method is one of fetch_methods' keys;
+  // cli only for registry_cli; url must be https and the full registry URL
+  // (not namespaced shorthand, see #14).
+  "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://ui.aceternity.com/registry/<name>.json" },
+  // What a human/agent reads - REQUIRED, and for registry_cli must be exactly
+  // `npx <cli>@latest add "<url>"` rendered from `fetch`. validate.py enforces it.
+  "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/<name>.json\"",
   "license": "MIT",                   // upstream license - REQUIRED
   "deps": ["motion"],                 // peer deps to install (framer-motion, cobe, ...)
   "registry_alt": "..."               // optional - see registry_alt below
@@ -34,6 +40,20 @@ No component source code lives here. The repo stores pointers, and the real code
 
 ### Rules
 
+- **`fetch` is the machine-readable half, `ref` is the display half.** Tooling
+  (`smoke-test.mjs`, `health-check.py`, `gallery/scripts/fetch-showpieces.mjs`)
+  reads `fetch.url` / `fetch.cli` and never parses `ref`. Keeping the URL and CLI
+  in named fields is deliberate: with only a command string, the obvious way to
+  "run the ref" is to hand the whole thing to a shell, and every consumer has to
+  re-derive the same regex ([#47](https://github.com/AnayDhawan/Components/issues/47)).
+  `validate.py` fails the build if `ref` is not the exact rendering of `fetch`, so
+  the two cannot drift.
+- **`fetch.method` must be one of `fetch_methods`' keys** (`registry_cli`,
+  `webfetch`, `playwright`), and `fetch.url` must be `https`. `fetch.cli` is
+  required for `registry_cli` and rejected otherwise.
+- **`fetch` applies to `showpiece[]` and its `frameworks.*` variants only.**
+  `fallback_basic` refs are shadcn shorthand or prose compose instructions with no
+  URL, and nothing fetches or executes them.
 - **`ref` must fetch live** - a registry command (preferred) or a resolvable component-page URL. No pasted code in this repo.
 - **`ref` must use the full registry URL form**, not a namespaced shorthand (`@aceternity/<name>` etc.) - shorthand requires the namespace pre-registered in the user's project `components.json` and fails cold on a fresh project.
 - **`aliases` are the match surface** - list how users phrase the effect, not just the canonical name.

@@ -46,7 +46,9 @@
     { "name": "cult-ui",    "registry": "npx shadcn@latest add \"https://www.cult-ui.com/r/<name>.json\"",    "site": "https://www.cult-ui.com/docs/components", "license": "MIT", "deps": ["motion (framer-motion)"], "best_for": "polished animated cards, text, shaders, dynamic islands" },
     { "name": "reactbits",  "registry": "npx shadcn@latest add \"https://reactbits.dev/r/<Name>-TS-TW\"", "site": "https://www.reactbits.dev", "license": "MIT + Commons Clause: commercial use is fine as part of a product; no reselling/redistributing the components themselves", "deps": ["motion (framer-motion)", "gsap for some", "ogl/three for WebGL ones"], "best_for": "animated text + WebGL backgrounds", "note": "registry item names are PascalCase with a variant suffix: <Name>-{TS|JS}-{TW|CSS}, e.g. SplitText-TS-TW. Invalid names return the site's HTML shell with HTTP 200, so verify the response is registry-item JSON, not just the status code." },
     { "name": "21st.dev",   "registry": "npx shadcn@latest add \"https://21st.dev/r/<author>/<name>\" (registry endpoint now requires a 21st.dev account/API key; unauthenticated requests get {\"error\":\"Authentication required\"})", "site": "https://21st.dev", "mirror_site": "https://kokonutui.com", "license": "per-component (NO blanket license; every curated entry below carries its own verified license field)", "deps": ["varies"], "best_for": "huge community registry; search by effect.", "note": "Unauthenticated registry requests return HTTP 403 {\"error\":\"Authentication required\"}. Without an API key, fetch via the public component page (webfetch/playwright method), or use the entry's registry_alt when the author mirrors the component on their own open registry. API-key path (opt-in, needs shadcn CLI 3.0+ namespaced registries): see references/live-fetch.md § 1b.", "mirror_note": "Most curated 21st.dev entries actually resolve through kokonutui.com, the author's own open registry. That host carries real traffic for this skill, so it is health-checked independently of 21st.dev itself." },
-    { "name": "vue-bits",   "registry": "npx shadcn-vue@latest add \"https://vue-bits.dev/r/<Name>.json\"", "site": "https://vue-bits.dev", "license": "MIT + Commons Clause: commercial use is fine as part of a product; no reselling/redistributing the components themselves", "deps": ["varies per component, e.g. gsap"], "best_for": "Vue port of ReactBits (same author, David Haz; official, declared parity with the React originals)", "note": "Framework-variant source only: referenced from a showpiece entry's frameworks.vue, not from a top-level showpiece.library. Registry item names are PascalCase, 1:1 with the ReactBits name (e.g. SplitText.json), and are plain shadcn registry-item JSON (public/r/<Name>.json), so the same npx <cli>@latest add \"<url>\" shape as every other library works, just through shadcn-vue instead of shadcn." }
+    { "name": "vue-bits",   "registry": "npx shadcn-vue@latest add \"https://vue-bits.dev/r/<Name>.json\"", "site": "https://vue-bits.dev", "license": "MIT + Commons Clause: commercial use is fine as part of a product; no reselling/redistributing the components themselves", "deps": ["varies per component, e.g. gsap"], "best_for": "Vue port of ReactBits (same author, David Haz; official, declared parity with the React originals)", "note": "Framework-variant source only: referenced from a showpiece entry's frameworks.vue, not from a top-level showpiece.library. Registry item names are PascalCase, 1:1 with the ReactBits name (e.g. SplitText.json), and are plain shadcn registry-item JSON (public/r/<Name>.json), so the same npx <cli>@latest add \"<url>\" shape as every other library works, just through shadcn-vue instead of shadcn." },
+    { "name": "svelte-bits", "registry": "npx shadcn@latest add \"https://sveltebits.xyz/r/<name>.json\"", "site": "https://sveltebits.xyz", "license": "MIT + Commons Clause: commercial use is fine as part of a product; no reselling/redistributing the components themselves", "deps": ["varies per component, e.g. gsap, ogl, three"], "best_for": "Svelte port of ReactBits (same author, David Haz; official, states parity with the React originals including dependencies, shaders, and physics)", "note": "Framework-variant source only: referenced from a showpiece entry's frameworks.svelte, not from a top-level showpiece.library. Item names are lowercase-kebab, NOT the PascalCase ReactBits/Vue Bits spelling (aurora.json, not Aurora.json), and carry no -TS-TW suffix. Wrong-case names return the site's HTML shell with HTTP 200, so verify the response is registry-item JSON. Installs through plain shadcn, not shadcn-vue." },
+    { "name": "inspira-ui", "registry": "npx shadcn-vue@latest add \"https://inspira-ui.com/r/<name>.json\"", "site": "https://inspira-ui.com", "license": "MIT (unovue/inspira-ui). Ports Aceternity UI and Magic UI designs to Vue; the project's README states Aceternity gave permission to adapt the original designs. See ATTRIBUTION.md.", "deps": ["@inspira-ui/plugins for the cn() helper (needed by nearly every component and NOT declared in the registry item)", "varies per component, e.g. cobe, simplex-noise"], "best_for": "Vue variants of the Aceternity and Magic UI showpieces", "note": "Framework-variant source only: referenced from a showpiece entry's frameworks.vue, not from a top-level showpiece.library. Item names are lowercase-kebab and do NOT always match the React original (aceternity 3d-card -> card-3d, lamp -> lamp-effect, magicui particles -> particles-bg, animated-shiny-text -> radiant-text), so map per entry rather than by pattern. inspira-ui.com/r/<name>.json 307-redirects to registry.inspira-ui.com; follow redirects. Every variant's deps below add @inspira-ui/plugins where the source imports it, because the registry item's own dependencies array omits it." }
   ],
 
   "galleries_visual_ref_only": [
@@ -62,6 +64,7 @@
       "aliases": ["laptop opening", "macbook open on scroll", "laptop screen lift", "device scroll reveal"],
       "effect": "MacBook lid opens + screen content scales as you scroll",
       "library": "aceternity",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://ui.aceternity.com/registry/macbook-scroll.json" },
       "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/macbook-scroll.json\"",
       "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)",
       "deps": ["motion"]
@@ -71,15 +74,26 @@
       "aliases": ["3d tilt card", "card perspective hover", "tilt on hover"],
       "effect": "card tilts in 3D toward cursor with layered depth",
       "library": "aceternity",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://ui.aceternity.com/registry/3d-card.json" },
       "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/3d-card.json\"",
       "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)",
-      "deps": ["motion"]
+      "deps": ["motion"],
+      "frameworks": {
+        "vue": {
+          "library": "inspira-ui",
+          "fetch": { "method": "registry_cli", "cli": "shadcn-vue", "url": "https://inspira-ui.com/r/card-3d.json" },
+          "ref": "npx shadcn-vue@latest add \"https://inspira-ui.com/r/card-3d.json\"",
+          "license": "MIT (Inspira UI)",
+          "deps": ["@inspira-ui/plugins"]
+        }
+      }
     },
     {
       "name": "spotlight",
       "aliases": ["cursor spotlight", "hero spotlight", "radial light follow"],
       "effect": "radial spotlight glow on hero / following cursor",
       "library": "aceternity",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://ui.aceternity.com/registry/spotlight.json" },
       "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/spotlight.json\"",
       "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)",
       "deps": ["motion"]
@@ -89,6 +103,7 @@
       "aliases": ["scattered beam collision bg", "svg beams", "collision beams"],
       "effect": "animated SVG light beams as section background",
       "library": "aceternity",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://ui.aceternity.com/registry/background-beams.json" },
       "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/background-beams.json\"",
       "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)",
       "deps": ["motion"]
@@ -98,24 +113,45 @@
       "aliases": ["lamp glow heading", "spotlight heading reveal"],
       "effect": "conic lamp glow that reveals a heading",
       "library": "aceternity",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://ui.aceternity.com/registry/lamp.json" },
       "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/lamp.json\"",
       "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)",
-      "deps": ["motion"]
+      "deps": ["motion"],
+      "frameworks": {
+        "vue": {
+          "library": "inspira-ui",
+          "fetch": { "method": "registry_cli", "cli": "shadcn-vue", "url": "https://inspira-ui.com/r/lamp-effect.json" },
+          "ref": "npx shadcn-vue@latest add \"https://inspira-ui.com/r/lamp-effect.json\"",
+          "license": "MIT (Inspira UI)",
+          "deps": ["@inspira-ui/plugins"]
+        }
+      }
     },
     {
       "name": "wavy-background",
       "aliases": ["animated waves", "fluid wave background"],
       "effect": "animated flowing wave background",
       "library": "aceternity",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://ui.aceternity.com/registry/wavy-background.json" },
       "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/wavy-background.json\"",
       "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)",
-      "deps": ["motion", "simplex-noise"]
+      "deps": ["motion", "simplex-noise"],
+      "frameworks": {
+        "vue": {
+          "library": "inspira-ui",
+          "fetch": { "method": "registry_cli", "cli": "shadcn-vue", "url": "https://inspira-ui.com/r/wavy-background.json" },
+          "ref": "npx shadcn-vue@latest add \"https://inspira-ui.com/r/wavy-background.json\"",
+          "license": "MIT (Inspira UI)",
+          "deps": ["simplex-noise", "@inspira-ui/plugins"]
+        }
+      }
     },
     {
       "name": "infinite-moving-cards",
       "aliases": ["marquee testimonials", "looping card row", "auto-scroll cards"],
       "effect": "infinite horizontal looping cards (testimonials/logos)",
       "library": "aceternity",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://ui.aceternity.com/registry/infinite-moving-cards.json" },
       "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/infinite-moving-cards.json\"",
       "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)",
       "deps": ["motion"]
@@ -125,15 +161,26 @@
       "aliases": ["text reveal", "staggered word fade-in", "sequential word reveal"],
       "effect": "words fade/blur in sequentially",
       "library": "aceternity",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://ui.aceternity.com/registry/text-generate-effect.json" },
       "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/text-generate-effect.json\"",
       "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)",
-      "deps": ["motion"]
+      "deps": ["motion"],
+      "frameworks": {
+        "vue": {
+          "library": "inspira-ui",
+          "fetch": { "method": "registry_cli", "cli": "shadcn-vue", "url": "https://inspira-ui.com/r/text-generate-effect.json" },
+          "ref": "npx shadcn-vue@latest add \"https://inspira-ui.com/r/text-generate-effect.json\"",
+          "license": "MIT (Inspira UI)",
+          "deps": ["@inspira-ui/plugins"]
+        }
+      }
     },
     {
       "name": "card-hover-effect",
       "aliases": ["grid hover glow", "feature card hover spotlight"],
       "effect": "grid cards with moving hover highlight",
       "library": "aceternity",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://ui.aceternity.com/registry/card-hover-effect.json" },
       "ref": "npx shadcn@latest add \"https://ui.aceternity.com/registry/card-hover-effect.json\"",
       "license": "Aceternity License (free to use, no redistribution - see ATTRIBUTION.md)",
       "deps": ["motion"]
@@ -143,94 +190,193 @@
       "aliases": ["beam between nodes", "connection beam", "integration diagram beam"],
       "effect": "animated beam connecting two nodes (integration diagrams)",
       "library": "magicui",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://magicui.design/r/animated-beam.json" },
       "ref": "npx shadcn@latest add \"https://magicui.design/r/animated-beam.json\"",
       "license": "MIT",
-      "deps": ["motion"]
+      "deps": ["motion"],
+      "frameworks": {
+        "vue": {
+          "library": "inspira-ui",
+          "fetch": { "method": "registry_cli", "cli": "shadcn-vue", "url": "https://inspira-ui.com/r/animated-beam.json" },
+          "ref": "npx shadcn-vue@latest add \"https://inspira-ui.com/r/animated-beam.json\"",
+          "license": "MIT (Inspira UI)",
+          "deps": ["@inspira-ui/plugins"]
+        }
+      }
     },
     {
       "name": "marquee",
       "aliases": ["logo marquee", "infinite scroll strip", "ticker"],
       "effect": "infinite scrolling row of logos/cards",
       "library": "magicui",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://magicui.design/r/marquee.json" },
       "ref": "npx shadcn@latest add \"https://magicui.design/r/marquee.json\"",
       "license": "MIT",
-      "deps": ["motion"]
+      "deps": ["motion"],
+      "frameworks": {
+        "vue": {
+          "library": "inspira-ui",
+          "fetch": { "method": "registry_cli", "cli": "shadcn-vue", "url": "https://inspira-ui.com/r/marquee.json" },
+          "ref": "npx shadcn-vue@latest add \"https://inspira-ui.com/r/marquee.json\"",
+          "license": "MIT (Inspira UI)",
+          "deps": ["@inspira-ui/plugins"]
+        }
+      }
     },
     {
       "name": "bento-grid",
       "aliases": ["bento", "feature bento", "asymmetric grid"],
       "effect": "animated asymmetric bento feature grid",
       "library": "magicui",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://magicui.design/r/bento-grid.json" },
       "ref": "npx shadcn@latest add \"https://magicui.design/r/bento-grid.json\"",
       "license": "MIT",
-      "deps": ["motion"]
+      "deps": ["motion"],
+      "frameworks": {
+        "vue": {
+          "library": "inspira-ui",
+          "fetch": { "method": "registry_cli", "cli": "shadcn-vue", "url": "https://inspira-ui.com/r/bento-grid.json" },
+          "ref": "npx shadcn-vue@latest add \"https://inspira-ui.com/r/bento-grid.json\"",
+          "license": "MIT (Inspira UI)",
+          "deps": ["@inspira-ui/plugins"]
+        }
+      }
     },
     {
       "name": "globe",
       "aliases": ["interactive globe", "3d earth", "spinning globe"],
       "effect": "interactive WebGL globe",
       "library": "magicui",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://magicui.design/r/globe.json" },
       "ref": "npx shadcn@latest add \"https://magicui.design/r/globe.json\"",
       "license": "MIT",
-      "deps": ["cobe", "motion"]
+      "deps": ["cobe", "motion"],
+      "frameworks": {
+        "vue": {
+          "library": "inspira-ui",
+          "fetch": { "method": "registry_cli", "cli": "shadcn-vue", "url": "https://inspira-ui.com/r/globe.json" },
+          "ref": "npx shadcn-vue@latest add \"https://inspira-ui.com/r/globe.json\"",
+          "license": "MIT (Inspira UI)",
+          "deps": ["cobe", "vue-use-spring", "@inspira-ui/plugins"]
+        }
+      }
     },
     {
       "name": "meteors",
       "aliases": ["meteor shower", "shooting stars bg"],
       "effect": "meteor-shower background effect",
       "library": "magicui",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://magicui.design/r/meteors.json" },
       "ref": "npx shadcn@latest add \"https://magicui.design/r/meteors.json\"",
       "license": "MIT",
-      "deps": ["motion"]
+      "deps": ["motion"],
+      "frameworks": {
+        "vue": {
+          "library": "inspira-ui",
+          "fetch": { "method": "registry_cli", "cli": "shadcn-vue", "url": "https://inspira-ui.com/r/meteors.json" },
+          "ref": "npx shadcn-vue@latest add \"https://inspira-ui.com/r/meteors.json\"",
+          "license": "MIT (Inspira UI)",
+          "deps": ["@inspira-ui/plugins"]
+        }
+      }
     },
     {
       "name": "shimmer-button",
       "aliases": ["shiny button", "shimmer cta", "animated gradient button"],
       "effect": "button with traveling shimmer/border light",
       "library": "magicui",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://magicui.design/r/shimmer-button.json" },
       "ref": "npx shadcn@latest add \"https://magicui.design/r/shimmer-button.json\"",
       "license": "MIT",
-      "deps": []
+      "deps": [],
+      "frameworks": {
+        "vue": {
+          "library": "inspira-ui",
+          "fetch": { "method": "registry_cli", "cli": "shadcn-vue", "url": "https://inspira-ui.com/r/shimmer-button.json" },
+          "ref": "npx shadcn-vue@latest add \"https://inspira-ui.com/r/shimmer-button.json\"",
+          "license": "MIT (Inspira UI)",
+          "deps": ["@inspira-ui/plugins"]
+        }
+      }
     },
     {
       "name": "dock",
       "aliases": ["macos dock", "magnify dock", "icon dock"],
       "effect": "macOS-style magnifying icon dock",
       "library": "magicui",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://magicui.design/r/dock.json" },
       "ref": "npx shadcn@latest add \"https://magicui.design/r/dock.json\"",
       "license": "MIT",
-      "deps": ["motion"]
+      "deps": ["motion"],
+      "frameworks": {
+        "vue": {
+          "library": "inspira-ui",
+          "fetch": { "method": "registry_cli", "cli": "shadcn-vue", "url": "https://inspira-ui.com/r/dock.json" },
+          "ref": "npx shadcn-vue@latest add \"https://inspira-ui.com/r/dock.json\"",
+          "license": "MIT (Inspira UI)",
+          "deps": ["@inspira-ui/plugins"]
+        }
+      }
     },
     {
       "name": "animated-shiny-text",
       "aliases": ["shiny text", "shimmer text", "announcement pill text"],
       "effect": "subtle shine sweeping across text",
       "library": "magicui",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://magicui.design/r/animated-shiny-text.json" },
       "ref": "npx shadcn@latest add \"https://magicui.design/r/animated-shiny-text.json\"",
       "license": "MIT",
-      "deps": []
+      "deps": [],
+      "frameworks": {
+        "vue": {
+          "library": "inspira-ui",
+          "fetch": { "method": "registry_cli", "cli": "shadcn-vue", "url": "https://inspira-ui.com/r/radiant-text.json" },
+          "ref": "npx shadcn-vue@latest add \"https://inspira-ui.com/r/radiant-text.json\"",
+          "license": "MIT (Inspira UI)",
+          "deps": ["@inspira-ui/plugins"]
+        }
+      }
     },
     {
       "name": "particles",
       "aliases": ["particle background", "interactive dots bg", "sparkles"],
       "effect": "interactive particle field background",
       "library": "magicui",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://magicui.design/r/particles.json" },
       "ref": "npx shadcn@latest add \"https://magicui.design/r/particles.json\"",
       "license": "MIT",
-      "deps": []
+      "deps": [],
+      "frameworks": {
+        "vue": {
+          "library": "inspira-ui",
+          "fetch": { "method": "registry_cli", "cli": "shadcn-vue", "url": "https://inspira-ui.com/r/particles-bg.json" },
+          "ref": "npx shadcn-vue@latest add \"https://inspira-ui.com/r/particles-bg.json\"",
+          "license": "MIT (Inspira UI)",
+          "deps": ["@vueuse/core"]
+        }
+      }
     },
     {
       "name": "split-text",
       "aliases": ["staggered text entrance", "per-letter animation", "gsap text intro"],
       "effect": "text splits into chars/words animating in with stagger",
       "library": "reactbits",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://reactbits.dev/r/SplitText-TS-TW" },
       "ref": "npx shadcn@latest add \"https://reactbits.dev/r/SplitText-TS-TW\"",
       "license": "MIT + Commons Clause",
       "deps": ["gsap", "@gsap/react"],
       "frameworks": {
         "vue": {
           "library": "vue-bits",
+          "fetch": { "method": "registry_cli", "cli": "shadcn-vue", "url": "https://vue-bits.dev/r/SplitText.json" },
           "ref": "npx shadcn-vue@latest add \"https://vue-bits.dev/r/SplitText.json\"",
+          "license": "MIT + Commons Clause",
+          "deps": ["gsap"]
+        },
+        "svelte": {
+          "library": "svelte-bits",
+          "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://sveltebits.xyz/r/split-text.json" },
+          "ref": "npx shadcn@latest add \"https://sveltebits.xyz/r/split-text.json\"",
           "license": "MIT + Commons Clause",
           "deps": ["gsap"]
         }
@@ -241,78 +387,208 @@
       "aliases": ["blur fade-in text", "text unblur reveal"],
       "effect": "words blur-fade into focus sequentially",
       "library": "reactbits",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://reactbits.dev/r/BlurText-TS-TW" },
       "ref": "npx shadcn@latest add \"https://reactbits.dev/r/BlurText-TS-TW\"",
       "license": "MIT + Commons Clause",
-      "deps": ["motion"]
+      "deps": ["motion"],
+      "frameworks": {
+        "vue": {
+          "library": "vue-bits",
+          "fetch": { "method": "registry_cli", "cli": "shadcn-vue", "url": "https://vue-bits.dev/r/BlurText.json" },
+          "ref": "npx shadcn-vue@latest add \"https://vue-bits.dev/r/BlurText.json\"",
+          "license": "MIT + Commons Clause",
+          "deps": ["motion-v"]
+        },
+        "svelte": {
+          "library": "svelte-bits",
+          "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://sveltebits.xyz/r/blur-text.json" },
+          "ref": "npx shadcn@latest add \"https://sveltebits.xyz/r/blur-text.json\"",
+          "license": "MIT + Commons Clause",
+          "deps": ["motion"]
+        }
+      }
     },
     {
       "name": "decrypted-text",
       "aliases": ["scramble text", "hacker text decode", "cipher decode text"],
       "effect": "characters scramble then settle into the real text",
       "library": "reactbits",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://reactbits.dev/r/DecryptedText-TS-TW" },
       "ref": "npx shadcn@latest add \"https://reactbits.dev/r/DecryptedText-TS-TW\"",
       "license": "MIT + Commons Clause",
-      "deps": ["motion"]
+      "deps": ["motion"],
+      "frameworks": {
+        "vue": {
+          "library": "vue-bits",
+          "fetch": { "method": "registry_cli", "cli": "shadcn-vue", "url": "https://vue-bits.dev/r/DecryptedText.json" },
+          "ref": "npx shadcn-vue@latest add \"https://vue-bits.dev/r/DecryptedText.json\"",
+          "license": "MIT + Commons Clause"
+        },
+        "svelte": {
+          "library": "svelte-bits",
+          "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://sveltebits.xyz/r/decrypted-text.json" },
+          "ref": "npx shadcn@latest add \"https://sveltebits.xyz/r/decrypted-text.json\"",
+          "license": "MIT + Commons Clause"
+        }
+      }
     },
     {
       "name": "count-up",
       "aliases": ["animated number counter", "stat count animation"],
       "effect": "number animates from 0 to target when scrolled into view",
       "library": "reactbits",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://reactbits.dev/r/CountUp-TS-TW" },
       "ref": "npx shadcn@latest add \"https://reactbits.dev/r/CountUp-TS-TW\"",
       "license": "MIT + Commons Clause",
-      "deps": ["motion"]
+      "deps": ["motion"],
+      "frameworks": {
+        "vue": {
+          "library": "vue-bits",
+          "fetch": { "method": "registry_cli", "cli": "shadcn-vue", "url": "https://vue-bits.dev/r/CountUp.json" },
+          "ref": "npx shadcn-vue@latest add \"https://vue-bits.dev/r/CountUp.json\"",
+          "license": "MIT + Commons Clause"
+        },
+        "svelte": {
+          "library": "svelte-bits",
+          "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://sveltebits.xyz/r/count-up.json" },
+          "ref": "npx shadcn@latest add \"https://sveltebits.xyz/r/count-up.json\"",
+          "license": "MIT + Commons Clause",
+          "deps": ["motion"]
+        }
+      }
     },
     {
       "name": "aurora",
       "aliases": ["aurora background", "northern lights bg", "flowing gradient waves"],
       "effect": "WebGL aurora ribbon background",
       "library": "reactbits",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://reactbits.dev/r/Aurora-TS-TW" },
       "ref": "npx shadcn@latest add \"https://reactbits.dev/r/Aurora-TS-TW\"",
       "license": "MIT + Commons Clause",
-      "deps": ["ogl"]
+      "deps": ["ogl"],
+      "frameworks": {
+        "vue": {
+          "library": "vue-bits",
+          "fetch": { "method": "registry_cli", "cli": "shadcn-vue", "url": "https://vue-bits.dev/r/Aurora.json" },
+          "ref": "npx shadcn-vue@latest add \"https://vue-bits.dev/r/Aurora.json\"",
+          "license": "MIT + Commons Clause",
+          "deps": ["ogl"]
+        },
+        "svelte": {
+          "library": "svelte-bits",
+          "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://sveltebits.xyz/r/aurora.json" },
+          "ref": "npx shadcn@latest add \"https://sveltebits.xyz/r/aurora.json\"",
+          "license": "MIT + Commons Clause",
+          "deps": ["ogl"]
+        }
+      }
     },
     {
       "name": "particles-webgl",
       "aliases": ["webgl particles", "3d particle field", "gpu particles"],
       "effect": "GPU particle field background (heavier, richer than magicui particles)",
       "library": "reactbits",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://reactbits.dev/r/Particles-TS-TW" },
       "ref": "npx shadcn@latest add \"https://reactbits.dev/r/Particles-TS-TW\"",
       "license": "MIT + Commons Clause",
-      "deps": ["ogl"]
+      "deps": ["ogl"],
+      "frameworks": {
+        "vue": {
+          "library": "vue-bits",
+          "fetch": { "method": "registry_cli", "cli": "shadcn-vue", "url": "https://vue-bits.dev/r/Particles.json" },
+          "ref": "npx shadcn-vue@latest add \"https://vue-bits.dev/r/Particles.json\"",
+          "license": "MIT + Commons Clause",
+          "deps": ["ogl"]
+        },
+        "svelte": {
+          "library": "svelte-bits",
+          "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://sveltebits.xyz/r/particles.json" },
+          "ref": "npx shadcn@latest add \"https://sveltebits.xyz/r/particles.json\"",
+          "license": "MIT + Commons Clause",
+          "deps": ["ogl"]
+        }
+      }
     },
     {
       "name": "hyperspeed",
       "aliases": ["warp speed background", "highway light tunnel", "hyperspace bg"],
       "effect": "3D hyperspeed highway/light-tunnel background",
       "library": "reactbits",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://reactbits.dev/r/Hyperspeed-TS-TW" },
       "ref": "npx shadcn@latest add \"https://reactbits.dev/r/Hyperspeed-TS-TW\"",
       "license": "MIT + Commons Clause",
-      "deps": ["three", "postprocessing"]
+      "deps": ["three", "postprocessing"],
+      "frameworks": {
+        "vue": {
+          "library": "vue-bits",
+          "fetch": { "method": "registry_cli", "cli": "shadcn-vue", "url": "https://vue-bits.dev/r/Hyperspeed.json" },
+          "ref": "npx shadcn-vue@latest add \"https://vue-bits.dev/r/Hyperspeed.json\"",
+          "license": "MIT + Commons Clause",
+          "deps": ["three", "postprocessing"]
+        },
+        "svelte": {
+          "library": "svelte-bits",
+          "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://sveltebits.xyz/r/hyperspeed.json" },
+          "ref": "npx shadcn@latest add \"https://sveltebits.xyz/r/hyperspeed.json\"",
+          "license": "MIT + Commons Clause",
+          "deps": ["three", "postprocessing"]
+        }
+      }
     },
     {
       "name": "letter-glitch",
       "aliases": ["glitch letters bg", "terminal glitch wall", "matrix wall"],
       "effect": "canvas wall of randomly glitching letters",
       "library": "reactbits",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://reactbits.dev/r/LetterGlitch-TS-TW" },
       "ref": "npx shadcn@latest add \"https://reactbits.dev/r/LetterGlitch-TS-TW\"",
       "license": "MIT + Commons Clause",
-      "deps": []
+      "deps": [],
+      "frameworks": {
+        "vue": {
+          "library": "vue-bits",
+          "fetch": { "method": "registry_cli", "cli": "shadcn-vue", "url": "https://vue-bits.dev/r/LetterGlitch.json" },
+          "ref": "npx shadcn-vue@latest add \"https://vue-bits.dev/r/LetterGlitch.json\"",
+          "license": "MIT + Commons Clause"
+        },
+        "svelte": {
+          "library": "svelte-bits",
+          "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://sveltebits.xyz/r/letter-glitch.json" },
+          "ref": "npx shadcn@latest add \"https://sveltebits.xyz/r/letter-glitch.json\"",
+          "license": "MIT + Commons Clause"
+        }
+      }
     },
     {
       "name": "splash-cursor",
       "aliases": ["fluid cursor", "fluid simulation", "fluid motion", "liquid cursor", "navier-stokes fluid", "splash cursor", "ink fluid trail"],
       "effect": "interactive WebGL fluid-simulation that splashes flowing color trails following the cursor",
       "library": "reactbits",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://reactbits.dev/r/SplashCursor-TS-TW" },
       "ref": "npx shadcn@latest add \"https://reactbits.dev/r/SplashCursor-TS-TW\"",
       "license": "MIT + Commons Clause",
-      "deps": []
+      "deps": [],
+      "frameworks": {
+        "vue": {
+          "library": "vue-bits",
+          "fetch": { "method": "registry_cli", "cli": "shadcn-vue", "url": "https://vue-bits.dev/r/SplashCursor.json" },
+          "ref": "npx shadcn-vue@latest add \"https://vue-bits.dev/r/SplashCursor.json\"",
+          "license": "MIT + Commons Clause"
+        },
+        "svelte": {
+          "library": "svelte-bits",
+          "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://sveltebits.xyz/r/splash-cursor.json" },
+          "ref": "npx shadcn@latest add \"https://sveltebits.xyz/r/splash-cursor.json\"",
+          "license": "MIT + Commons Clause"
+        }
+      }
     },
     {
       "name": "dynamic-island",
       "aliases": ["ios dynamic island", "expanding pill notification", "morphing status pill"],
       "effect": "iOS-style dynamic island that morphs between compact/expanded states",
       "library": "cult-ui",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://www.cult-ui.com/r/dynamic-island.json" },
       "ref": "npx shadcn@latest add \"https://www.cult-ui.com/r/dynamic-island.json\"",
       "license": "MIT",
       "deps": ["motion"]
@@ -322,6 +598,7 @@
       "aliases": ["shader blur hero", "lens blur shader", "liquid blur surface"],
       "effect": "interactive WebGL lens-blur shader surface",
       "library": "cult-ui",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://www.cult-ui.com/r/shader-lens-blur.json" },
       "ref": "npx shadcn@latest add \"https://www.cult-ui.com/r/shader-lens-blur.json\"",
       "license": "MIT",
       "deps": ["motion", "three", "jotai"]
@@ -331,6 +608,7 @@
       "aliases": ["fractal grid background", "animated canvas grid"],
       "effect": "animated fractal grid canvas background",
       "library": "cult-ui",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://www.cult-ui.com/r/canvas-fractal-grid.json" },
       "ref": "npx shadcn@latest add \"https://www.cult-ui.com/r/canvas-fractal-grid.json\"",
       "license": "MIT",
       "deps": ["motion"]
@@ -340,6 +618,7 @@
       "aliases": ["tactile card", "textured gradient card", "layered border card"],
       "effect": "layered texture/border card with tactile depth",
       "library": "cult-ui",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://www.cult-ui.com/r/texture-card.json" },
       "ref": "npx shadcn@latest add \"https://www.cult-ui.com/r/texture-card.json\"",
       "license": "MIT",
       "deps": []
@@ -349,6 +628,7 @@
       "aliases": ["typing text", "terminal typing effect", "type and delete loop"],
       "effect": "typewriter typing/deleting text loop",
       "library": "cult-ui",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://www.cult-ui.com/r/typewriter.json" },
       "ref": "npx shadcn@latest add \"https://www.cult-ui.com/r/typewriter.json\"",
       "license": "MIT",
       "deps": ["motion"]
@@ -358,6 +638,7 @@
       "aliases": ["number ticker", "smooth number transition", "springy counter"],
       "effect": "number springs smoothly between values on change",
       "library": "cult-ui",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://www.cult-ui.com/r/animated-number.json" },
       "ref": "npx shadcn@latest add \"https://www.cult-ui.com/r/animated-number.json\"",
       "license": "MIT",
       "deps": ["motion"]
@@ -367,6 +648,7 @@
       "aliases": ["geometric hero", "floating shapes hero", "modern gradient hero"],
       "effect": "hero section with floating animated geometric shapes",
       "library": "21st.dev",
+      "fetch": { "method": "webfetch", "url": "https://21st.dev/@kokonutd/components/shape-landing-hero" },
       "ref": "fetch page https://21st.dev/@kokonutd/components/shape-landing-hero via webfetch/playwright (registry needs 21st.dev auth)",
       "license": "MIT (KokonutUI, github.com/kokonut-labs/kokonutui)",
       "deps": ["motion"]
@@ -376,6 +658,7 @@
       "aliases": ["matrix text reveal", "raining code text"],
       "effect": "matrix-style character rain resolving into text",
       "library": "21st.dev",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://kokonutui.com/r/matrix-text.json" },
       "ref": "npx shadcn@latest add \"https://kokonutui.com/r/matrix-text.json\"",
       "registry_alt": "author's own open registry; 21st.dev page: https://21st.dev/@kokonutd/components/matrix-text",
       "license": "MIT (KokonutUI)",
@@ -386,6 +669,7 @@
       "aliases": ["diagonal light beams bg", "diagonal beam rays bg"],
       "effect": "animated diagonal light beams background",
       "library": "21st.dev",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://kokonutui.com/r/beams-background.json" },
       "ref": "npx shadcn@latest add \"https://kokonutui.com/r/beams-background.json\"",
       "registry_alt": "author's own open registry; 21st.dev page: https://21st.dev/@kokonutd/components/beams-background",
       "license": "MIT (KokonutUI)",
@@ -396,6 +680,7 @@
       "aliases": ["flowing path lines bg", "animated svg paths hero"],
       "effect": "hero background of flowing animated SVG paths",
       "library": "21st.dev",
+      "fetch": { "method": "registry_cli", "cli": "shadcn", "url": "https://kokonutui.com/r/background-paths.json" },
       "ref": "npx shadcn@latest add \"https://kokonutui.com/r/background-paths.json\"",
       "registry_alt": "author's own open registry; 21st.dev page: https://21st.dev/@kokonutd/components/background-paths",
       "license": "MIT (KokonutUI)",
@@ -406,6 +691,7 @@
       "aliases": ["ai chat input", "v0 style prompt box", "llm input"],
       "effect": "v0-style AI chat input with attachments + actions",
       "library": "21st.dev",
+      "fetch": { "method": "webfetch", "url": "https://21st.dev/@kokonutd/components/v0-ai-chat" },
       "ref": "fetch page https://21st.dev/@kokonutd/components/v0-ai-chat via webfetch/playwright (registry needs 21st.dev auth)",
       "license": "MIT (KokonutUI)",
       "deps": []
@@ -415,6 +701,7 @@
       "aliases": ["draggable globe", "cobe globe", "interactive 3d earth"],
       "effect": "interactive draggable cobe globe (by cobe's author)",
       "library": "21st.dev",
+      "fetch": { "method": "webfetch", "url": "https://21st.dev/@shuding/components/cobe-globe-interactive" },
       "ref": "fetch page https://21st.dev/@shuding/components/cobe-globe-interactive via webfetch/playwright (registry needs 21st.dev auth)",
       "license": "MIT (cobe, github.com/shuding/cobe)",
       "deps": ["cobe"]

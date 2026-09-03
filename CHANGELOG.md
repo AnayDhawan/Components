@@ -6,6 +6,43 @@ All notable changes to this project are documented here. Format based on
 
 ## [Unreleased]
 
+### Added
+- Multi-framework rollout, completing #13's pilot (#55). 31 framework variants across
+  three new sources, every one verified individually rather than mapped by pattern:
+  - **Svelte**, via **Svelte Bits** (official ReactBits port, same author): all 9
+    ReactBits entries.
+  - **Vue**, via **Vue Bits**: the 8 remaining ReactBits entries, joining the
+    `split-text` pilot.
+  - **Vue**, via **Inspira UI** (MIT; its README records Aceternity's permission to
+    adapt the designs): 4 of 9 Aceternity entries and all 9 Magic UI entries. The
+    Magic UI half was not in #55's plan, which recorded no viable Vue path for that
+    library; Inspira UI ports both, so the same verification pass covered both.
+- Structured `fetch` object (`method`, `cli`, `url`) on every showpiece entry and
+  framework variant (#47). `ref` stays as the human- and agent-facing command string,
+  but `smoke-test.mjs`, `health-check.py` and `gallery/scripts/fetch-showpieces.mjs`
+  now read named fields instead of each re-deriving a URL and CLI by regex, and
+  `validate.py` fails the build if the two ever disagree.
+- `health-check.py` probes framework-variant refs. They point at entirely different
+  registries, so a healthy React ref said nothing about them; with 31 variants that
+  was a blind spot the size of the rollout.
+
+### Changed
+- `smoke-test.mjs` installs an entry's declared `deps` before building, so `deps` is
+  now proven rather than asserted. Inspira UI forced this: every component imports
+  `@inspira-ui/plugins` for `cn()` and its registry items declare no dependencies at
+  all, so the build fails without the curated entry. Package names are validated
+  against a strict pattern first, since `deps` is contributor-editable data on a job
+  that runs on `pull_request`.
+- A declared dep absent from the registry's own `dependencies` no longer warns as
+  drift. Now that the build installs and compiles it, its presence is proven
+  necessary; only deps that could not be installed as written (free-text like
+  `"varies per component"`) are reported as unverifiable.
+- `--diff` selects entries whose `fetch` **or** `deps` changed, not just `ref`, since
+  a dep change now changes what the job proves.
+- A framework variant whose project setup does not exist yet (`svelte`) reports SKIP
+  before installing anything, instead of being built in the wrong framework's
+  template and failing for an unrelated reason.
+
 ## [1.2.0] - 2026-08-30
 
 ### Added
