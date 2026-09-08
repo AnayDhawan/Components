@@ -78,7 +78,13 @@ jobs:
       - name: Comment results on the PR
         # Runs even if either smoke-test step failed above, so a broken ref shows
         # up as a comment, not just a red check the contributor has to click into.
-        if: github.event_name == 'pull_request' && always()
+        # Only for same-repo PRs: a fork's pull_request runs with a read-only
+        # GITHUB_TOKEN, and writing the comment would 403 and fail the job even
+        # though the smoke tests themselves passed. Fork contributors still get
+        # the full results in the run log and job summary.
+        if: >-
+          github.event_name == 'pull_request' && always() &&
+          github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
         uses: actions/github-script@v9
         with:
           script: |

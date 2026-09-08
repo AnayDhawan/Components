@@ -714,7 +714,7 @@
       "kind": "web",
       "description": "Hero with a spotlight/beam background, animated headline reveal, and a shimmer CTA - the most common 'wow' request pattern.",
       "composedFrom": ["spotlight", "split-text", "shimmer-button"],
-      "preview": null,
+      "preview": "none",
       "sections": ["hero"]
     },
     {
@@ -722,7 +722,7 @@
       "kind": "web",
       "description": "Bento-style multi-feature showcase: animated bento grid with per-cell showpiece effects for a product feature-overview section.",
       "composedFrom": ["bento-grid", "marquee", "globe"],
-      "preview": null,
+      "preview": "none",
       "sections": ["feature-grid"]
     },
     {
@@ -730,7 +730,7 @@
       "kind": "video",
       "description": "Single core-feature product demo: hook, problem, demo x2-3, differentiator, cta. 60-75s.",
       "composedFrom": ["hook", "problem", "demo", "demo", "differentiator", "cta"],
-      "preview": null,
+      "preview": "none",
       "source": "vidstudio PIPELINE.md (beat arcs)",
       "beats": ["hook", "problem", "demo", "demo", "differentiator", "cta"]
     },
@@ -739,7 +739,7 @@
       "kind": "video",
       "description": "Multi-feature product: one dense ~15s hook stating every core claim up front, one demo beat per claim, differentiator, cta.",
       "composedFrom": ["packed-hook", "demo-per-feature", "differentiator", "cta"],
-      "preview": null,
+      "preview": "none",
       "source": "vidstudio PIPELINE.md (beat arcs); proven on pepiros v3",
       "beats": ["packed-hook", "demo", "demo", "demo", "differentiator", "cta"]
     },
@@ -748,7 +748,7 @@
       "kind": "video",
       "description": "Mechanism/credibility beat: identical BrowserFrame position/size across 3 sequential real screenshots, each a different claim tier, so only inner content swaps.",
       "composedFrom": ["BrowserFrame", "CinematicScene", "Caption"],
-      "preview": null,
+      "preview": "none",
       "source": "vidstudio pepiros v3, src/videos/pepiros/scenes/Mechanism.tsx"
     },
     {
@@ -756,7 +756,7 @@
       "kind": "video",
       "description": "Two-panel beat: top is a hand-built mockup in the project's real tokens for a claimed-but-unwired feature; bottom is a genuine screenshot of an adjacent real page.",
       "composedFrom": ["BrowserFrame", "CinematicScene", "Caption"],
-      "preview": null,
+      "preview": "none",
       "source": "vidstudio pepiros v3, src/videos/pepiros/scenes/Publish.tsx"
     },
     {
@@ -764,7 +764,7 @@
       "kind": "video",
       "description": "Single-panel constructed mockup reusing an exact card/badge convention captured live in an earlier real-screenshot beat, so it reads as continuation not invention.",
       "composedFrom": ["CinematicScene", "Caption"],
-      "preview": null,
+      "preview": "none",
       "source": "vidstudio pepiros v3, src/videos/pepiros/scenes/Discuss.tsx"
     }
   ],

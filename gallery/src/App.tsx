@@ -2,10 +2,7 @@ import { useState, type ReactNode } from "react";
 
 import showpieces from "./showpieces.json";
 import layouts from "./layouts.json";
-import { Demo3dCard } from "./demos/Demo3dCard";
-import { DemoMarquee } from "./demos/DemoMarquee";
-import { DemoBlurText } from "./demos/DemoBlurText";
-import { DemoMatrixText } from "./demos/DemoMatrixText";
+import { LIVE_DEMOS, STATIC_PREVIEWS } from "./demos/index";
 
 type Entry = {
   name: string;
@@ -16,6 +13,7 @@ type Entry = {
   deps: string[];
   ref: string;
   available: boolean;
+  preview?: "static" | null;
   reason?: string;
 };
 
@@ -30,30 +28,32 @@ type LayoutEntry = {
   beats?: string[];
 };
 
-const DEMOS: Record<string, () => ReactNode> = {
-  "3d-card": Demo3dCard,
-  marquee: DemoMarquee,
-  "blur-text": DemoBlurText,
-  "matrix-text": DemoMatrixText,
-};
-
 const REPO = "https://github.com/AnayDhawan/Components";
 
 function Card({ entry }: { entry: Entry }) {
-  const Demo = DEMOS[entry.name];
+  const LiveDemo = LIVE_DEMOS[entry.name];
+  const StaticPreview = STATIC_PREVIEWS[entry.name];
 
   return (
     <section className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950">
       <div className="flex min-h-[22rem] items-center justify-center overflow-hidden bg-neutral-900/40 p-6">
-        {entry.available && Demo ? (
-          <Demo />
+        {entry.available && LiveDemo ? (
+          <LiveDemo />
+        ) : StaticPreview ? (
+          <div className="relative w-full">
+            <StaticPreview />
+            <span className="absolute right-3 top-3 rounded-full border border-neutral-700 bg-neutral-950/80 px-2.5 py-1 text-[10px] uppercase tracking-wide text-neutral-400">
+              static preview
+            </span>
+          </div>
         ) : (
           <div className="max-w-sm text-center">
             <p className="text-sm font-medium text-neutral-300">Upstream temporarily unavailable</p>
             <p className="mt-2 text-xs leading-relaxed text-neutral-500">{entry.reason}</p>
             <p className="mt-3 text-xs text-neutral-600">
-              The entry is still valid; only automated fetching is blocked. This page is built by
-              running the real registry command, so it shows the gap instead of hiding it.
+              The entry is still valid; only automated fetching is blocked. Live demos
+              are built by running the real registry command, so the page shows the gap
+              instead of hiding it.
             </p>
           </div>
         )}
@@ -104,6 +104,10 @@ function LayoutCard({ layout }: { layout: LayoutEntry }) {
       </div>
 
       <p className="mt-3 text-sm text-neutral-400">{layout.description}</p>
+
+      {layout.preview === "none" && (
+        <p className="mt-2 text-[11px] uppercase tracking-wide text-neutral-600">no visual preview</p>
+      )}
 
       {layout.kind === "web" && layout.sections && (
         <ul className="mt-3 list-inside list-disc text-xs text-neutral-500">
@@ -163,10 +167,12 @@ export default function App() {
             fetches the real component live from its registry and adapts it to your brand tokens.
           </p>
           <p className="mt-4 text-sm text-neutral-500">
-            Every component below was pulled by running its actual{" "}
-            <code className="text-neutral-400">ref</code> command during this page's build. Nothing
-            here is copy-pasted, which is the whole point: the registry stores pointers, so the code
-            cannot go stale.
+            Every live demo below was pulled by running its actual{" "}
+            <code className="text-neutral-400">ref</code> command during this page's build.
+            WebGL/canvas-class effects and the challenge-blocked cult-ui host render as
+            hand-authored static previews, labeled as such. Nothing here is copy-pasted,
+            which is the whole point: the registry stores pointers, so the code cannot
+            go stale.
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3 text-sm">
@@ -182,8 +188,9 @@ export default function App() {
           </div>
 
           <p className="mt-6 text-xs text-neutral-600">
-            A curated sample, one per source library. The full registry has 39 showpieces and 12
-            plain fallbacks; see the{" "}
+            A curated window onto the 39-effect registry: live demos for the lightweight
+            effects, static previews for the WebGL/canvas-class and challenge-blocked
+            ones. The full registry has 39 showpieces and 12 plain fallbacks; see the{" "}
             <a href={REPO} className="underline hover:text-neutral-400">
               README
             </a>
