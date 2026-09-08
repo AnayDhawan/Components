@@ -54,6 +54,10 @@ All notable changes to this project are documented here. Format based on
   the demo components can no longer silently drift (#62).
 - `layouts[]` now records an explicit `"preview": "none"` instead of `null`, and the
   gallery shows the intent (#62).
+- The smoke-test workflow's PR-comment step skips fork PRs instead of failing the job.
+  A `pull_request` from a fork always runs with a read-only token, so posting the
+  results comment 403'd and turned a passed check red; fork contributors still get
+  full results in the run log and job summary.
 
 ## [1.2.0] - 2026-08-30
 
