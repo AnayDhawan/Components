@@ -25,6 +25,13 @@ All notable changes to this project are documented here. Format based on
 - `health-check.py` probes framework-variant refs. They point at entirely different
   registries, so a healthy React ref said nothing about them; with 31 variants that
   was a blind spot the size of the rollout.
+- Gallery preview coverage (#62): the showpiece showcase grew from 4 to 22 rendered
+  previews. The live-fetched sample now spans 13 entries (8 new lightweight effects:
+  `spotlight`, `background-beams`, `shimmer-button`, `meteors`, `animated-shiny-text`,
+  `dock`, `count-up`, `decrypted-text`), and the 10 entries that cannot be fetched
+  cheaply - WebGL/canvas-class effects plus the challenge-blocked `texture-card` (#31) -
+  are shown as hand-authored static CSS/SVG previews instead of placeholders or a bare
+  gap. See `docs/previews-audit.md` for the audit behind the change.
 
 ### Changed
 - `smoke-test.mjs` installs an entry's declared `deps` before building, so `deps` is
@@ -42,6 +49,11 @@ All notable changes to this project are documented here. Format based on
 - A framework variant whose project setup does not exist yet (`svelte`) reports SKIP
   before installing anything, instead of being built in the wrong framework's
   template and failing for an unrelated reason.
+- `gallery/scripts/fetch-showpieces.mjs` fails the build if any entry in
+  `CURATED`/`STATIC_PREVIEW` lacks a matching `Demo<Name>.tsx`, so the fetch list and
+  the demo components can no longer silently drift (#62).
+- `layouts[]` now records an explicit `"preview": "none"` instead of `null`, and the
+  gallery shows the intent (#62).
 
 ## [1.2.0] - 2026-08-30
 
