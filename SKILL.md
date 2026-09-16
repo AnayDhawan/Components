@@ -68,8 +68,11 @@ Registries change. Recover in this order - never leave the user stuck:
 
 ## Limitations
 
-- **React + Tailwind only**, and the target project must already be `shadcn`-initialised
-  (has `components.json` + a registry-aware `npx shadcn` setup). No Vue/Svelte/plain-HTML support.
+- **Primarily React + Tailwind**, and the target project must already be `shadcn`-initialised
+  (has `components.json` + a registry-aware `npx shadcn` setup). Vue and Svelte support is
+  narrow and per-entry, not general: see step 2 of "How to fetch live" for which showpieces
+  carry a verified `frameworks.vue` / `frameworks.svelte` variant. Everything else, and
+  plain HTML, is React-only.
 - **No vendoring.** Showpieces are pointers fetched live; if an upstream registry endpoint
   changes or goes down, that showpiece is temporarily unavailable (see Troubleshooting)
   rather than silently served from a stale local copy.
