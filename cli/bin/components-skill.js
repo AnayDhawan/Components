@@ -1,7 +1,9 @@
 #!/usr/bin/env node
+import { resolve } from "node:path";
 import { add } from "../src/commands/add.js";
 import { update } from "../src/commands/update.js";
 import { search, formatResults } from "../src/commands/search.js";
+import { extractTokens, formatTokens } from "../src/commands/tokens.js";
 import { packageVersion } from "../src/lib/dist.js";
 import { AGENTS } from "../src/lib/layout.js";
 
@@ -11,12 +13,14 @@ Usage:
   npx components-skill@latest add [options]
   npx components-skill@latest update [options]
   npx components-skill@latest search <query> [options]
+  npx components-skill@latest tokens [path] [options]
 
 Options:
   --agent <name>    ${AGENTS.join(" | ")} | all      (default: claude, add/update only)
   --global          install into your user config dir instead of this project
   --force           update: overwrite files you have edited locally
   --library <name>  search: restrict to one source library
+  --json            tokens: print the raw extracted structure instead of a summary
   -h, --help        show this
   -v, --version     print the version
 
@@ -28,6 +32,8 @@ Examples:
   npx components-skill@latest update                  # refresh, keeping local edits
   npx components-skill@latest search "laptop opening" # find a showpiece by effect/alias
   npx components-skill@latest search card --library cult-ui
+  npx components-skill@latest tokens                  # read this project's brand tokens
+  npx components-skill@latest tokens ../other-app --json
 `;
 
 /**
@@ -43,6 +49,7 @@ function parse(argv) {
     else if (a === "-v" || a === "--version") opts.version = true;
     else if (a === "--global") opts.global = true;
     else if (a === "--force") opts.force = true;
+    else if (a === "--json") opts.json = true;
     else if (a === "--agent") {
       opts.agent = argv[++i];
       if (!opts.agent || opts.agent.startsWith("-")) throw new Error("--agent needs a value");
@@ -94,6 +101,12 @@ function main(argv) {
       const results = search(query, opts);
       console.log(formatResults(results));
       return results.length ? 0 : 1;
+    }
+    if (cmd === "tokens") {
+      const projectDir = opts._[1] ? resolve(opts._[1]) : process.cwd();
+      const result = extractTokens(projectDir);
+      console.log(opts.json ? JSON.stringify(result, null, 2) : formatTokens(result));
+      return result.cssFile || result.configFile ? 0 : 1;
     }
     console.error(`Unknown command: ${cmd}\n`);
     console.error(USAGE);

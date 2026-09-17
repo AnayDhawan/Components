@@ -21,6 +21,7 @@ npx components-skill@latest add --agent cursor   # just Cursor
 npx components-skill@latest add --global         # ~/.claude/skills/components
 npx components-skill@latest update               # refresh, keeping your edits
 npx components-skill@latest search "laptop opening"   # find a showpiece before installing
+npx components-skill@latest tokens                    # read this project's brand tokens
 ```
 
 ### Options
@@ -31,6 +32,7 @@ npx components-skill@latest search "laptop opening"   # find a showpiece before 
 | `--global` | Install into your user config dir instead of the current project. Not supported for Cursor, which has no documented user-level rules directory. |
 | `--force` | On `update`, overwrite files you have edited locally. |
 | `--library <name>` | On `search`, restrict results to one source library (`aceternity`, `magicui`, `cult-ui`, `reactbits`, `21st.dev`, `shadcn`, `tremor`). |
+| `--json` | On `tokens`, print the raw extracted structure instead of a summary. |
 | `-v`, `--version` | Print the version. |
 
 ## `search`: find a showpiece before you install
@@ -76,6 +78,27 @@ Updating components skill...
 ```
 
 Deleted files are restored. `--force` overwrites everything.
+
+## `tokens`: read the target project's brand tokens
+
+`references/adaptation.md` § 1 tells an agent to find the project's token source and map demo colors onto it, but nothing ever read that source into a form another step could compare against. `tokens` does that read: CSS custom properties in the project's global stylesheet (`:root` for light, `.dark` / `[data-theme="dark"]` / `prefers-color-scheme` for dark), a Tailwind v4 `@theme` block, and a best-effort read of a legacy `tailwind.config.*`'s `theme.extend.colors` as a fallback.
+
+```
+$ npx components-skill@latest tokens
+Project: /path/to/your-project
+Token source: src/app/globals.css (CSS custom properties)
+Dark mode: class
+
+Known adaptation tokens (references/adaptation.md § 1):
+  [x] --background           0 0% 100%
+  [x] --primary              222 47% 11%
+  [ ] --accent               (not found)
+  ...
+
+Missing 6/20. Adapt onto the closest existing token, or run `npx shadcn@latest init` first...
+```
+
+`--json` prints the full structure (`light`, `dark`, `tailwindConfigColors`, `knownTokens`, `missingKnownTokens`) instead, for a tool to consume rather than a human to read. Entirely offline and read-only: it never writes to the target project.
 
 ## Offline by design
 

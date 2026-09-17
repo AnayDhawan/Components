@@ -7,6 +7,21 @@ All notable changes to this project are documented here. Format based on
 ## [Unreleased]
 
 ### Added
+- All nine `frameworks.svelte` entries are now genuinely verified, not just
+  listed: `smoke-test.mjs` fetches each Svelte Bits registry item directly,
+  places the file where SvelteKit's own `$lib` alias actually resolves it,
+  renders it in a throwaway route, and runs a real SvelteKit build.
+  `--framework svelte --all-variants` runs all nine on schedule. This bypasses
+  `fetch.cli` entirely for Svelte: `shadcn`, `shadcn-svelte`, and jsrepo
+  (Svelte Bits' own documented method) were each tried by hand against a real
+  SvelteKit project first and each mis-resolves this registry's `$lib/`-rooted
+  target paths a different way.
+- `components-skill tokens [path]`: reads a target project's brand tokens
+  (CSS custom properties, a Tailwind v4 `@theme` block, or a best-effort
+  `tailwind.config.*` read) into one comparable structure, with `--json` for
+  machine consumption. `references/adaptation.md` § 1 has always told an
+  agent to find and map a project's tokens by eye; this is the first thing
+  that actually reads them.
 - Multi-framework rollout, completing #13's pilot (#55). 31 framework variants across
   three new sources, every one verified individually rather than mapped by pattern:
   - **Svelte**, via **Svelte Bits** (official ReactBits port, same author): all 9
@@ -46,9 +61,6 @@ All notable changes to this project are documented here. Format based on
   `"varies per component"`) are reported as unverifiable.
 - `--diff` selects entries whose `fetch` **or** `deps` changed, not just `ref`, since
   a dep change now changes what the job proves.
-- A framework variant whose project setup does not exist yet (`svelte`) reports SKIP
-  before installing anything, instead of being built in the wrong framework's
-  template and failing for an unrelated reason.
 - `gallery/scripts/fetch-showpieces.mjs` fails the build if any entry in
   `CURATED`/`STATIC_PREVIEW` lacks a matching `Demo<Name>.tsx`, so the fetch list and
   the demo components can no longer silently drift (#62).
