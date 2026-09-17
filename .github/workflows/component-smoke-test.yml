@@ -67,6 +67,22 @@ jobs:
         run: |
           node scripts/smoke-test.mjs --only split-text --framework vue --soft
 
+      - name: Smoke-test every Svelte variant (schedule only)
+        # Not a curated sample: all nine frameworks.svelte entries, the entire
+        # population, via --all-variants. Cheap enough to run in full (~5 min
+        # total, each entry gets its own SvelteKit scaffold) and there is no
+        # natural "one per library" cut the way SAMPLE has, since every one of
+        # these nine is the same library (Svelte Bits). This is real
+        # verification, not a listing check: it fetches each frameworks.svelte
+        # ref's registry JSON directly rather than shelling out to fetch.cli
+        # (see the comment on setupSvelteProject in smoke-test.mjs for why -
+        # every shadcn-family CLI mis-resolves this registry's $lib/ paths),
+        # places the file at the path SvelteKit's own $lib alias actually
+        # means, and builds a real SvelteKit project with it rendered.
+        if: github.event_name != 'pull_request'
+        run: |
+          node scripts/smoke-test.mjs --framework svelte --all-variants --soft
+
       - name: Smoke-test entries this PR added or changed
         # The curated sample above is a fixed regression baseline; it does not
         # necessarily include whatever ref this PR actually touched. This is the

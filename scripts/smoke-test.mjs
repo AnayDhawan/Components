@@ -18,7 +18,7 @@
  */
 
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, rmSync, readFileSync, writeFileSync, readdirSync, statSync, existsSync } from "node:fs";
+import { mkdtempSync, mkdirSync, rmSync, readFileSync, writeFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -106,15 +106,16 @@ const ALLOWED_HOSTS = new Set([
  * Which project setup a framework variant needs, independent of the CLI its ref
  * invokes.
  *
- * These are not the same axis. Svelte Bits documents installation through plain
- * `shadcn` with a direct URL, not through a `shadcn-svelte` CLI, so CLI_SETUP
- * would resolve its refs to a React project and fail them for the wrong reason.
- * A framework listed here with a setup this file does not implement is reported
- * as SKIP, not FAIL: the data is fine, the harness just cannot compile it yet.
+ * These are not the same axis. A framework listed here with a setup this file
+ * does not implement is reported as SKIP, not FAIL: the data is fine, the
+ * harness just cannot compile it yet.
+ *
+ * `svelte` is deliberately absent. It does not go through this table at all -
+ * see the big comment above `smokeTestSvelte` for why Svelte Bits' entries are
+ * verified by a completely different path than every other framework here.
  */
 const FRAMEWORK_SETUP = {
   vue: "vue",
-  svelte: null, // no SvelteKit + shadcn project builder here yet
 };
 
 /**
@@ -181,6 +182,11 @@ const KEEP = args.includes("--keep");
 const ONLY = args.includes("--only") ? args[args.indexOf("--only") + 1] : null;
 const DIFF_BASE = args.includes("--diff") ? args[args.indexOf("--diff") + 1] : null;
 const FRAMEWORK = args.includes("--framework") ? args[args.indexOf("--framework") + 1] : null;
+// Every showpiece entry carrying frameworks.<FRAMEWORK>, instead of one --only
+// name. Framework-agnostic on purpose: today it is what runs all nine Svelte
+// Bits entries on schedule (see component-smoke-test.yml) rather than needing
+// one hand-written YAML line per entry, and it works the same way for vue.
+const ALL_VARIANTS = args.includes("--all-variants");
 
 const log = (...m) => console.log(...m);
 const group = (t) => log(`\n${"=".repeat(70)}\n${t}\n${"=".repeat(70)}`);
@@ -386,9 +392,194 @@ export default defineConfig({
 
 const SETUP = { react: setupProject, vue: setupVueProject };
 
+/**
+ * A fresh SvelteKit + TS project with Tailwind v4, for `frameworks.svelte` refs.
+ *
+ * No shadcn-family `init` here, on purpose. `sv create` needs no prompting, but
+ * every CLI that can *consume* a Svelte Bits registry item does: hand-verified
+ * against a real target (split-text, 2026-09-18) before writing this file -
+ *
+ *  - `npx shadcn@latest add <url>` never detects SvelteKit at all (framework
+ *    probe reports "Vite" and falls back to its React template), and writes a
+ *    literal `src/$lib/...` directory - `$lib` as four characters on disk, not
+ *    SvelteKit's alias.
+ *  - `npx shadcn-svelte@latest add <url>` (the framework's own CLI) resolves
+ *    the target's `$lib/components/...` prefix *inside* the already-resolved
+ *    `components` alias instead of recognizing it as the alias itself, landing
+ *    at `src/lib/components/$lib/components/svelte-bits/...` - doubly nested,
+ *    still wrong.
+ *  - `npx jsrepo add <name> --registry <url>`, sveltebits.xyz's own documented
+ *    primary method, writes to `./$lib/...` at the project root with no config,
+ *    and a hand-written `paths: { "$lib": "./src/lib" }` in `jsrepo.config.ts`
+ *    (the only mapping shape its docs suggest) makes no difference.
+ *
+ * All three were tried against a real SvelteKit project before concluding this:
+ * the breakage is in how the wrapper CLIs resolve this registry's `$lib/`-
+ * rooted `target` paths, not in the Svelte code itself. SvelteKit's `$lib`
+ * alias needs no setup - it always points at `src/lib`. So this harness fetches
+ * the registry-item JSON directly (same as `checkDeclaredDeps` already does a
+ * second time, for a different reason) and performs that one resolution step
+ * itself: strip the leading `$lib/` and write under `src/lib/`. That is not a
+ * workaround for a harness limitation, it is the file landing exactly where
+ * `$lib/...` already means it should.
+ *
+ * Filed as a components.json data question (`fetch.cli: "shadcn"` on these nine
+ * entries names a command that cannot place the file correctly) rather than
+ * changed here - out of scope for a test harness to silently repoint.
+ */
+function setupSvelteProject(dir) {
+  run(NPX, ["--yes", "sv@latest", "create", "app", "--template", "minimal", "--types", "ts", "--no-add-ons", "--no-install"], dir);
+  const app = join(dir, "app");
+
+  run(NPM, ["install", "--no-audit", "--no-fund"], app);
+
+  // Non-interactive per Svelte CLI's own `--install <package-manager>` flag;
+  // confirmed no prompts reach stdin with this exact flag combination.
+  run(
+    NPX,
+    ["--yes", "sv@latest", "add", "tailwindcss=plugins:none", "--no-git-check", "--no-download-check", "--install", "npm"],
+    app,
+  );
+
+  return app;
+}
+
+/**
+ * `frameworks.svelte` entries never touch `parseRef` / `CLI_SETUP` / `SETUP` -
+ * see the comment on `setupSvelteProject` for the three CLI paths that were
+ * tried and found to mis-place the file before this direct-fetch approach was
+ * written. This function is the whole svelte path: fetch the registry item,
+ * place its files under the real `src/lib/...` location, render it (so it is
+ * not dead-code-eliminated out of the bundle before the build ever sees it),
+ * and build for real.
+ */
+async function smokeTestSvelte(entry, fetchSpec, declaredDeps, knownBlocked) {
+  const host = (() => {
+    try {
+      return new URL(fetchSpec?.url ?? "").hostname;
+    } catch {
+      return null;
+    }
+  })();
+  if (host && knownBlocked[host]) {
+    return { name: entry.name, status: "skip", detail: knownBlocked[host] };
+  }
+  if (!fetchSpec?.url) {
+    return { name: entry.name, status: "fail", detail: "entry has no frameworks.svelte.fetch.url" };
+  }
+  let url;
+  try {
+    url = new URL(fetchSpec.url);
+  } catch {
+    return { name: entry.name, status: "fail", detail: `fetch.url is unparseable: ${fetchSpec.url}` };
+  }
+  if (url.protocol !== "https:") return { name: entry.name, status: "fail", detail: `fetch.url is not https: ${url.href}` };
+  if (!ALLOWED_HOSTS.has(url.hostname)) {
+    return { name: entry.name, status: "fail", detail: `fetch.url host '${url.hostname}' is not in the smoke-test allowlist` };
+  }
+
+  let registryItem;
+  try {
+    const res = await fetch(url.href);
+    if (!res.ok) return { name: entry.name, status: "fail", detail: `GET ${url.href} -> HTTP ${res.status}` };
+    registryItem = await res.json();
+  } catch (err) {
+    return { name: entry.name, status: "fail", detail: `fetching ${url.href} failed: ${String(err.message || err)}` };
+  }
+
+  const files = Array.isArray(registryItem?.files) ? registryItem.files : [];
+  const svelteFiles = files.filter(
+    (f) => typeof f?.target === "string" && f.target.endsWith(".svelte") && typeof f.content === "string",
+  );
+  if (svelteFiles.length === 0) {
+    return { name: entry.name, status: "fail", detail: "registry item has no files[] with a .svelte target and content" };
+  }
+  const badTarget = svelteFiles.find((f) => !f.target.startsWith("$lib/"));
+  if (badTarget) {
+    return {
+      name: entry.name,
+      status: "fail",
+      detail: `file target '${badTarget.target}' is not $lib/-rooted; the src/lib/ resolution this harness does is specific to that shape`,
+    };
+  }
+
+  const tmp = mkdtempSync(join(tmpdir(), `components-smoke-svelte-${entry.name}-`));
+  try {
+    const app = setupSvelteProject(tmp);
+
+    // The one resolution step every CLI tried in setupSvelteProject's comment
+    // got wrong: SvelteKit needs nothing else to make `$lib` resolve, it
+    // always means `src/lib`.
+    const added = [];
+    const imports = [];
+    svelteFiles.forEach((f, i) => {
+      const localRel = f.target.replace(/^\$lib\//, "src/lib/");
+      mkdirSync(dirname(join(app, localRel)), { recursive: true });
+      writeFileSync(join(app, localRel), f.content);
+      added.push(localRel);
+      imports.push({ varName: `SmokeEntry${i}`, specifier: f.target });
+    });
+    log(`  + ${added.length} file(s): ${added.join(", ")}`);
+
+    // A throwaway route that imports and renders every fetched file, with no
+    // props. Svelte 5's runtime does not throw on a missing required prop
+    // (that is a type-only concern), so this cannot catch every possible
+    // defect, but rendering - not just importing - is what stops the module
+    // from being dead-code-eliminated before the build ever compiles it:
+    // confirmed by hand, an unused `import X from "..."; const _x = X` was
+    // silently stripped and a genuinely broken import (nonexistent package)
+    // still built clean; `<X />` in the template caught the same break every
+    // time.
+    const routeDir = join(app, "src", "routes", "__smoke_test__");
+    mkdirSync(routeDir, { recursive: true });
+    const scriptLines = imports.map((im) => `  import ${im.varName} from ${JSON.stringify(im.specifier)};`);
+    const markupLines = imports.map((im) => `<${im.varName} />`);
+    writeFileSync(
+      join(routeDir, "+page.svelte"),
+      `<script lang="ts">\n${scriptLines.join("\n")}\n</script>\n\n${markupLines.join("\n")}\n`,
+    );
+
+    const installable = declaredDeps.filter((d) => NPM_PACKAGE_NAME.test(d));
+    const rejected = declaredDeps.filter((d) => !NPM_PACKAGE_NAME.test(d));
+    if (installable.length > 0) {
+      log(`  $ npm install ${installable.join(" ")}`);
+      run(NPM, ["install", ...installable, "--no-audit", "--no-fund"], app);
+    }
+
+    log(`  $ npm run build`);
+    run(NPM, ["run", "build"], app);
+
+    const motion = checkReducedMotion(app, added);
+    const registryDeps = await checkDeclaredDeps(url.href);
+    const unprovenDeps = registryDeps
+      ? declaredDeps.filter((d) => !registryDeps.has(d.toLowerCase()) && !NPM_PACKAGE_NAME.test(d))
+      : [];
+
+    return {
+      name: entry.name,
+      status: "pass",
+      added,
+      motion,
+      missingDeps: unprovenDeps,
+      installedDeps: installable,
+      rejectedDeps: rejected,
+      detail:
+        `${added.length} file(s), build OK` +
+        (installable.length ? `, ${installable.length} declared dep(s) installed` : "") +
+        (rejected.length ? `, ${rejected.length} dep(s) not installable as written` : ""),
+    };
+  } catch (err) {
+    const msg = (err.stderr || err.stdout || err.message || "").toString().trim().split("\n").slice(-12).join("\n");
+    return { name: entry.name, status: "fail", detail: msg || String(err) };
+  } finally {
+    if (!KEEP) rmSync(tmp, { recursive: true, force: true });
+    else log(`  kept: ${tmp}`);
+  }
+}
+
 function checkReducedMotion(app, added) {
   // Upstream's code, not this repo's data, so this can only ever be a warning.
-  const sources = [...added].filter((f) => /\.(tsx?|jsx?|vue|css)$/.test(f));
+  const sources = [...added].filter((f) => /\.(tsx?|jsx?|vue|svelte|css)$/.test(f));
   const hits = [];
   for (const f of sources) {
     let text;
@@ -463,6 +654,13 @@ async function smokeTest(entry, framework, knownBlocked) {
         status: "skip",
         detail: `no ${framework} project setup in smoke-test.mjs yet; ref is validated but not compiled`,
       };
+    }
+
+    // Svelte never reaches parseRef/CLI_SETUP/SETUP below: see the comment on
+    // setupSvelteProject for why this registry's `$lib/`-rooted target paths
+    // need a different verification path than every shadcn-family CLI here.
+    if (framework === "svelte") {
+      return smokeTestSvelte(entry, fetchSpec, declaredDeps, knownBlocked);
     }
   }
 
@@ -606,14 +804,25 @@ async function main() {
   const byName = new Map(data.showpiece.map((e) => [e.name, e]));
   const knownBlocked = knownBlockedHosts(data);
 
-  if (FRAMEWORK && !ONLY) {
-    console.error("--framework needs --only <name>: it tests one entry's frameworks.<name> variant, not a batch.");
+  if (ALL_VARIANTS && !FRAMEWORK) {
+    console.error("--all-variants needs --framework <name>: it tests every entry carrying that framework's variant.");
+    process.exit(1);
+  }
+  if (FRAMEWORK && !ONLY && !ALL_VARIANTS) {
+    console.error("--framework needs --only <name> or --all-variants: it never tests the React sample by accident.");
     process.exit(1);
   }
 
   let wanted;
   let modeLabel;
-  if (DIFF_BASE) {
+  if (ALL_VARIANTS) {
+    wanted = data.showpiece.filter((e) => e.frameworks?.[FRAMEWORK]).map((e) => e.name);
+    modeLabel = "all";
+    if (wanted.length === 0) {
+      log(`No showpiece entry carries frameworks.${FRAMEWORK}. Nothing to smoke-test.`);
+      return 0;
+    }
+  } else if (DIFF_BASE) {
     wanted = changedShowpieceNames(DIFF_BASE, data);
     modeLabel = "new/changed";
     if (wanted.length === 0) {
